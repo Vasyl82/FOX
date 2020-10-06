@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string'
 import { getProfileFetch } from '../actions';
 import "./style.scss";
+import { FoxEngagedModals } from './modals'
 
 
 const loading = (
@@ -19,8 +20,6 @@ const Register = React.lazy(() => import('./pages/Register'));
 const Page404 = React.lazy(() => import('./pages/Page404'));
 
 class App extends Component {
-
-
 
   componentDidMount() {
     this.props.getProfileFetch();
@@ -53,6 +52,7 @@ class App extends Component {
               <Page404 />
             </>
           </Switch>
+          <FoxEngagedModals {...this.props} />
         </Suspense>
       </HashRouter>
     );

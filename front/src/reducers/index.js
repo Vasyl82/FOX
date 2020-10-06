@@ -11,7 +11,8 @@ const initialState = {
     entityListTable: {},
     additionalEntityListTable: {},
     projectId: "",
-    notifications: []
+    notifications: [],
+    modal: {}
 }
 
 const changeState = (state = initialState, { type, ...rest }) => {
@@ -48,6 +49,8 @@ const changeState = (state = initialState, { type, ...rest }) => {
             const newNotifications = [...state.notifications]
             newNotifications[newNotifications.findIndex(element => element.id === rest.notification.id)] = rest.notification;
             return { ...state, notifications: newNotifications };
+        case 'UPDATE_MODAL':
+            return { ...state, ...rest };
 
         default:
             return state;

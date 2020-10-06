@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import {
   CButton,
   CModal,
@@ -12,6 +13,8 @@ import {
   CLabel,
 } from '@coreui/react'
 import { FoxApiService } from '../../services'
+import { updateModal } from '../../actions'
+
 
 const foxApi = new FoxApiService()
 
@@ -52,11 +55,10 @@ class ForgetPasswordModal extends Component {
 
   render = () => {
     const { email, error, success } = this.state
-    console.log(success);
     return (
       <CModal
-        show={this.props.show}
-        onClose={this.props.setModalVisibility}
+        show={this.props.modalType === "forgetPasswordModal"}
+        onClose={this.props.hideModal}
         color="dark"
       >
         <CModalHeader closeButton>
@@ -80,11 +82,20 @@ class ForgetPasswordModal extends Component {
         </CModalBody>
         <CModalFooter>
           {success ? null : <CButton shape="pill" color="primary" onClick={this.handleSubmit}>Confirm</CButton>}
-          {' '}<CButton shape="pill" color="dark" onClick={this.props.setModalVisibility}>{success ? "Close" : "Cancel"}</CButton>
+          {' '}<CButton shape="pill" color="dark" onClick={this.props.hideModal}>{success ? "Close" : "Cancel"}</CButton>
         </CModalFooter>
       </CModal >
     )
   }
 }
 
-export default ForgetPasswordModal
+const mapStateToProps = state => ({
+  modalType: state.modal.modalType,
+})
+
+const mapDispatchToProps = dispatch => ({
+  hideModal: () => dispatch(updateModal("", {}))
+})
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(ForgetPasswordModal)
