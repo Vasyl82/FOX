@@ -189,14 +189,9 @@ class WorkerSpecialCompetencyAdmin(admin.ModelAdmin):
     list_display = ("name", "issued_by")
 
 
-class PermitAdmin(admin.ModelAdmin):
-    model = Permit
-    list_display = ("Project", "Worker", "issue_date", "active")
-
 
 class DocumentAdmin(admin.ModelAdmin):
     model = Document
-
 
 class DocumentAssignAdmin(admin.ModelAdmin):
     model = DocumentAssign
