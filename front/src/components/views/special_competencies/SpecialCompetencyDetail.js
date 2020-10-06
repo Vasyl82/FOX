@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { getProfileFetch } from '../../../actions'
 import { connect } from 'react-redux'
 import {
   CForm,
@@ -8,12 +7,11 @@ import {
   CLabel, CRow,
   CCol,
   CButton,
-  CLink
 } from "@coreui/react";
 import DjangoCSRFToken from 'django-react-csrftoken'
+import { getProfileFetch, updateModal } from '../../../actions'
 import { FoxApiService } from '../../../services'
 import { FoxFormGroupInputDownloadUpload } from '../../forms'
-import { DeleteModal } from '../../modals'
 
 const foxApi = new FoxApiService();
 
@@ -24,7 +22,6 @@ class WorkerDetail extends Component {
     name: "",
     file: "",
     issued_by: "",
-    modal: false,
     error: false,
     filename: "",
     doc_type: "",
@@ -50,7 +47,6 @@ class WorkerDetail extends Component {
     event.preventDefault();
     this.requestData = this.state;
     const { upload_files } = this.requestData
-    delete this.requestData.modal
     delete this.requestData.upload_files
     delete this.requestData.error;
     delete this.requestData.filename;
@@ -80,6 +76,7 @@ class WorkerDetail extends Component {
     await foxApi.deleteEntityOf('worker_special_competencies', this.props.match.params.competency_id)
       .then(() => {
         this.props.history.goBack()
+        this.props.updateModal("", {})
       },
         (error) => {
           console.error(error);
@@ -116,9 +113,11 @@ class WorkerDetail extends Component {
     )
   }
 
-  setModalVisibility = () => {
-    this.setState({
-      modal: !this.state.modal
+  showDeleteModal = () => {
+    this.props.updateModal({
+      modalType: "deleteModal",
+      entity: "special competency",
+      confirmDelete: () => this.confirmDelete()
     })
   }
 
@@ -157,20 +156,14 @@ class WorkerDetail extends Component {
               />
             </CFormGroup>
             <CFormGroup>
-              <CButton type="submit" color="dark" variant="outline" block>Save changes</CButton>
+              <CButton shape="pill" type="submit" color="dark" variant="outline" block>Save changes</CButton>
             </CFormGroup>
-            <CButton className="mb-3" color="danger" variant="outline" onClick={this.setModalVisibility} block>Delete Competency</CButton>
+            <CButton shape="pill" className="mb-3" color="danger" variant="outline" onClick={this.showDeleteModal} block>Delete Competency</CButton>
             {this.state.error
               ? <p>{this.state.error}</p>
               : null
             }
           </CForm>
-          <DeleteModal
-            setModalVisibility={this.setModalVisibility}
-            danger={this.state.modal}
-            entity="special competency"
-            confirmDelete={this.confirmDelete}
-          />
         </CCol>
       </CRow >
     )
@@ -185,6 +178,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
+  updateModal: ({ modalType, ...rest }) => dispatch(updateModal({ modalType, ...rest }))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(WorkerDetail)

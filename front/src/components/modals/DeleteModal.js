@@ -1,4 +1,5 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import {
   CButton,
   CModal,
@@ -7,13 +8,14 @@ import {
   CModalHeader,
   CModalTitle,
 } from '@coreui/react'
+import { updateModal } from '../../actions'
 
 
 const DeleteModal = props => {
   return (
     <CModal
-      show={props.danger}
-      onClose={props.setModalVisibility}
+      show={props.modalType === "deleteModal"}
+      onClose={props.hideModal}
       color="danger"
     >
       <CModalHeader closeButton>
@@ -24,10 +26,21 @@ const DeleteModal = props => {
       </CModalBody>
       <CModalFooter>
         <CButton color="danger" onClick={props.confirmDelete}>Confirm</CButton>{' '}
-        <CButton color="secondary" onClick={props.setModalVisibility}>Cancel</CButton>
+        <CButton color="secondary" onClick={props.hideModal}>Cancel</CButton>
       </CModalFooter>
     </CModal>
   )
 }
 
-export default DeleteModal
+const mapStateToProps = state => ({
+  modalType: state.modal.modalType,
+  entity: state.modal.entity,
+  confirmDelete: state.modal.confirmDelete
+})
+
+const mapDispatchToProps = dispatch => ({
+  hideModal: () => dispatch(updateModal("", {}))
+})
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(DeleteModal)
