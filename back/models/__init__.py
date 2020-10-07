@@ -14,5 +14,7 @@ from .approval import Approval  # noqa F401
 from .activity import Activity  # noqa F401
 from .message import Message  # noqa F401
 from .notification import Notification  # noqa F401
+from .template import Template # noqa F401
+
 
 # from .worker_document import WorkerDocument
