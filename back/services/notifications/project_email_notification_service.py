@@ -1,3 +1,4 @@
+import tempfile
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -5,6 +6,7 @@ from back.logger import log
 from .internal_notification_service import (
     InternalNotificationService as internal_service,
 )
+from back.services.permits import PermitHandlingService
 
 
 class ProjectEmailNotificationService:
@@ -42,7 +44,7 @@ class ProjectEmailNotificationService:
 
     def send_project_approved(self):
         self.subject = f"Project {self.project.name}. Application approved."
-        self._conduct_email_send("project_approved")
+        self._conduct_email_send_with_qr_codes("project_approved")
         self._conduct_internal_notification()
 
     def send_project_rejected(self):
@@ -64,6 +66,11 @@ class ProjectEmailNotificationService:
         self._generate_context()
         self._render_email_text(template)
         self._send_message()
+
+    def _conduct_email_send_with_qr_codes(self, template):
+        self._generate_context()
+        self._render_email_text(template)
+        self._send_message_with_qr_codes()
 
     def _conduct_internal_notification(self):
         internal_message = internal_service(
@@ -97,4 +104,22 @@ class ProjectEmailNotificationService:
             to=self.mail_list,
         )
         msg.attach_alternative(self.email_text["html_message"], "text/html")
+        msg.send()
+
+    def _send_message_with_qr_codes(self):
+
+        msg = EmailMultiAlternatives(
+            subject=self.subject,
+            body=self.email_text["plaintext_message"],
+            from_email=settings.EMAIL_EMAIL_FROM,
+            to=self.mail_list,
+        )
+        msg.attach_alternative(self.email_text["html_message"], "text/html")
+        qr_codes = PermitHandlingService(self.project).retreive_qr_codes()
+        for qr_code in qr_codes:
+            with tempfile.TemporaryFile() as fp:
+                qr_code["qr_code_obj"].png(fp, scale=5)
+                fp.seek(0)
+                image_data = fp.read()
+                msg.attach(qr_code["filename"], image_data, "image/png")
         msg.send()

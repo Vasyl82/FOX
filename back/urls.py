@@ -75,4 +75,8 @@ urlpatterns = [
     path("activities/", views.ActivityList.as_view()),
     path("notifications/", views.NotificationList.as_view()),
     path("notifications/<int:pk>/", views.NotificationUpdate.as_view()),
+    path(
+        "permits/verification/<str:part1>/<str:part2>/<str:part3>/",
+        views.PermitVerification.as_view(),
+    ),
 ]

@@ -5,7 +5,7 @@ import {
   CForm,
   CFormGroup,
   CInput,
-  CLabel, CRow,
+  CRow,
   CCol,
   CButton,
   CCard,

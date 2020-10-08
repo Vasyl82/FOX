@@ -28,7 +28,8 @@ env = environ.Env(
     ),
     MAX_NOTIFICATION_DISPLAY=(int, 5),
 )
-environ.Env.read_env()
+environ.Env.read_env("FOX/.env.taras")
+# environ.Env.read_env()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
@@ -173,6 +174,7 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 DISPLAY_FILE_KEY = env("DISPLAY_FILE_KEY")
+PERMIT_VALIDATE_KEY = env("PERMIT_VALIDATE_KEY")
 
 JWT_AUTH = {
     "JWT_ENCODE_HANDLER": "rest_framework_jwt.utils.jwt_encode_handler",

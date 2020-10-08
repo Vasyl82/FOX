@@ -1,4 +1,6 @@
 from django.core import mail
+from datetime import datetime
+from back.services.permits import PermitHandlingService
 
 # from django.urls import reverse
 # from datetime import datetime
@@ -10,6 +12,7 @@ from back.models import (
     Company,
     ClientAdmin,
     ClientManager,
+    Worker,
 )
 from back.services import ProjectEmailNotificationService
 
@@ -36,6 +39,7 @@ class ProjectStatusMailingTestCase(APITestCase):
             company=company,
             contractor=contractor,
             status="Rejected",
+            end_date=datetime.now(),
         )
         Project.objects.create(
             name="Test project3",
@@ -57,6 +61,32 @@ class ProjectStatusMailingTestCase(APITestCase):
             role=ClientManager.Role.client_manager,
             position=ClientManager.Position.safety_manager,
         )
+        Worker.objects.create(
+            contractor=contractor,
+            name="test_worker1",
+            phone_number="000",
+            birthday=datetime.now(),
+            card_number_id="000",
+            license_number="111",
+            passport="222",
+            safety_green_card="aaa",
+            registration_number="333",
+            position_in_company="Weld",
+            trade_competency="Civ",
+        )
+        Worker.objects.create(
+            contractor=contractor,
+            name="test_worker2",
+            phone_number="000",
+            birthday=datetime.now(),
+            card_number_id="000",
+            license_number="111",
+            passport="222",
+            safety_green_card="aaa",
+            registration_number="333",
+            position_in_company="Weld",
+            trade_competency="Civ",
+        )
 
     def test_project_created_mail(self):
         project = Project.objects.get(name="Test project1")
@@ -64,7 +94,7 @@ class ProjectStatusMailingTestCase(APITestCase):
         email_service = ProjectEmailNotificationService(
             project=project, receivers=[contractor]
         )
-        email_service.send_project_updated()
+        email_service.send_project_created()
         self.assertEqual(
             mail.outbox[-1].subject, "You are assigned for project Test project1"
         )
@@ -76,7 +106,7 @@ class ProjectStatusMailingTestCase(APITestCase):
         email_service = ProjectEmailNotificationService(
             project=project, receivers=[project.contractor], issuer=manager
         )
-        email_service.send_project_updated()
+        email_service.send_project_rejected()
         self.assertEqual(
             mail.outbox[-1].subject, "Project Test project2. Application rejected."
         )
@@ -84,10 +114,14 @@ class ProjectStatusMailingTestCase(APITestCase):
     def test_project_approved(self):
         project = Project.objects.get(name="Test project2")
         manager = ClientManager.objects.get(username="test_man1")
+        worker1 = Worker.objects.get(pk=1)
+        worker2 = Worker.objects.get(pk=2)
+        project.workers.add(worker1, worker2)
+        PermitHandlingService(project).generate_permits()
         email_service = ProjectEmailNotificationService(
             project=project, receivers=[project.contractor], issuer=manager
         )
-        email_service.send_project_updated()
+        email_service.send_project_approved()
         self.assertEqual(
-            mail.outbox[-1].subject, "Project Test project2. Application rejected."
+            mail.outbox[-1].subject, "Project Test project2. Application approved."
         )

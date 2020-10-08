@@ -102,6 +102,10 @@ const getProfileFetch = () => {
                     }
                 })
         }
+        else {
+            return Promise.reject("User is not logged in")
+
+        }
     }
 }
 

@@ -18,44 +18,66 @@ const Login = React.lazy(() => import('./pages/Login'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const Register = React.lazy(() => import('./pages/Register'));
 const Page404 = React.lazy(() => import('./pages/Page404'));
+const PermitVerification = React.lazy(() => import('./pages/PermitVerification'));
+
 
 class App extends Component {
+  state = {
+    loadingState: true
+  }
 
-  componentDidMount() {
-    this.props.getProfileFetch();
+  componentDidMount = () => {
+    this.props.getProfileFetch()
+      .then(() => {
+        this.setState({
+          loadingState: false
+        })
+      })
+      .catch(error => {
+        console.log(error);
+        this.setState({
+          loadingState: false
+        })
+      })
   }
 
   render() {
-    return (
-      <HashRouter>
-        <Suspense fallback={loading}>
-          <Switch>
-            {/* <Route exact path="/projects" name="Projects" render={props => <ProjectList {...props} />} /> */}
-            <Route exact path="/register" name="Register Page" render={
-              props => {
-                return <Register
-                  username={queryString.parse(props.location.search).username}
-                  token={queryString.parse(props.location.search).token}
-                  {...props}
-                />
-              }
-            } />
-            <Route exact path="/login" name="Login Page" render={
-              props => {
-                let this_props = this.props;
-                return this_props.currentUser.username ? <Redirect to="/" /> : <Login {...props} />
-              }
-            } />
-            <Route path="/" name="Home" render={props => <Dashboard {...props} />}>
-            </Route>
-            <>
-              <Page404 />
-            </>
-          </Switch>
-          <FoxEngagedModals {...this.props} />
-        </Suspense>
-      </HashRouter>
-    );
+    const { loadingState } = this.state
+    if (loadingState) {
+      return loading;
+    }
+    else {
+      return (
+        <HashRouter>
+          <Suspense fallback={loading}>
+            <Switch>
+              {/* <Route exact path="/projects" name="Projects" render={props => <ProjectList {...props} />} /> */}
+              <Route exact path="/permits/validate/:part1/:part2/:part3/" name="Home" render={props => <PermitVerification {...props} />} />
+              <Route exact path="/register" name="Register Page" render={
+                props => {
+                  return <Register
+                    username={queryString.parse(props.location.search).username}
+                    token={queryString.parse(props.location.search).token}
+                    {...props}
+                  />
+                }
+              } />
+              <Route exact path="/login" name="Login Page" render={
+                props => {
+                  let this_props = this.props;
+                  return this_props.currentUser.username ? <Redirect to="/" /> : <Login {...props} />
+                }
+              } />
+              <Route path="/" name="Home" render={props => <Dashboard {...props} />} />
+              <>
+                <Page404 />
+              </>
+            </Switch>
+            <FoxEngagedModals {...this.props} />
+          </Suspense>
+        </HashRouter>
+      );
+    }
   }
 }
 
