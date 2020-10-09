@@ -8,9 +8,7 @@ class PermitHandlingService:
 
     def generate_permits(self):
         for worker in self.project.workers.all():
-            permit = Permit(
-                project=self.project, worker=worker, end_date=self.project.end_date
-            )
+            permit = Permit(project=self.project, worker=worker)
             permit.save()
 
     def retreive_qr_codes(self):

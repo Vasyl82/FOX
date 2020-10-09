@@ -70,7 +70,6 @@ class PermitHandlingTestCase(APITestCase):
         permits = Permit.objects.filter(project__name="Test project1")
         self.assertEqual(permits.count(), 2)
         self.assertEqual(permits[0].worker.name, "test_worker1")
-        self.assertEqual(permits[1].end_date, project.end_date)
 
     def test_retreive_qr_codes(self):
         project = Project.objects.get(name="Test project1")
