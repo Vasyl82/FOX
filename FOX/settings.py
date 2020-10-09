@@ -28,8 +28,8 @@ env = environ.Env(
     ),
     MAX_NOTIFICATION_DISPLAY=(int, 5),
 )
-# environ.Env.read_env("FOX/.env.taras")
-environ.Env.read_env()
+environ.Env.read_env("FOX/.env.taras")
+# environ.Env.read_env()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")

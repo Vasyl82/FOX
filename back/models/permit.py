@@ -15,10 +15,10 @@ class Permit(models.Model):
         "Worker", on_delete=models.CASCADE, related_name="permits"
     )
     issue_date = models.DateField(auto_now_add=True)
-    end_date = models.DateTimeField()
+    # end_date = models.DateTimeField()
     active = models.BooleanField(default=True)
     qr_code = models.ImageField(upload_to=project_qr_code_path, null=True, blank=True)
     deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Permit for {self.Worker} ({self.Project})"
+        return f"Permit for {self.worker} ({self.project})"

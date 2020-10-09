@@ -13,7 +13,17 @@ class PermitVerificationService:
             self.token, key=settings.PERMIT_VALIDATE_KEY.encode(), algorithm="HS256"
         )
         permit = Permit.objects.get(pk=payload.get("id"))
-        permit_is_valid = timezone.now() < permit.end_date
-        if permit and permit.active and permit_is_valid:
+        permit_is_valid = self._validate_permit(permit)
+        if permit_is_valid:
             return {"name": permit.worker.name}
         return "Access Denied"
+
+    def _validate_permit(self, permit):
+        if permit is None:
+            return False
+        end_date = (
+            permit.project.extend_date
+            if permit.project.extend_date is not None
+            else permit.project.end_date
+        )
+        return permit.active and (timezone.now() < end_date)

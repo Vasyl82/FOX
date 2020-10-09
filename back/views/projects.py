@@ -55,6 +55,8 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
             activity.project_status_updated_message(project.status)
             mail = mail_service(project=project, receivers=[project.contractor])
             mail.send_project_updated()
+            if project.status == "Closed":
+                project.permits.update(active=False)
         return res
 
     def destroy(self, request, pk):
