@@ -21,6 +21,7 @@ from back.models import (
     Document,
     DocumentAssign,
     WorkerSpecialCompetency,
+    Template
 )
 
 FoxUser = get_user_model()
@@ -170,6 +171,53 @@ class CompanyAdmin(admin.ModelAdmin):
 class WorkerAdmin(admin.ModelAdmin):
     list_display = ("name", "contractor", "deleted")
 
+    fieldsets = (
+        (
+            "Personal Info",
+            {
+                "fields": ("name", "phone_number", "birthday"),
+            },
+        ),
+
+        (
+            "Documents and Scans",
+            {
+                "fields": (
+                    "card_number_id",
+                    "license_number",
+                    "license_scan",
+                    "passport",
+                    "passport_scan",
+                    "safety_green_card",
+                    "safety_green_card_scan"
+                ),
+            },
+        ),
+
+        (
+            "Working Info",
+            {
+                "fields": (
+                    "registration_number",
+                    "position_in_company",
+                    "trade_competency",
+                    "safety_quiz_answer",
+                    "personal_declaration"
+                ),
+            },
+        ),
+
+        (
+            "General Info",
+            {
+                "fields": (
+                    "contractor",
+                    "deleted",
+                ),
+            },
+        ),
+    )
+
 
 class ProjectAdmin(admin.ModelAdmin):
     model = Project
@@ -183,19 +231,77 @@ class ProjectAdmin(admin.ModelAdmin):
         "status",
     )
 
+    fieldsets = (
+        (
+            "General Info",
+            {
+                "fields":
+                (
+                    "name",
+                    "description",
+                    "location",
+                    "status",
+                    "company",
+                    "deleted"
+                ),
+            },
+        ),
+
+        (
+            "Deadlines",
+            {
+                "fields": ("start_date", "end_date", "extend_date"),
+            },
+        ),
+
+        (
+            "Participants",
+            {
+                "fields": ("contractor", "workers", "responsible_person"),
+            },
+        ),
+
+        (
+            "Type of work",
+            {
+                "fields":
+                (
+                    "work_at_height",
+                    "lifting_work",
+                    "confined_space",
+                    "hot_work",
+                    "chemical_handling",
+                    "work_alone",
+                    "work_at_sensitive_area",
+                    "cold_work"
+                ),
+            },
+        ),
+    )
+
 
 class WorkerSpecialCompetencyAdmin(admin.ModelAdmin):
     model = WorkerSpecialCompetency
     list_display = ("name", "issued_by")
 
 
+class PermitAdmin(admin.ModelAdmin):
+    model = Permit
+    list_display = ("Project", "Worker", "issue_date", "active")
+
 
 class DocumentAdmin(admin.ModelAdmin):
     model = Document
 
+
 class DocumentAssignAdmin(admin.ModelAdmin):
     model = DocumentAssign
     list_display = ("document", "manager", "issue_date", "last_approve_date")
+
+
+class TemplateAdmin(admin.ModelAdmin):
+    model = Template
+    list_display = ("name", "company", "hazardous_work", "file", "deleted")
 
 
 admin.site.site_header = "Fox Project Admin Panel"
@@ -211,4 +317,5 @@ admin.site.register(Permit, PermitAdmin)
 admin.site.register(Document, DocumentAdmin)
 admin.site.register(WorkerSpecialCompetency, WorkerSpecialCompetencyAdmin)
 admin.site.register(DocumentAssign, DocumentAssignAdmin)
+admin.site.register(Template, TemplateAdmin)
 admin.site.unregister(Group)
