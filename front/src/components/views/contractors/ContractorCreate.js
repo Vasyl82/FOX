@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { getProfileFetch } from '../../../actions'
 import { connect } from 'react-redux'
+import DjangoCSRFToken from 'django-react-csrftoken'
 import {
   CForm,
   CFormGroup,
@@ -14,8 +14,9 @@ import {
   CCardTitle,
   CCardSubtitle
 } from "@coreui/react";
-import DjangoCSRFToken from 'django-react-csrftoken'
 import { FoxApiService } from '../../../services'
+import { getProfileFetch } from '../../../actions'
+import { WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -55,8 +56,9 @@ class ContractorCreate extends Component {
       })
   }
 
-  componentDidMount = () => {
-    this.props.getProfileFetch()
+  componentDidMount = async () => {
+    await this.props.getProfileFetch()
+      .then(() => this.props.changeLoadingState())
   }
 
   render = () => {
@@ -69,67 +71,69 @@ class ContractorCreate extends Component {
               <CCardSubtitle>Fill up the form below to add a new Contractor</CCardSubtitle>
             </CCardHeader>
             <CCardBody>
-              <CForm
-                onSubmit={this.handleSubmit}
-              >
-                <DjangoCSRFToken />
-                <CFormGroup>
-                  <CInput
-                    id="username"
-                    name='username'
-                    placeholder="Username"
-                    value={this.state.username}
-                    onChange={this.handleChange}
-                    required />
-                </CFormGroup>
-                <CFormGroup>
-                  <CInput
-                    id="email"
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={this.state.email}
-                    onChange={this.handleChange}
-                    required
-                  />
-                </CFormGroup>
-                <CFormGroup>
-                  <CInput
-                    id="related_company"
-                    name='related_company'
-                    placeholder="Company name"
-                    value={this.state.related_company}
-                    onChange={this.handleChange}
-                    required />
-                </CFormGroup>
-                <CFormGroup>
-                  <CInput
-                    id="name"
-                    type="name"
-                    name="name"
-                    placeholder="Contact Person Name"
-                    value={this.state.name}
-                    onChange={this.handleChange}
-                    required
-                  />
-                </CFormGroup>
-                <CFormGroup>
-                  <CInput
-                    id="company_phone"
-                    name='company_phone'
-                    placeholder="Contact phone number"
-                    value={this.state.company_phone}
-                    onChange={this.handleChange}
-                    required />
-                </CFormGroup>
-                <CFormGroup>
-                  <CButton shape="pill" type="submit" color="dark" variant="outline" block>Create contractor</CButton>
-                </CFormGroup>
-                {this.state.error
-                  ? <p>{this.state.error}</p>
-                  : null
-                }
-              </CForm>
+              <WithLoadingSpinner loading={this.props.loading}>
+                <CForm
+                  onSubmit={this.handleSubmit}
+                >
+                  <DjangoCSRFToken />
+                  <CFormGroup>
+                    <CInput
+                      id="username"
+                      name='username'
+                      placeholder="Username"
+                      value={this.state.username}
+                      onChange={this.handleChange}
+                      required />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CInput
+                      id="email"
+                      type="email"
+                      name="email"
+                      placeholder="Email"
+                      value={this.state.email}
+                      onChange={this.handleChange}
+                      required
+                    />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CInput
+                      id="related_company"
+                      name='related_company'
+                      placeholder="Company name"
+                      value={this.state.related_company}
+                      onChange={this.handleChange}
+                      required />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CInput
+                      id="name"
+                      type="name"
+                      name="name"
+                      placeholder="Contact Person Name"
+                      value={this.state.name}
+                      onChange={this.handleChange}
+                      required
+                    />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CInput
+                      id="company_phone"
+                      name='company_phone'
+                      placeholder="Contact phone number"
+                      value={this.state.company_phone}
+                      onChange={this.handleChange}
+                      required />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CButton shape="pill" type="submit" color="dark" variant="outline" block>Create contractor</CButton>
+                  </CFormGroup>
+                  {this.state.error
+                    ? <p>{this.state.error}</p>
+                    : null
+                  }
+                </CForm>
+              </WithLoadingSpinner>
             </CCardBody>
           </CCard>
 
@@ -149,5 +153,5 @@ const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ContractorCreate)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ContractorCreate))
 

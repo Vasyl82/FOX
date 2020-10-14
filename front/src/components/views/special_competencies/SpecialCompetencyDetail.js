@@ -12,10 +12,11 @@ import DjangoCSRFToken from 'django-react-csrftoken'
 import { getProfileFetch, updateModal } from '../../../actions'
 import { FoxApiService } from '../../../services'
 import { FoxFormGroupInputDownloadUpload } from '../../forms'
+import { WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
-class WorkerDetail extends Component {
+class SpecialCompetencyDetail extends Component {
 
   state = {
     worker: this.props.match.params.id,
@@ -125,45 +126,47 @@ class WorkerDetail extends Component {
     await this.props.getProfileFetch()
       .then(() => foxApi.getDetailsOf('worker_special_competencies', this.props.match.params.competency_id))
       .then((data) => this.setState({ ...data }))
+      .then(() => this.props.changeLoadingState())
   }
 
   render = () => {
     return (
       <CRow>
         <CCol>
-          <CForm
-            onSubmit={this.handleSubmit}
-          >
-            <DjangoCSRFToken />
-            <FoxFormGroupInputDownloadUpload
-              inputValue={this.state.name}
-              downloadValue={this.state.file}
-              handleChange={this.handleChange}
-              handleFileUpload={this.handleFileUpload}
-              inputInfo="name"
-              uploadInfo="file"
-              downloadFile={this.downloadFile}
-            />
-
-            <CFormGroup>
-              <CLabel htmlFor="issued_by">Competency issued by</CLabel>
-              <CInput
-                id="issued_by"
-                name='issued_by'
-                placeholder="Enter legal entity"
-                value={this.state.issued_by}
-                onChange={this.handleChange}
+          <WithLoadingSpinner loading={this.props.loading}>
+            <CForm
+              onSubmit={this.handleSubmit}
+            >
+              <DjangoCSRFToken />
+              <FoxFormGroupInputDownloadUpload
+                inputValue={this.state.name}
+                downloadValue={this.state.file}
+                handleChange={this.handleChange}
+                handleFileUpload={this.handleFileUpload}
+                inputInfo="name"
+                uploadInfo="file"
+                downloadFile={this.downloadFile}
               />
-            </CFormGroup>
-            <CFormGroup>
-              <CButton shape="pill" type="submit" color="dark" variant="outline" block>Save changes</CButton>
-            </CFormGroup>
-            <CButton shape="pill" className="mb-3" color="danger" variant="outline" onClick={this.showDeleteModal} block>Delete Competency</CButton>
-            {this.state.error
-              ? <p>{this.state.error}</p>
-              : null
-            }
-          </CForm>
+              <CFormGroup>
+                <CLabel htmlFor="issued_by">Competency issued by</CLabel>
+                <CInput
+                  id="issued_by"
+                  name='issued_by'
+                  placeholder="Enter legal entity"
+                  value={this.state.issued_by}
+                  onChange={this.handleChange}
+                />
+              </CFormGroup>
+              <CFormGroup>
+                <CButton shape="pill" type="submit" color="dark" variant="outline" block>Save changes</CButton>
+              </CFormGroup>
+              <CButton shape="pill" className="mb-3" color="danger" variant="outline" onClick={this.showDeleteModal} block>Delete Competency</CButton>
+              {this.state.error
+                ? <p>{this.state.error}</p>
+                : null
+              }
+            </CForm>
+          </WithLoadingSpinner>
         </CCol>
       </CRow >
     )
@@ -181,4 +184,4 @@ const mapDispatchToProps = dispatch => ({
   updateModal: ({ modalType, ...rest }) => dispatch(updateModal({ modalType, ...rest }))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(WorkerDetail)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(SpecialCompetencyDetail))

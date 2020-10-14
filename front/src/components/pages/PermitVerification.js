@@ -10,19 +10,13 @@ import {
   CCardBody
 } from '@coreui/react';
 import { FoxApiService } from '../../services';
+import { WithLoading, WithLoadingSpinner } from '../loadings'
 
 const foxApi = new FoxApiService();
-
-const LoadingSpinner = (
-  <div className="pt-3 text-center">
-    <CSpinner size="sm" variant="grow" style={{ width: '4rem', height: '4rem' }} />
-  </div>
-)
 
 class PermitVerification extends Component {
 
   state = {
-    loading: true,
     verified: false,
     verification_info: {}
   }
@@ -32,38 +26,31 @@ class PermitVerification extends Component {
     foxApi.verifyPermit(part1, part2, part3)
       .then(data => {
         if (data.detail === "Not found.") {
-          this.setState({
-            loading: false
-          })
+          this.props.changeLoadingState()
         }
         else {
           this.setState({
-            loading: false,
             verification_info: data,
             verified: true
           })
+          this.props.changeLoadingState()
         }
       })
       .catch(error => {
         console.log(error);
-        this.setState({
-          loading: false,
-        })
+        this.props.changeLoadingState()
       })
 
   }
 
   render = () => {
-    const { loading, verification_info, verified } = this.state
-    if (loading) {
-      return (
-        LoadingSpinner
-      )
-    }
-    else {
-      return (
-        this.props.currentUser.username ?
-          <div className="c-app c-default-layout flex-row align-items-center">
+    const { verification_info, verified } = this.state
+
+
+    return (
+      this.props.currentUser.username ?
+        <div className="c-app c-default-layout flex-row align-items-center">
+          <WithLoadingSpinner loading={this.props.loading}>
             <CContainer>
               <CRow>
                 <CCol>
@@ -80,13 +67,10 @@ class PermitVerification extends Component {
                 </CCol>
               </CRow>
             </CContainer >
-          </div>
-
-
-          : <Redirect to="/login" />
-      )
-    }
-
+          </WithLoadingSpinner>
+        </div>
+        : <Redirect to="/login" />
+    )
   }
 }
 
@@ -96,4 +80,4 @@ const mapStateToProps = state => {
   }
 }
 
-export default connect(mapStateToProps, null)(PermitVerification)
+export default connect(mapStateToProps, null)(WithLoading(PermitVerification))

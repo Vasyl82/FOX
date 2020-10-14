@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { FoxEntityListTable, FoxTableWithDeleteOption } from '../../tables'
-import { getProfileFetch, getDocumentList, } from '../../../actions'
+import { getProfileFetch, getDocumentList, clearList } from '../../../actions'
 import { connect } from 'react-redux'
 
 const getBadge = status => {
@@ -15,14 +15,27 @@ const getBadge = status => {
 
 class DocumentList extends Component {
 
+  state = {
+    loading: true
+  }
+
   componentDidMount = async () => {
     await this.props.getProfileFetch()
       .then(() => {
         this.props.getDocumentList({
           project_id: this.props.match.params.id,
-        }, false, this.props.role);
+        }, false, this.props.role, this.abortController.signal);
       })
+      .then(() => this.setState({
+        loading: false
+      }))
+  }
 
+  abortController = new window.AbortController();
+
+  componentWillUnmount = () => {
+    this.abortController.abort()
+    this.props.clearList()
   }
 
   render = () => {
@@ -35,6 +48,7 @@ class DocumentList extends Component {
           getBadge={getBadge}
           tableData={this.props.documentListTable.tableData}
           updateList={this.props.getDocumentList}
+          loading={this.state.loading}
         />
         :
         <FoxEntityListTable
@@ -43,6 +57,7 @@ class DocumentList extends Component {
           fields={this.props.documentListTable.fields}
           getBadge={getBadge}
           tableData={this.props.documentListTable.tableData}
+          loading={this.state.loading}
         />
     )
   }
@@ -58,7 +73,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getDocumentList: (params, additional, role) => dispatch(getDocumentList(params, additional, role))
+  getDocumentList: (params, additional, role) => dispatch(getDocumentList(params, additional, role)),
+  clearList: () => dispatch(clearList())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(DocumentList)

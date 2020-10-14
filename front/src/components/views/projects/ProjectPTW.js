@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Redirect } from 'react-router-dom'
 import { getProfileFetch } from '../../../actions'
 import {
   CRow,
@@ -8,11 +7,13 @@ import {
   CEmbed
 } from "@coreui/react";
 import { ActivityLog } from '../../activity_log'
+import { WithLoading, WithLoadingSpinner } from '../../loadings'
 
 class ProjectPTW extends Component {
 
-  componentDidMount = () => {
-    this.props.getProfileFetch()
+  componentDidMount = async () => {
+    await this.props.getProfileFetch()
+      .then(() => this.props.changeLoadingState())
   }
 
   render = () => {
@@ -25,18 +26,16 @@ class ProjectPTW extends Component {
         </CRow>
         <CRow>
           <CCol>
-            {this.props.username ?
+            <WithLoadingSpinner loading={this.props.loading}>
               <CEmbed
                 ratio="16by9"
               >
                 <iframe src={`${window.location.origin}/api/ptw/${this.props.match.params.id}`} />
-              </CEmbed> : <Redirect to="" />
-            }
+              </CEmbed>
+            </WithLoadingSpinner>
           </CCol>
         </CRow >
-
       </React.Fragment>
-
     )
   }
 }
@@ -51,4 +50,4 @@ const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProjectPTW)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ProjectPTW))

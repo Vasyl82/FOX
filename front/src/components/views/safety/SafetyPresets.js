@@ -41,13 +41,14 @@ class SafetyPresets extends Component {
 
   handleSubmit = async event => {
     event.preventDefault();
-    this.requestData = this.state;
-    delete this.requestData.error;
-    this.formData = new FormData
-    Object.entries(this.requestData).forEach(([key, value]) => {
-      this.formData.append(key, value);
+    const requestData = this.state;
+    delete requestData.error;
+    requestData.safety_video_url = requestData.safety_video_url.replace("watch?v=", "embed/");
+    const formData = new FormData
+    Object.entries(requestData).forEach(([key, value]) => {
+      formData.append(key, value);
     })
-    await foxApi.patchCompanySafetyInfo(this.props.company, this.formData)
+    await foxApi.patchCompanySafetyInfo(this.props.company, formData)
       .then(() => {
         this.props.history.push(`/safety/video`)
       },

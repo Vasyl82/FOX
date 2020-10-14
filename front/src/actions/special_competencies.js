@@ -1,29 +1,13 @@
 import { RepresentationService } from '../services'
 
 const repr = new RepresentationService
-const getSpecialCompetencyList = (params = null, additional = false, role = null) => {
+const getSpecialCompetencyList = (params = null, additional = false, role = null, signal = null) => {
     if (role === "Contr") {
-        return repr.displayDeleteList('worker_special_competencies', params, additional)
+        return repr.displayDeleteList('worker_special_competencies', params, additional, signal)
     }
     else {
-        return repr.displaySimpleList('worker_special_competencies', params, additional)
+        return repr.displaySimpleList('worker_special_competencies', params, additional, signal)
     }
-}
-
-const getSpecialCompetency = () => {
-
-}
-
-const createSpecialCompetency = () => {
-
-}
-
-const updateSpecialCompetency = () => {
-
-}
-
-const deleteSpecialCompetency = () => {
-
 }
 
 export {

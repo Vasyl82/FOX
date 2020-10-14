@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { FoxEntityListTable, FoxTableWithDeleteOption } from '../../tables'
-import { getProfileFetch, getContractorList, } from '../../../actions'
+import { getProfileFetch, getContractorList, clearList } from '../../../actions'
+import { WithLoading } from '../../loadings'
 
 const getBadge = status => {
   switch (status) {
@@ -17,7 +18,15 @@ class ContractorList extends Component {
 
   componentDidMount = async () => {
     await this.props.getProfileFetch()
-      .then(() => this.props.getContractorList(this.props.role))
+      .then(() => this.props.getContractorList({ role: this.props.role, signal: this.abortController.signal }))
+      .then(() => this.props.changeLoadingState())
+  }
+
+  abortController = new window.AbortController();
+
+  componentWillUnmount = () => {
+    this.abortController.abort()
+    this.props.clearList()
   }
 
   render = () => {
@@ -30,6 +39,7 @@ class ContractorList extends Component {
           getBadge={getBadge}
           tableData={this.props.contractorTable.tableData}
           updateList={this.props.getContractorList}
+          loading={this.props.loading}
         />
         :
         <FoxEntityListTable
@@ -38,6 +48,7 @@ class ContractorList extends Component {
           fields={this.props.contractorTable.fields}
           getBadge={getBadge}
           tableData={this.props.contractorTable.tableData}
+          loading={this.props.loading}
         />
     )
   }
@@ -52,7 +63,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getContractorList: (role) => dispatch(getContractorList(role))
+  getContractorList: ({ ...params }) => dispatch(getContractorList({ ...params })),
+  clearList: () => dispatch(clearList())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ContractorList)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ContractorList))

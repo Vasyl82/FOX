@@ -16,6 +16,12 @@ const getNotifications = () => {
   }
 }
 
+const clearNotifications = () => {
+  return dispatch => {
+    dispatch(refreshNotificationList({}))
+  }
+}
+
 const readNotification = id => {
   return dispatch => {
     foxApi.patchEntityOf('notifications', id, { unread: false })
@@ -37,4 +43,4 @@ const setNotificationAsRead = notification => ({
   notification: notification
 })
 
-export { getNotifications, readNotification }
+export { getNotifications, clearNotifications, readNotification }

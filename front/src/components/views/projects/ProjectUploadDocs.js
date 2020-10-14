@@ -1,18 +1,17 @@
 import React, { Component } from 'react'
-import { getProfileFetch, getDocumentList, setProjectId } from '../../../actions'
+import { getProfileFetch, getDocumentList, setProjectId, clearList } from '../../../actions'
 import { connect } from 'react-redux'
 import {
   CForm,
   CFormGroup,
-  CLabel, CRow,
+  CRow,
   CCol,
-  CLink,
   CButton,
-  CInputFile
 } from "@coreui/react";
 import DjangoCSRFToken from 'django-react-csrftoken'
 import { FoxApiService } from '../../../services'
 import FoxProjectDocumentDownLoadUploadFormGroup from '../../forms/FoxProjectDocumentDownloadUploadFormGroup';
+import { WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -88,16 +87,24 @@ class ProjectUploadDocs extends Component {
   }
 
   componentDidMount = async () => {
+    const params = {
+      target_type: "Contractor",
+      project_id: this.props.match.params.id
+    }
     await this.props.getProfileFetch()
-      .then(() => this.props.getDocumentList({
-        target_type: "Contractor",
-        project_id: this.props.match.params.id
-      }, false))
+      .then(() => this.props.getDocumentList({ params, additional: false, signal: this.abortController.signal }))
+      .then(() => this.props.changeLoadingState())
   }
+
+  componentWillUnmount = async () => {
+    this.abortController.abort();
+    await this.props.clearList();
+  }
+
+  abortController = new window.AbortController();
 
   render = () => {
     let documentWidgetArray = []
-
     if (this.props.documents) {
       documentWidgetArray = this.props.documents.map((document) => {
         return (
@@ -109,23 +116,24 @@ class ProjectUploadDocs extends Component {
         )
       })
     }
-
     return (
       <CRow>
         <CCol>
-          <CForm
-            onSubmit={this.handleSubmit}
-          >
-            <DjangoCSRFToken />
-            {documentWidgetArray}
-            <CFormGroup>
-              <CButton type="submit" color="dark" variant="outline" block>Submit documents</CButton>
-            </CFormGroup>
-            {this.state.error
-              ? <p>{this.state.error}</p>
-              : null
-            }
-          </CForm>
+          <WithLoadingSpinner loading={this.props.loading}>
+            <CForm
+              onSubmit={this.handleSubmit}
+            >
+              <DjangoCSRFToken />
+              {documentWidgetArray}
+              <CFormGroup>
+                <CButton type="submit" color="dark" variant="outline" block>Submit documents</CButton>
+              </CFormGroup>
+              {this.state.error
+                ? <p>{this.state.error}</p>
+                : null
+              }
+            </CForm>
+          </WithLoadingSpinner>
         </CCol>
       </CRow >
     )
@@ -140,8 +148,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getDocumentList: (params, additional) => dispatch(getDocumentList(params, additional)),
-  setProjectId: (id) => dispatch(setProjectId(id))
+  getDocumentList: ({ ...params }) => dispatch(getDocumentList({ ...params })),
+  setProjectId: (id) => dispatch(setProjectId(id)),
+  clearList: () => dispatch(clearList())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProjectUploadDocs)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ProjectUploadDocs))

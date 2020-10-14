@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import DjangoCSRFToken from 'django-react-csrftoken'
-import { getProfileFetch, getDocumentList, getWorkerList } from '../../../actions'
+import { getProfileFetch, getDocumentList, getWorkerList, clearList } from '../../../actions'
 import {
   CForm,
   CFormGroup,
@@ -20,6 +20,7 @@ import {
 } from "@coreui/react";
 import { FoxApiService } from '../../../services'
 import { DisplayFile, WorkerReview } from '../../../utils'
+import { WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -111,12 +112,21 @@ class ProjectDetail extends Component {
     await this.props.getProfileFetch()
       .then(() => foxApi.getDetailsOf('approvals', this.props.match.params.id))
       .then((data) => this.setState(
-        { ...data }, () => {
-          this.props.getDocumentList({ project_id: this.state.project }, true);
-          this.props.getWorkerList({ project_id: this.state.project }, false)
+        { ...data }, async () => {
+          await Promise.all([
+            this.props.getDocumentList({ params: { project_id: this.state.project }, additional: true, signal: this.abortController.signal }),
+            this.props.getWorkerList({ params: { project_id: this.state.project }, additional: false, signal: this.abortController.signal })
+          ]).then(() => this.props.changeLoadingState())
         }
       ))
   }
+
+  componentWillUnmount = async () => {
+    this.abortController.abort();
+    await this.props.clearList();
+  }
+
+  abortController = new window.AbortController();
 
   render = () => {
     return (
@@ -129,44 +139,46 @@ class ProjectDetail extends Component {
               </CCardTitle>
             </CCardHeader>
             <CCardBody>
-              {this.props.documents
-                ?
-                this.props.documents.map((document, idx) => {
-                  return (
-                    <React.Fragment key={idx}>
-                      <h6>
-                        {document.name}
-                      </h6>
-                      {document.url_to_doc ?
-                        <CLink
-                          key={`dl-${document.id}`}
-                          href={document.url_to_doc}
-                          target="_blank"
-                          className="btn btn-ghost-primary"
-                        >
-                          Open this document in Google Docs
+              <WithLoadingSpinner loading={this.props.loading}>
+                {this.props.documents
+                  ?
+                  this.props.documents.map((document, idx) => {
+                    return (
+                      <React.Fragment key={idx}>
+                        <h6>
+                          {document.name}
+                        </h6>
+                        {document.url_to_doc ?
+                          <CLink
+                            key={`dl-${document.id}`}
+                            href={document.url_to_doc}
+                            target="_blank"
+                            className="btn btn-ghost-primary"
+                          >
+                            Open this document in Google Docs
             						</CLink>
-                        :
-                        // <React.Fragment>
-                        <CButton
-                          variant="outline"
-                          color="primary"
-                          key={`cb-${document.id}`}
-                          id={document.id}
-                          name={document.id}
-                          value={document.filename}
-                          onClick={this.downloadFile}
-                        >
-                          Download document
+                          :
+                          // <React.Fragment>
+                          <CButton
+                            variant="outline"
+                            color="primary"
+                            key={`cb-${document.id}`}
+                            id={document.id}
+                            name={document.id}
+                            value={document.filename}
+                            onClick={this.downloadFile}
+                          >
+                            Download document
               					</CButton>
-                        // {/* <DisplayFile document={document} /> */}
-                        // </React.Fragment>
-                      }
-                    </React.Fragment>
-                  )
-                })
-                :
-                null}
+                          // {/* <DisplayFile document={document} /> */}
+                          // </React.Fragment>
+                        }
+                      </React.Fragment>
+                    )
+                  })
+                  :
+                  <p>There was no documents attached to this project.</p>}
+              </WithLoadingSpinner>
             </CCardBody>
           </CCard>
           <CCard>
@@ -176,36 +188,37 @@ class ProjectDetail extends Component {
               </CCardTitle>
             </CCardHeader>
             <CCardBody>
-              {this.props.workers ?
-                this.props.workers.map((worker, idx) => {
-                  return (
-                    <CCard key={`card-${idx}`} className="mb-0">
-                      {/* <CCardHeader key={`ch-${idx}`} id={worker.id}>
-
-                      </CCardHeader> */}
-                      <CCardBody key={`cbody-${idx}`}>
-                        <h5 key={`h5-${idx}`} className="m-0 p-0">{worker.name}</h5>
-                        <h6 key={`h6-${idx}`} className="m-0 p-0">{worker.position_in_company}</h6>
-                        <CButton
-                          key={`btn-${idx}`}
-                          block
-                          color="link"
-                          className="text-left m-0 p-0"
-                          id={worker.id}
-                          value={worker.id}
-                          name={worker.id}
-                          onClick={this.handleWorkerSelect}
-                        >Display Details</CButton>
-                        <CCollapse key={`clps-${idx}`} show={this.state.current_worker_id === worker.id.toString()}>
-                          <WorkerReview workerId={worker.id} />
-                        </CCollapse>
-                      </CCardBody>
-                    </CCard>
-                  )
-                })
-                :
-                null
-              }
+              <WithLoadingSpinner loading={this.props.loading}>
+                {this.props.workers ?
+                  this.props.workers.map((worker, idx) => {
+                    return (
+                      <CCard key={`card-${idx}`} className="mb-0">
+                        {/* <CCardHeader key={`ch-${idx}`} id={worker.id}>
+</CCardHeader> */}
+                        <CCardBody key={`cbody-${idx}`}>
+                          <h5 key={`h5-${idx}`} className="m-0 p-0">{worker.name}</h5>
+                          <h6 key={`h6-${idx}`} className="m-0 p-0">{worker.position_in_company}</h6>
+                          <CButton
+                            key={`btn-${idx}`}
+                            block
+                            color="link"
+                            className="text-left m-0 p-0"
+                            id={worker.id}
+                            value={worker.id}
+                            name={worker.id}
+                            onClick={this.handleWorkerSelect}
+                          >Display Details</CButton>
+                          <CCollapse key={`clps-${idx}`} show={this.state.current_worker_id === worker.id.toString()}>
+                            <WorkerReview workerId={worker.id} />
+                          </CCollapse>
+                        </CCardBody>
+                      </CCard>
+                    )
+                  })
+                  :
+                  <p>There was no workers assigned to this project.</p>
+                }
+              </WithLoadingSpinner>
             </CCardBody>
           </CCard>
 
@@ -214,7 +227,7 @@ class ProjectDetail extends Component {
               <CForm onSubmit={this.handleSubmit}>
                 <DjangoCSRFToken />
                 <CFormGroup>
-                  <CLabel htmlFor="description">Reject reason:</CLabel>
+                  <CLabel htmlFor="description">Comments:</CLabel>
                   <CTextarea
                     id="description"
                     name="description"
@@ -270,8 +283,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getDocumentList: (params, additional) => dispatch(getDocumentList(params, additional)),
-  getWorkerList: (params, additional) => dispatch(getWorkerList(params, additional)),
+  getDocumentList: ({ ...kwargs }) => dispatch(getDocumentList({ ...kwargs })),
+  getWorkerList: ({ ...kwargs }) => dispatch(getWorkerList({ ...kwargs })),
+  clearList: () => dispatch(clearList())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProjectDetail)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ProjectDetail))

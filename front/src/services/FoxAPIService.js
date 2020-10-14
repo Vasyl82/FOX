@@ -1,12 +1,15 @@
 const SERVER_ADDRESS = `${window.location.origin}/`
 
+// const controller = new AbortController();
 class FoxApiService {
 
     apiBase = `${SERVER_ADDRESS}api/`;
 
-    async get(url) {
+    async get(url, signal = null) {
         const jwt = localStorage.getItem('token');
         const res = await fetch(url, {
+            // signal: controller.signal,
+            signal: signal,
             headers: jwt ? {
                 'Authorization': `JWT ${jwt}`,
                 'Accept': 'application/json',
@@ -22,9 +25,10 @@ class FoxApiService {
         return res.json();
     }
 
-    async getDoc(url) {
+    async getDoc(url, signal = null) {
         const jwt = localStorage.getItem('token');
         const res = await fetch(url, {
+            signal: signal,
             headers: jwt ? {
                 'Authorization': `JWT ${jwt}`,
             } : {}
@@ -80,8 +84,6 @@ class FoxApiService {
         }
         return res.json();
     }
-
-
 
     async put(url, data = {}) {
         const jwt = localStorage.getItem('token');
@@ -200,14 +202,14 @@ class FoxApiService {
         return cookieValue;
     }
 
-
-    getEntityList = (entity, params) => {
+    getEntityList = (entity, params, signal = null) => {
         let url = `${this.apiBase}${entity}/`;
         if (params) {
             url = new URL(url);
             Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
         }
-        return this.get(url)
+        const res = this.get(url, signal)
+        return res
     }
 
     createEntityOf = (entity, data) => {
@@ -222,9 +224,9 @@ class FoxApiService {
         return res
     }
 
-    getDetailsOf = (entity, id) => {
+    getDetailsOf = (entity, id, signal = null) => {
         let url = `${this.apiBase}${entity}/${id}/`;
-        const res = this.get(url = url);
+        const res = this.get(url = url, signal);
         return res
     }
 
