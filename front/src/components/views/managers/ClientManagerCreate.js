@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
-import { getProfileFetch } from '../../../actions'
+import DjangoCSRFToken from 'django-react-csrftoken'
 import { connect } from 'react-redux'
 import {
   CForm,
   CFormGroup,
   CInput,
-  CLabel, CRow,
+  CRow,
   CCol,
   CButton,
   CSelect,
@@ -15,8 +15,9 @@ import {
   CCardTitle,
   CCardBody
 } from "@coreui/react";
-import DjangoCSRFToken from 'django-react-csrftoken'
 import { FoxApiService } from '../../../services'
+import { getProfileFetch } from '../../../actions'
+import { WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const positions = [
   { id: -1, position: "Choose manager position" },
@@ -58,10 +59,11 @@ class ClientManagerCreate extends Component {
     } else {
       this.formData = this.state;
       delete this.formData.error;
-      await foxApi.createEntityOf('client_managers', this.formData).then(() => {
-        this.props.history.goBack()
-      },
-        (error) => {
+      await foxApi.createEntityOf('client_managers', this.formData)
+        .then(() => {
+          this.props.history.goBack()
+        })
+        .catch((error) => {
           console.error(error);
           this.setState({
             error: 'Client manager creation failed!' +
@@ -70,16 +72,15 @@ class ClientManagerCreate extends Component {
           })
         })
     }
-
   }
 
-  componentDidMount = () => {
-    this.props.getProfileFetch()
+  componentDidMount = async () => {
+    await this.props.getProfileFetch()
+      .then(() => this.props.changeLoadingState())
   }
 
   render = () => {
     return (
-
       <CRow>
         <CCol>
           <CCard>
@@ -92,73 +93,76 @@ class ClientManagerCreate extends Component {
               </CCardSubtitle>
             </CCardHeader>
             <CCardBody>
-              <CForm
-                onSubmit={this.handleSubmit}
-              >
-                <DjangoCSRFToken />
-                <CFormGroup>
-                  <CInput
-                    id="username"
-                    name='username'
-                    placeholder="Username. This will be used for login"
-                    value={this.state.username}
-                    onChange={this.handleChange}
-                    required />
-                </CFormGroup>
-                <CFormGroup>
-                  <CInput
-                    id="name"
-                    name='name'
-                    placeholder="Verbose name"
-                    value={this.state.name}
-                    onChange={this.handleChange}
-                    required />
-                </CFormGroup>
-                <CFormGroup>
-                  <CInput
-                    id="email"
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={this.state.email}
-                    onChange={this.handleChange}
-                    required
-                  />
-                </CFormGroup>
-                <CFormGroup>
-                  <CSelect
-                    id="position"
-                    name="position"
-                    placeholder="Choose position"
-                    value={this.state.position}
-                    onChange={this.handleChange}
-                    required
-                  >
-                    {positions.map((option) => {
-                      return (
-                        <option key={option.id} value={option.id}>{option.position}</option>
-                      )
-                    }
-                    )}
-                  </CSelect>
-                </CFormGroup>
-                <CFormGroup>
-                  <CInput
-                    id="department"
-                    name="department"
-                    placeholder="Department"
-                    value={this.state.department}
-                    onChange={this.handleChange}
-                    required />
-                </CFormGroup>
-                <CFormGroup>
-                  <CButton shape="pill" type="submit" color="dark" variant="outline" block>Create client manager</CButton>
-                </CFormGroup>
-                {this.state.error
-                  ? <p>{this.state.error}</p>
-                  : null
-                }
-              </CForm>
+              <WithLoadingSpinner loading={this.props.loading}>
+
+                <CForm
+                  onSubmit={this.handleSubmit}
+                >
+                  <DjangoCSRFToken />
+                  <CFormGroup>
+                    <CInput
+                      id="username"
+                      name='username'
+                      placeholder="Username. This will be used for login"
+                      value={this.state.username}
+                      onChange={this.handleChange}
+                      required />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CInput
+                      id="name"
+                      name='name'
+                      placeholder="Verbose name"
+                      value={this.state.name}
+                      onChange={this.handleChange}
+                      required />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CInput
+                      id="email"
+                      type="email"
+                      name="email"
+                      placeholder="Email"
+                      value={this.state.email}
+                      onChange={this.handleChange}
+                      required
+                    />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CSelect
+                      id="position"
+                      name="position"
+                      placeholder="Choose position"
+                      value={this.state.position}
+                      onChange={this.handleChange}
+                      required
+                    >
+                      {positions.map((option) => {
+                        return (
+                          <option key={option.id} value={option.id}>{option.position}</option>
+                        )
+                      }
+                      )}
+                    </CSelect>
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CInput
+                      id="department"
+                      name="department"
+                      placeholder="Department"
+                      value={this.state.department}
+                      onChange={this.handleChange}
+                      required />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CButton shape="pill" type="submit" color="dark" variant="outline" block>Create client manager</CButton>
+                  </CFormGroup>
+                  {this.state.error
+                    ? <p>{this.state.error}</p>
+                    : null
+                  }
+                </CForm>
+              </WithLoadingSpinner>
             </CCardBody>
           </CCard>
         </CCol>
@@ -177,5 +181,5 @@ const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ClientManagerCreate)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ClientManagerCreate))
 

@@ -79,10 +79,10 @@ const userLoginFetch = user => {
 }
 
 const getProfileFetch = () => {
-    return dispatch => {
+    return async dispatch => {
         const token = localStorage.token;
         if (token) {
-            return fetch(`${SERVER_ADDRESS}/api/current_user/`, {
+            return await fetch(`${SERVER_ADDRESS}/api/current_user/`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -104,7 +104,6 @@ const getProfileFetch = () => {
         }
         else {
             return Promise.reject("User is not logged in")
-
         }
     }
 }

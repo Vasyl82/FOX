@@ -13,6 +13,7 @@ import {
   CCardHeader
 } from "@coreui/react";
 import { FoxApiService } from '../../../services';
+import { WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -53,12 +54,13 @@ class SafetyVideo extends Component {
     )
   }
 
-  componentDidMount = () => {
-    this.props.getProfileFetch()
+  componentDidMount = async () => {
+    await this.props.getProfileFetch()
       .then(() => foxApi.getCompanySafetyInfo(this.props.company))
       .then((data) => {
         this.setState({ ...data })
       })
+      .then(() => this.props.changeLoadingState())
   }
 
   render = () => {
@@ -71,51 +73,52 @@ class SafetyVideo extends Component {
             </CCardTitle>
           </CCardHeader>
           <CCardBody>
-            <CRow>
-              <CCol >
-                <CButton
-                  shape="pill"
-                  className='mr-3 mb-3'
-                  variant="outline"
-                  color="info"
-                  id={this.state.personal_declaration_template}
-                  name="personal_declaration_template"
-                  value={this.state.personal_declaration_template}
-                  onClick={this.downloadFile}
-                >
-                  Personal Declaration
+            <WithLoadingSpinner loading={this.props.loading}>
+              <CRow>
+                <CCol >
+                  <CButton
+                    shape="pill"
+                    className='mr-3 mb-3'
+                    variant="outline"
+                    color="info"
+                    id={this.state.personal_declaration_template}
+                    name="personal_declaration_template"
+                    value={this.state.personal_declaration_template}
+                    onClick={this.downloadFile}
+                  >
+                    Personal Declaration
       				</CButton>
-                <CButton
-                  shape="pill"
-                  className='mr-3 mb-3'
-                  variant="outline"
-                  color="info"
-                  id={this.state.safety_quiz_template}
-                  name="safety_quiz_template"
-                  value={this.state.safety_quiz_template}
-                  onClick={this.downloadFile}
-                >
-                  Safety Quiz
+                  <CButton
+                    shape="pill"
+                    className='mr-3 mb-3'
+                    variant="outline"
+                    color="info"
+                    id={this.state.safety_quiz_template}
+                    name="safety_quiz_template"
+                    value={this.state.safety_quiz_template}
+                    onClick={this.downloadFile}
+                  >
+                    Safety Quiz
       				</CButton>
-              </CCol>
-            </CRow>
-            <CRow alignHorizontal="center">
-              <CCol md="9">
-                <CEmbed
-                  ratio="16by9"
-                >
-                  <iframe src={this.state.safety_video_url}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen>
-                  </iframe>
-                </CEmbed>
-              </CCol>
-            </CRow >
+                </CCol>
+              </CRow>
+              <CRow alignHorizontal="center">
+                <CCol md="9">
+                  <CEmbed
+                    ratio="16by9"
+                  >
+                    <iframe src={this.state.safety_video_url}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen>
+                    </iframe>
+                  </CEmbed>
+                </CCol>
+              </CRow >
+            </WithLoadingSpinner>
           </CCardBody>
         </CCard>
         : <Redirect to="" />
-
     )
   }
 }
@@ -131,4 +134,4 @@ const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(SafetyVideo)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(SafetyVideo))

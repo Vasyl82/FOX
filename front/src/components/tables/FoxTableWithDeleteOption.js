@@ -43,8 +43,9 @@ class FoxTableWithDeleteOption extends Component {
     await foxApi.deleteEntityOf(entity, id)
       .then(() => {
         this.props.updateList(this.props.role)
-        this.props.updateModal("", {})
+
       })
+      .then(() => this.props.updateModal("", {}))
       .catch((error) => {
         console.error(error);
         this.setState({
@@ -86,6 +87,7 @@ class FoxTableWithDeleteOption extends Component {
               <CDataTable
                 items={this.props.tableData ? this.props.tableData : []}
                 fields={this.props.fields}
+                loading={this.props.loading}
                 clickableRows
                 hover
                 striped
@@ -135,7 +137,6 @@ class FoxTableWithDeleteOption extends Component {
               />
             </CCardBody>
           </CCard>
-
         </CCol>
       </CRow >
     )

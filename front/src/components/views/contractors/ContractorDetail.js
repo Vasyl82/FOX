@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
-import { getProfileFetch } from '../../../actions'
 import { connect } from 'react-redux'
 import {
   CRow,
   CCol,
 } from "@coreui/react";
+import { getProfileFetch } from '../../../actions'
 import { FoxApiService } from '../../../services'
 import { UserDetailCard } from '../../cards'
+import { WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -26,6 +27,8 @@ class ContractorDetail extends Component {
       .then((data) => {
         this.setState({ ...data })
       })
+      .then(() => this.props.changeLoadingState())
+
   }
   render = () => {
     const details = this.state;
@@ -35,11 +38,13 @@ class ContractorDetail extends Component {
     return (
       <CRow>
         <CCol>
-          <UserDetailCard
-            userRole="Contractor"
-            details={details}
-            {...this.props}
-          />
+          <WithLoadingSpinner loading={this.props.loading}>
+            <UserDetailCard
+              userRole="Contractor"
+              details={details}
+              {...this.props}
+            />
+          </WithLoadingSpinner>
         </CCol>
       </CRow >
     )
@@ -51,4 +56,4 @@ const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
 })
 
-export default connect(null, mapDispatchToProps)(ContractorDetail)
+export default connect(null, mapDispatchToProps)(WithLoading(ContractorDetail))

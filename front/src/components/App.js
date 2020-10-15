@@ -1,18 +1,11 @@
 import React, { Component, Suspense } from 'react';
 import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
-import { CSpinner } from '@coreui/react';
 import { connect } from 'react-redux';
 import queryString from 'query-string'
 import { getProfileFetch } from '../actions';
 import "./style.scss";
 import { FoxEngagedModals } from './modals'
-
-
-const loading = (
-  <div className="pt-3 text-center">
-    <CSpinner size="sm" variant="grow" style={{ width: '4rem', height: '4rem' }} />
-  </div>
-)
+import { WithLoading, WithLoadingSpinner, LoadingSpinner } from './loadings';
 
 const Login = React.lazy(() => import('./pages/Login'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
@@ -22,36 +15,23 @@ const PermitVerification = React.lazy(() => import('./pages/PermitVerification')
 
 
 class App extends Component {
-  state = {
-    loadingState: true
-  }
 
   componentDidMount = () => {
     this.props.getProfileFetch()
-      .then(() => {
-        this.setState({
-          loadingState: false
-        })
-      })
+      .then(() => this.props.changeLoadingState())
       .catch(error => {
         console.log(error);
-        this.setState({
-          loadingState: false
-        })
+        return this.props.changeLoadingState()
       })
   }
 
   render() {
-    const { loadingState } = this.state
-    if (loadingState) {
-      return loading;
-    }
-    else {
-      return (
-        <HashRouter>
-          <Suspense fallback={loading}>
+    console.log((this.props.loading));
+    return (
+      <HashRouter>
+        <Suspense fallback={<LoadingSpinner />}>
+          <WithLoadingSpinner loading={this.props.loading}>
             <Switch>
-              {/* <Route exact path="/projects" name="Projects" render={props => <ProjectList {...props} />} /> */}
               <Route exact path="/permits/validate/:part1/:part2/:part3/" name="Home" render={props => <PermitVerification {...props} />} />
               <Route exact path="/register" name="Register Page" render={
                 props => {
@@ -74,10 +54,10 @@ class App extends Component {
               </>
             </Switch>
             <FoxEngagedModals {...this.props} />
-          </Suspense>
-        </HashRouter>
-      );
-    }
+          </WithLoadingSpinner>
+        </Suspense>
+      </HashRouter>
+    );
   }
 }
 
@@ -91,4 +71,4 @@ const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(App));

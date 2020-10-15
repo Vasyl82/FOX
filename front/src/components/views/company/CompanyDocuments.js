@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Redirect } from 'react-router-dom'
 import { getProfileFetch } from '../../../actions'
 import {
   CForm,
@@ -87,7 +86,6 @@ class CompanyDocuments extends Component {
                   </CButton>
               <CInputFile id="personalDeclarationFile" name="personalDeclarationFile" onChange={this.handleFileUpload} />
             </CFormGroup>
-
           </CForm>
         </CCol>
       </CRow >

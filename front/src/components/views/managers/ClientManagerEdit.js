@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { getProfileFetch, getContractorList, setProjectId } from '../../../actions'
+import DjangoCSRFToken from 'django-react-csrftoken'
 import { connect } from 'react-redux'
 import {
   CForm,
@@ -14,8 +14,9 @@ import {
   CCardBody,
   CCardTitle
 } from "@coreui/react";
-import DjangoCSRFToken from 'django-react-csrftoken'
 import { FoxApiService } from '../../../services'
+import { getProfileFetch } from '../../../actions'
+import { WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -78,6 +79,7 @@ class ClientManagerEdit extends Component {
     await this.props.getProfileFetch()
       .then(() => foxApi.getDetailsOf('client_managers', this.props.match.params.id))
       .then((data) => this.setState({ ...data }))
+      .then(() => this.props.changeLoadingState())
   }
 
   render = () => {
@@ -90,81 +92,83 @@ class ClientManagerEdit extends Component {
               <CCardTitle>Manager details</CCardTitle>
             </CCardHeader>
             <CCardBody>
-              <CForm
-                onSubmit={this.handleSubmit}
-              >
-                <DjangoCSRFToken />
-                <CFormGroup>
-                  <CLabel htmlFor="username">Manager username</CLabel>
-                  <CInput
-                    id="username"
-                    name='username'
-                    placeholder="Username"
-                    value={this.state.username}
-                    onChange={this.handleChange}
-                    required />
-                </CFormGroup>
-                <CFormGroup>
-                  <CLabel htmlFor="name">Manager verbose name</CLabel>
-                  <CInput
-                    id="name"
-                    name='name'
-                    placeholder="Verbose name"
-                    value={this.state.name}
-                    onChange={this.handleChange}
-                    required />
-                </CFormGroup>
-                <CFormGroup>
-                  <CLabel htmlFor="email">Manager email</CLabel>
-                  <CInput
-                    id="email"
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={this.state.email}
-                    onChange={this.handleChange}
-                    required
-                  />
-                </CFormGroup>
-                <CFormGroup>
-                  <CLabel htmlFor="target_type">Manager Position</CLabel>
-                  <CSelect
-                    id="position"
-                    name="position"
-                    placeholder="Choose position"
-                    value={this.state.position}
-                    onChange={this.handleChange}
-                    required
-                  >
-                    {positions.map((option) => {
-                      return (
-                        <option key={option.id} value={option.id}>{option.position}</option>
-                      )
-                    }
-                    )}
-                  </CSelect>
-                </CFormGroup>
-                <CFormGroup>
-                  <CLabel htmlFor="department">Manager department</CLabel>
-                  <CInput
-                    id="department"
-                    name="department"
-                    placeholder="Department"
-                    value={this.state.department}
-                    onChange={this.handleChange}
-                    required />
-                </CFormGroup>
-                <CFormGroup>
-                  <CButton shape="pill" type="submit" color="dark" variant="outline" block>Save changes</CButton>
-                </CFormGroup>
-                {this.state.error
-                  ? <p>{this.state.error}</p>
-                  : null
-                }
-              </CForm>
+              <WithLoadingSpinner loading={this.props.loading}>
+
+                <CForm
+                  onSubmit={this.handleSubmit}
+                >
+                  <DjangoCSRFToken />
+                  <CFormGroup>
+                    <CLabel htmlFor="username">Manager username</CLabel>
+                    <CInput
+                      id="username"
+                      name='username'
+                      placeholder="Username"
+                      value={this.state.username}
+                      onChange={this.handleChange}
+                      required />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CLabel htmlFor="name">Manager verbose name</CLabel>
+                    <CInput
+                      id="name"
+                      name='name'
+                      placeholder="Verbose name"
+                      value={this.state.name}
+                      onChange={this.handleChange}
+                      required />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CLabel htmlFor="email">Manager email</CLabel>
+                    <CInput
+                      id="email"
+                      type="email"
+                      name="email"
+                      placeholder="Email"
+                      value={this.state.email}
+                      onChange={this.handleChange}
+                      required
+                    />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CLabel htmlFor="target_type">Manager Position</CLabel>
+                    <CSelect
+                      id="position"
+                      name="position"
+                      placeholder="Choose position"
+                      value={this.state.position}
+                      onChange={this.handleChange}
+                      required
+                    >
+                      {positions.map((option) => {
+                        return (
+                          <option key={option.id} value={option.id}>{option.position}</option>
+                        )
+                      }
+                      )}
+                    </CSelect>
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CLabel htmlFor="department">Manager department</CLabel>
+                    <CInput
+                      id="department"
+                      name="department"
+                      placeholder="Department"
+                      value={this.state.department}
+                      onChange={this.handleChange}
+                      required />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CButton shape="pill" type="submit" color="dark" variant="outline" block>Save changes</CButton>
+                  </CFormGroup>
+                  {this.state.error
+                    ? <p>{this.state.error}</p>
+                    : null
+                  }
+                </CForm>
+              </WithLoadingSpinner>
             </CCardBody>
           </CCard>
-
         </CCol>
       </CRow >
     )
@@ -181,4 +185,4 @@ const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ClientManagerEdit)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ClientManagerEdit))

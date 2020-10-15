@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { FoxEntityListTable, FoxTableWithDeleteOption } from '../../tables'
-
-import { getProfileFetch, getProjectList, setProjectId } from '../../../actions'
-
+import { clearList, getProfileFetch, getProjectList, setProjectId } from '../../../actions'
+import { WithLoading } from '../../loadings'
 
 const getBadge = status => {
   switch (status) {
@@ -27,8 +26,16 @@ class ProjectList extends Component {
   componentDidMount = async () => {
     this.props.setProjectId(this.props.match.params.id)
     await this.props.getProfileFetch()
-      .then(() => this.props.getProjectList(this.props.role))
+      .then(() => this.props.getProjectList(this.props.role, this.abortController.signal))
+      .then(() => this.props.changeLoadingState())
   }
+
+  componentWillUnmount = async () => {
+    this.abortController.abort();
+    await this.props.clearList();
+  }
+
+  abortController = new window.AbortController();
 
   render = () => {
     return (
@@ -40,6 +47,7 @@ class ProjectList extends Component {
           getBadge={getBadge}
           tableData={this.props.projectTable.tableData}
           updateList={this.props.getProjectList}
+          loading={this.props.loading}
         /> :
         <FoxEntityListTable
           {...this.props}
@@ -47,8 +55,8 @@ class ProjectList extends Component {
           fields={this.props.projectTable.fields}
           getBadge={getBadge}
           tableData={this.props.projectTable.tableData}
+          loading={this.props.loading}
         />
-
     )
   }
 
@@ -63,8 +71,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getProjectList: (role) => dispatch(getProjectList(role)),
-  setProjectId: () => dispatch(setProjectId())
+  getProjectList: (role, signal) => dispatch(getProjectList(role, signal)),
+  setProjectId: () => dispatch(setProjectId()),
+  clearList: () => dispatch(clearList())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProjectList)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ProjectList))

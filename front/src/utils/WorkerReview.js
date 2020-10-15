@@ -62,8 +62,7 @@ class WorkerReview extends Component {
   }
 
   componentDidMount = async () => {
-    await this.props.getProfileFetch()
-      .then(() => foxApi.getDetailsOf('workers', this.props.workerId))
+    await foxApi.getDetailsOf('workers', this.props.workerId)
       .then((data) => this.setState(
         { ...data }))
       .catch(error => console.log(error))

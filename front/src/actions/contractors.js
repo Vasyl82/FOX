@@ -1,29 +1,13 @@
 import { RepresentationService } from '../services'
 
 const repr = new RepresentationService
-const getContractorList = (role) => {
+const getContractorList = ({ role, signal } = {}) => {
     if (role === 'CliAdm') {
-        return repr.displayDeleteList('contractors', null, false)
+        return repr.displayDeleteList('contractors', null, false, signal)
     }
     else {
-        return repr.displaySimpleList('contractors', null, false)
+        return repr.displaySimpleList('contractors', null, false, signal)
     }
-}
-
-const getContractor = () => {
-
-}
-
-const createContractor = () => {
-
-}
-
-const updateContractor = () => {
-
-}
-
-const deleteContractor = () => {
-
 }
 
 export {

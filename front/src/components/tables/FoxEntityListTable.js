@@ -15,17 +15,6 @@ import WorkStatusDropdown from './WorkStatusDropdown'
 
 class FoxEntityListTable extends Component {
 
-  state = {
-    error: "",
-    modal: false
-  }
-
-  setModalVisibility = () => {
-    this.setState({
-      modal: !this.state.modal
-    })
-  }
-
   alertOnClick = (id, e) => {
     this.props.history.push(`${this.props.match.url}/${id}`)
   }
@@ -57,6 +46,7 @@ class FoxEntityListTable extends Component {
               <CDataTable
                 items={this.props.tableData ? this.props.tableData : []}
                 fields={this.props.fields ? this.props.fields : []}
+                loading={this.props.loading}
                 clickableRows
                 hover
                 striped

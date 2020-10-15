@@ -16,8 +16,9 @@ import { getContractorList } from './contractors'
 import { getWorkerList } from './workers'
 import { getApprovalList } from './approvals'
 import { getSpecialCompetencyList } from './special_competencies'
-import { getNotifications, readNotification } from './notifications'
+import { getNotifications, clearNotifications, readNotification } from './notifications'
 import { updateModal } from './modals'
+import { clearList, populateAdditionalEntityTable, populateEntityTable, } from './tables'
 
 const userLoggedIn = () => {
     return {
@@ -44,6 +45,10 @@ export {
     getApprovalList,
     getSpecialCompetencyList,
     getNotifications,
+    clearNotifications,
     readNotification,
-    updateModal
+    updateModal,
+    clearList,
+    populateEntityTable,
+    populateAdditionalEntityTable
 };

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { getProfileFetch, getContractorList } from '../../../actions'
+import { getProfileFetch, getContractorList, clearList } from '../../../actions'
 import { connect } from 'react-redux'
 import {
   CForm,
@@ -18,9 +18,10 @@ import {
 } from "@coreui/react";
 import DjangoCSRFToken from 'django-react-csrftoken'
 import { FoxApiService } from '../../../services'
-import { FoxSwitchGroup } from '../../../utils'
+import { FoxSwitchGroup, } from '../../../utils'
 import { FoxReactSelectFormGroup } from '../../forms'
 import { permitOptions } from './optionsLists'
+import { WithLoadingSpinner, WithLoading } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -42,7 +43,7 @@ class ProjectCreate extends Component {
     work_alone: false,
     work_at_sensitive_area: false,
     cold_work: false,
-    error: false
+    error: false,
   }
 
   handleChange = event => {
@@ -112,8 +113,16 @@ class ProjectCreate extends Component {
 
   componentDidMount = async () => {
     await this.props.getProfileFetch()
-      .then(() => this.props.getContractorList())
+      .then(() => this.props.getContractorList({ signal: this.abortController.signal }))
+      .then(() => this.props.changeLoadingState())
   }
+
+  componentWillUnmount = async () => {
+    this.abortController.abort();
+    await this.props.clearList();
+  }
+
+  abortController = new window.AbortController();
 
   render = () => {
     const options = this.props.options ? this.props.options.map(option => { return { value: option.id, label: option.username } }) : null
@@ -128,91 +137,93 @@ class ProjectCreate extends Component {
               <CCardSubtitle>Fill up the form below to add a new Project</CCardSubtitle>
             </CCardHeader>
             <CCardBody>
-              <CForm
-                onSubmit={this.silenceSubmit}
-              >
-                <DjangoCSRFToken />
-                <CFormGroup>
-                  <CInput
-                    id="name"
-                    name='name'
-                    placeholder="Project Name"
-                    value={this.state.name}
-                    onChange={this.handleChange}
-                    required />
-                </CFormGroup>
-                <CFormGroup>
-                  <CInput
-                    id="location "
-                    name="location"
-                    placeholder="Project Works Location"
-                    value={this.state.location}
-                    onChange={this.handleChange}
-                    required />
-                </CFormGroup>
-                <CFormGroup>
-                  <CTextarea
-                    id="description"
-                    name="description"
-                    placeholder="Short Project Description"
-                    value={this.state.description}
-                    onChange={this.handleChange}
-                    required
-                  />
-                </CFormGroup>
-                <CFormGroup>
-                  <CRow>
-                    <CCol lg="6">
-                      <CLabel htmlFor="start_date">Start Date</CLabel>
-                      <CInput
-                        type="datetime-local"
-                        id="start_date"
-                        placeholder='Start date'
-                        name="start_date"
-                        value={this.state.start_date}
-                        onChange={this.handleChange}
-                        required
-                      />
-                    </CCol>
-                    <CCol lg="6">
-                      <CLabel htmlFor="end_date">End Date</CLabel>
-                      <CInput
-                        type="datetime-local"
-                        id="end_date"
-                        name="end_date"
-                        placeholder="date"
-                        value={this.state.end_date}
-                        onChange={this.handleChange}
-                        required
-                      />
+              <WithLoadingSpinner loading={this.props.loading}>
+                <CForm
+                  onSubmit={this.silenceSubmit}
+                >
+                  <DjangoCSRFToken />
+                  <CFormGroup>
+                    <CInput
+                      id="name"
+                      name='name'
+                      placeholder="Project Name"
+                      value={this.state.name}
+                      onChange={this.handleChange}
+                      required />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CInput
+                      id="location "
+                      name="location"
+                      placeholder="Project Works Location"
+                      value={this.state.location}
+                      onChange={this.handleChange}
+                      required />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CTextarea
+                      id="description"
+                      name="description"
+                      placeholder="Short Project Description"
+                      value={this.state.description}
+                      onChange={this.handleChange}
+                      required
+                    />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CRow>
+                      <CCol lg="6">
+                        <CLabel htmlFor="start_date">Start Date</CLabel>
+                        <CInput
+                          type="datetime-local"
+                          id="start_date"
+                          placeholder='Start date'
+                          name="start_date"
+                          value={this.state.start_date}
+                          onChange={this.handleChange}
+                          required
+                        />
+                      </CCol>
+                      <CCol lg="6">
+                        <CLabel htmlFor="end_date">End Date</CLabel>
+                        <CInput
+                          type="datetime-local"
+                          id="end_date"
+                          name="end_date"
+                          placeholder="date"
+                          value={this.state.end_date}
+                          onChange={this.handleChange}
+                          required
+                        />
 
-                    </CCol>
-                  </CRow>
-                </CFormGroup>
-                <FoxReactSelectFormGroup
-                  options={options}
-                  inputInfo="contractor"
-                  inputValue={this.state.contractor}
-                  handleChange={this.handleReactSelect}
-                />
-                <FoxSwitchGroup
-                  groupLabel='Choose the related hazardous work
+                      </CCol>
+                    </CRow>
+                  </CFormGroup>
+                  <FoxReactSelectFormGroup
+                    options={options}
+                    inputInfo="contractor"
+                    inputValue={this.state.contractor}
+                    handleChange={this.handleReactSelect}
+                  />
+                  <FoxSwitchGroup
+                    groupLabel='Choose the related hazardous work
                   from the list below:'
-                  options={permitOptions}
-                  handleCheck={this.handleCheck}
-                  parentState={this.state}
-                />
-                <CButton shape="pill" onClick={this.handleDocumentCreationRedirect} color="dark" variant="outline" block>Create Project and go to document creation</CButton>
-                {/* <CButton onClick={this.handleCreateProject} color="dark" variant="outline" block>Create Project</CButton> */}
-                {this.state.error
-                  ? <p>{this.state.error}</p>
-                  : null
-                }
-              </CForm>
+                    options={permitOptions}
+                    handleCheck={this.handleCheck}
+                    parentState={this.state}
+                  />
+                  <CButton shape="pill" onClick={this.handleDocumentCreationRedirect} color="dark" variant="outline" block>Create Project and go to document creation</CButton>
+                  {this.state.error
+                    ? <p>{this.state.error}</p>
+                    : null
+                  }
+                </CForm>
+              </WithLoadingSpinner>
             </CCardBody>
           </CCard>
         </CCol>
       </CRow >
+
     )
   }
 }
@@ -226,7 +237,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getContractorList: () => dispatch(getContractorList())
+  getContractorList: ({ ...params }) => dispatch(getContractorList({ ...params })),
+  clearList: () => dispatch(clearList())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProjectCreate)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ProjectCreate))

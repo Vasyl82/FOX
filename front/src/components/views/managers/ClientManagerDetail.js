@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
-import { getProfileFetch } from '../../../actions'
 import { connect } from 'react-redux'
 import {
   CRow,
   CCol,
 } from "@coreui/react";
 import { FoxApiService } from '../../../services'
+import { getProfileFetch } from '../../../actions'
 import { UserDetailCard } from '../../cards'
+import { WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -39,6 +40,7 @@ class ClientManagerDetail extends Component {
         data.position = positions[data.position]
         this.setState({ ...data })
       })
+      .then(() => this.props.changeLoadingState())
   }
   render = () => {
     const details = this.state;
@@ -48,11 +50,13 @@ class ClientManagerDetail extends Component {
     return (
       <CRow>
         <CCol>
-          <UserDetailCard
-            userRole="Manager"
-            details={details}
-            {...this.props}
-          />
+          <WithLoadingSpinner loading={this.props.loading}>
+            <UserDetailCard
+              userRole="Manager"
+              details={details}
+              {...this.props}
+            />
+          </WithLoadingSpinner>
         </CCol>
       </CRow >
     )
@@ -63,4 +67,4 @@ const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
 })
 
-export default connect(null, mapDispatchToProps)(ClientManagerDetail)
+export default connect(null, mapDispatchToProps)(WithLoading(ClientManagerDetail))

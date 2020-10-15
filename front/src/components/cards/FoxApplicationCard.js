@@ -16,9 +16,7 @@ class FoxApplicationCard extends Component {
                         </CCard>
                     </CCol>
                 </CRow>
-
             </CContainer>
-
         )
     }
 }
