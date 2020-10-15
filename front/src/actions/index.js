@@ -17,6 +17,7 @@ import { getWorkerList } from './workers'
 import { getApprovalList } from './approvals'
 import { getSpecialCompetencyList } from './special_competencies'
 import { getNotifications, readNotification } from './notifications'
+import { updateModal } from './modals'
 
 const userLoggedIn = () => {
     return {
@@ -43,5 +44,6 @@ export {
     getApprovalList,
     getSpecialCompetencyList,
     getNotifications,
-    readNotification
+    readNotification,
+    updateModal
 };

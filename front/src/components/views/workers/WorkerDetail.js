@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { getProfileFetch } from '../../../actions'
+import { getProfileFetch, updateModal } from '../../../actions'
 import { connect } from 'react-redux'
 import {
   CForm,
@@ -25,7 +25,6 @@ const foxApi = new FoxApiService();
 class WorkerDetail extends Component {
 
   state = {
-    modal: false,
     name: "",
     phone_number: "",
     contractor: "",
@@ -65,9 +64,8 @@ class WorkerDetail extends Component {
   handleSubmit = async event => {
     event.preventDefault();
     this.requestData = this.state;
-    const { upload_files } = this.requestData
-    delete this.requestData.modal
-    delete this.requestData.upload_files
+    const { upload_files } = this.requestData;
+    delete this.requestData.upload_files;
     delete this.requestData.error;
     delete this.requestData.filename;
     delete this.requestData.doc_type;
@@ -101,6 +99,7 @@ class WorkerDetail extends Component {
     await foxApi.deleteEntityOf('workers', this.props.match.params.id)
       .then(() => {
         this.props.history.goBack()
+        this.props.updateModal("", {})
       },
         (error) => {
           console.error(error);
@@ -137,9 +136,11 @@ class WorkerDetail extends Component {
     )
   }
 
-  setModalVisibility = () => {
-    this.setState({
-      modal: !this.state.modal
+  showDeleteModal = () => {
+    this.props.updateModal({
+      modalType: "deleteModal",
+      entity: "worker",
+      confirmDelete: () => this.confirmDelete()
     })
   }
 
@@ -278,7 +279,7 @@ class WorkerDetail extends Component {
                 <CFormGroup>
                   <CButton shape="pill" type="submit" color="dark" variant="outline" block>Save changes</CButton>
                 </CFormGroup>
-                <CButton shape="pill" color="danger" variant="outline" onClick={this.setModalVisibility} block>Delete Worker</CButton>
+                <CButton shape="pill" color="danger" variant="outline" onClick={this.showDeleteModal} block>Delete Worker</CButton>
                 {this.state.error
                   ? <p>{this.state.error}</p>
                   : null
@@ -286,13 +287,6 @@ class WorkerDetail extends Component {
               </CForm>
             </CCardBody>
           </CCard>
-
-          <DeleteModal
-            setModalVisibility={this.setModalVisibility}
-            danger={this.state.modal}
-            entity="worker"
-            confirmDelete={this.confirmDelete}
-          />
         </CCol>
       </CRow >
     )
@@ -307,6 +301,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
+  updateModal: ({ modalType, ...rest }) => dispatch(updateModal({ modalType, ...rest }))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(WorkerDetail)

@@ -15,17 +15,14 @@ import {
 import CIcon from '@coreui/icons-react'
 import WorkStatusDropdown from './WorkStatusDropdown'
 import { FoxApiService } from '../../services'
-import { DeleteModal } from '../modals'
-
+import { updateModal } from '../../actions'
 
 const foxApi = new FoxApiService();
 
 class FoxTableWithDeleteOption extends Component {
 
   state = {
-    delete_id: "",
     error: "",
-    modal: false
   }
 
   getEntityFromTableName = () => {
@@ -33,23 +30,20 @@ class FoxTableWithDeleteOption extends Component {
   }
 
   callDeleteModal = (id) => {
-    this.setState({
-      delete_id: id
-    }, this.setModalVisibility)
-  }
-
-  setModalVisibility = () => {
-    this.setState({
-      modal: !this.state.modal
+    this.props.updateModal({
+      modalType: "deleteModal",
+      entity: "entity",
+      confirmDelete: () => this.confirmDelete(id)
     })
   }
 
   confirmDelete = async (id) => {
+    console.log("trying to delete");
     const entity = this.props.tableName.toLowerCase().replace(' ', '_');
     await foxApi.deleteEntityOf(entity, id)
       .then(() => {
         this.props.updateList(this.props.role)
-        this.setModalVisibility()
+        this.props.updateModal("", {})
       })
       .catch((error) => {
         console.error(error);
@@ -67,7 +61,6 @@ class FoxTableWithDeleteOption extends Component {
 
   render = () => {
     const linkName = this.props.fields ? this.props.fields[0] : "username"
-    const { delete_id, modal } = this.state
     return (
       <CRow>
         <CCol>
@@ -142,12 +135,7 @@ class FoxTableWithDeleteOption extends Component {
               />
             </CCardBody>
           </CCard>
-          <DeleteModal
-            setModalVisibility={this.setModalVisibility}
-            danger={modal}
-            entity="entity"
-            confirmDelete={() => this.confirmDelete(delete_id)}
-          />
+
         </CCol>
       </CRow >
     )
@@ -158,4 +146,8 @@ const mapStateToProps = state => ({
   role: state.currentUser.role
 })
 
-export default connect(mapStateToProps, null)(FoxTableWithDeleteOption)
+const mapDispatchToProps = dispatch => ({
+  updateModal: ({ modalType, ...rest }) => dispatch(updateModal({ modalType, ...rest }))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(FoxTableWithDeleteOption)
