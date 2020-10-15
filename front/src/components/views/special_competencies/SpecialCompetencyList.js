@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { FoxEntityListTable, FoxTableWithDeleteOption } from '../../tables'
 import { getProfileFetch, getSpecialCompetencyList, clearList } from '../../../actions'
 import { connect } from 'react-redux'
+import { WithLoading } from '../../loadings'
 
 const getBadge = status => {
   switch (status) {
@@ -16,17 +17,17 @@ const getBadge = status => {
 
 class SpecialCompetencyList extends Component {
 
-  state = {
-    loading: true
-  }
-
   componentDidMount = async () => {
     await this.props.getProfileFetch()
       .then(() =>
         this.props.getSpecialCompetencyList({
           worker_id: this.props.match.params.id
         }, this.props.role, this.abortController.signal))
-      .then(() => this.setState({ loading: false }))
+      .then(() => this.props.changeLoadingState())
+      .catch(error => {
+        console.log(error);
+        return this.props.changeLoadingState()
+      })
   }
 
   abortController = new window.AbortController();
@@ -46,7 +47,7 @@ class SpecialCompetencyList extends Component {
           getBadge={getBadge}
           tableData={this.props.specialCompetencyListTable.tableData}
           updateList={this.props.getSpecialCompetencyList}
-          loading={this.state.loading}
+          loading={this.props.loading}
         />
         :
         <FoxEntityListTable
@@ -55,7 +56,7 @@ class SpecialCompetencyList extends Component {
           fields={this.props.specialCompetencyListTable.fields}
           getBadge={getBadge}
           tableData={this.props.specialCompetencyListTable.tableData}
-          loading={this.state.loading}
+          loading={this.props.loading}
         />
     )
   }
@@ -75,4 +76,4 @@ const mapDispatchToProps = dispatch => ({
   clearList: () => dispatch(clearList())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(SpecialCompetencyList)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(SpecialCompetencyList))

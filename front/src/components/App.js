@@ -21,12 +21,11 @@ class App extends Component {
       .then(() => this.props.changeLoadingState())
       .catch(error => {
         console.log(error);
-        return this.props.changeLoadingState()
+        this.props.changeLoadingState()
       })
   }
 
   render() {
-    console.log((this.props.loading));
     return (
       <HashRouter>
         <Suspense fallback={<LoadingSpinner />}>
