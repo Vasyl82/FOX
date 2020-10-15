@@ -42,9 +42,13 @@ urlpatterns = [
         "workers/download_doc/<int:pk>/<str:doctype>/",
         views.WorkerDocDownload.as_view(),
     ),
+    
     path("ptw/<int:pk>", views.ptw),
     path("documents/", views.DocumentList.as_view()),
     path("documents/new/", views.DocumentCreate.as_view()),
+
+    path("documents/predefined/", views.PredefinedDocumentCreate.as_view()),
+
     path("documents/<int:pk>/", views.DocumentDetail.as_view()),
     path("documents/downloads/<int:pk>/", views.DocumentDownload.as_view()),
     path(

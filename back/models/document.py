@@ -12,6 +12,9 @@ class Document(models.Model):
     project = models.ForeignKey(
         "back.Project", on_delete=models.CASCADE, related_name="documents", null=True
     )
+    template = models.ForeignKey(
+        "back.Template", on_delete=models.SET_NULL, related_name="templates", null=True, blank=True
+    )
     deleted = models.BooleanField(default=False)
     url_to_doc = models.URLField(null=True, blank=True)
 

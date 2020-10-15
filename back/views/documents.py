@@ -4,7 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from back.models import Document
-from back.serializers import DocumentSerializer, DocumentListSerializer
+from back.serializers import DocumentSerializer, DocumentListSerializer, PredefinedDocumentSerializer
 from back.services import (
     DocumentFileService,
     DocumentFileJWTCreator,
@@ -26,6 +26,21 @@ class DocumentList(generics.ListAPIView):
 class DocumentCreate(generics.CreateAPIView):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
+
+
+class PredefinedDocumentCreate(generics.CreateAPIView):
+    serializer_class = PredefinedDocumentSerializer
+    queryset = Document.objects.all()
+
+    def destroy(self, request, pk):
+        queryset = self.get_queryset()
+        document = get_object_or_404(queryset, pk=pk)
+        document.deleted = True
+        document.save()
+        return JsonResponse(
+            data={"response": f"document {document.name} deleted."},
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
 
 class DocumentDetail(generics.RetrieveUpdateDestroyAPIView):

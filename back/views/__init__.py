@@ -22,6 +22,7 @@ from .documents import (  # noqa F401
     DocumentList,
     DocumentDetail,
     DocumentCreate,
+    PredefinedDocumentCreate,
     DocumentDownload,
     DocumentDisplayPermission,
     download_file_to_display,

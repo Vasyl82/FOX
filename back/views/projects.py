@@ -1,9 +1,10 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
-from back.models import Project, Activity
+from back.models import Project, Activity, Document, Template, Company
 from back.serializers import ProjectSerializer, ProjectListSerializer
-from back.services import ProjectEmailNotificationService as mail_service
+from back.services import ProjectEmailNotificationService as mail_service, PredefinedDocHandlingService
+
 
 
 class ProjectList(generics.ListAPIView):
@@ -31,6 +32,9 @@ class ProjectCreate(generics.CreateAPIView):
         activity.project_created_message()
         email = mail_service(project=project, receivers=[project.contractor])
         email.send_project_created()
+
+        PredefinedDocHandlingService(project=project).create_documents()
+
         return res
 
 
