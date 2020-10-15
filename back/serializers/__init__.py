@@ -19,3 +19,4 @@ from .notification import (  # noqa F401
     NotificationUpdateSerializer,
     NotificationListSerializer,
 )
+from .template import TemplateSerializer, TemplateListSerializer  # noqa F401

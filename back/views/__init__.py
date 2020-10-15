@@ -38,3 +38,8 @@ from .company_doc_templates import CompanyDocUpload, CompanyDocDownload  # noqa 
 from .activities import ActivityList  # noqa F401
 from .notifications import NotificationList, NotificationUpdate  # noqa F401
 from .permits import PermitVerification  # noqa F401
+from .template import (  # noqa F401
+    TemplateListView,
+    SingleTemplateView,
+    TemplateCreateView,
+)

@@ -79,4 +79,7 @@ urlpatterns = [
         "permits/verification/<str:part1>/<str:part2>/<str:part3>/",
         views.PermitVerification.as_view(),
     ),
+    path("templates/", views.TemplateListView.as_view()),
+    path("templates/<int:pk>/", views.SingleTemplateView.as_view()),
+    path("templates/new/", views.TemplateCreateView.as_view()),
 ]
