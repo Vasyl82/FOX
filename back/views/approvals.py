@@ -5,6 +5,7 @@ from rest_framework import generics, status
 from back.models import Approval, Project, ClientManager, Activity
 from back.serializers import ApprovalSerializer, ApprovalListSerializer
 from back.services import ProjectEmailNotificationService as mail_service
+from back.services.permits import PermitHandlingService
 
 
 class ApprovalList(generics.ListAPIView):
@@ -79,6 +80,7 @@ class ApprovalDetail(generics.RetrieveUpdateDestroyAPIView):
         ):
             project.status = Project.Status.approved
             project.save()
+            PermitHandlingService(project).generate_permits()
             resolution_activity = Activity(
                 project=project, author=request.user, company=request.user.company
             )

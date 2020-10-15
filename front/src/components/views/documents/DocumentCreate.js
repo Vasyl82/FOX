@@ -11,6 +11,12 @@ import {
   CSelect,
   CButton,
   CInputFile,
+  CCard,
+  CCardTitle,
+  CCardHeader,
+  CCardBody,
+  CCardFooter, CCardSubtitle,
+  CFormText
 } from "@coreui/react";
 import DjangoCSRFToken from 'django-react-csrftoken';
 import { FoxApiService } from '../../../services';
@@ -31,7 +37,7 @@ class DocumentCreate extends Component {
     file: "",
     project: this.props.match.params.id,
     url_to_doc: "",
-    upload_option: 1,
+    upload_option: -1,
     error: false
   }
 
@@ -48,26 +54,33 @@ class DocumentCreate extends Component {
 
   handleSubmit = async event => {
     event.preventDefault();
-
-    this.requestData = this.state;
-    delete this.requestData.error;
-    delete this.requestData.upload_option;
-    this.formData = new FormData
-    Object.entries(this.requestData).forEach(([key, value]) => {
-      this.formData.append(key, value);
-    })
-    await foxApi.createEntityWithFile('documents', this.formData)
-      .then(() => {
-        this.props.history.push(`/projects/${this.props.match.params.id}/documents`)
-      },
-        (error) => {
-          console.error(error);
-          this.setState({
-            error: 'Document creation failed!' +
-              ' Please check your input and try again!' +
-              ' In case this problem repeats, please contact your administrator!'
+    console.log(this.state.upload_option.toString() === "-1");
+    if (this.state.upload_option === -1) {
+      this.setState({
+        error: "Please, choose the file attachment option and attach the file itself before submitting the document"
+      })
+    }
+    else {
+      this.requestData = this.state;
+      delete this.requestData.error;
+      delete this.requestData.upload_option;
+      this.formData = new FormData
+      Object.entries(this.requestData).forEach(([key, value]) => {
+        this.formData.append(key, value);
+      })
+      await foxApi.createEntityWithFile('documents', this.formData)
+        .then(() => {
+          this.props.history.push(`/projects/${this.props.match.params.id}/documents`)
+        },
+          (error) => {
+            console.error(error);
+            this.setState({
+              error: 'Document creation failed!' +
+                ' Please check your input and try again!' +
+                ' In case this problem repeats, please contact your administrator!'
+            })
           })
-        })
+    }
   }
 
   componentDidMount = async () => {
@@ -75,69 +88,85 @@ class DocumentCreate extends Component {
   }
 
   render = () => {
+    const { upload_option, error, name, url_to_doc, } = this.state
     return (
       <CRow>
         <CCol>
-          <CForm
-            onSubmit={this.handleSubmit}
-          >
-            <DjangoCSRFToken />
-            <CFormGroup>
-              <CLabel htmlFor="name">Name</CLabel>
-              <CInput
-                id="name"
-                name='name'
-                placeholder="Enter document name"
-                value={this.state.name}
-                onChange={this.handleChange}
-                required />
-            </CFormGroup>
-            <CFormGroup>
-              <CLabel htmlFor="upload_option">File upload option</CLabel>
-              <CSelect
-                id="upload_option"
-                name="upload_option"
-                placeholder="Choose contractor"
-                value={this.state.upload_option}
-                onChange={this.handleChange}
-                required
+          <CCard>
+            <CCardHeader>
+              <CCardTitle>
+                New Document
+              </CCardTitle>
+              <CCardSubtitle>
+                Fill this form to create a custom document for the project
+              </CCardSubtitle>
+            </CCardHeader>
+            <CCardBody>
+              <CForm
+                onSubmit={this.handleSubmit}
               >
-                {uploadOptions.map((option) => {
-                  return (
-                    <option key={option.id} value={option.id}>{option.name}</option>
-                  )
-                })
-                }
-              </CSelect>
-            </CFormGroup>
+                <DjangoCSRFToken />
+                <CFormGroup>
+                  <CInput
+                    id="name"
+                    name='name'
+                    placeholder="Document name"
+                    value={name}
+                    onChange={this.handleChange}
+                    required />
+                </CFormGroup>
+                <CFormGroup>
+                  <CSelect
+                    id="upload_option"
+                    name="upload_option"
+                    value={upload_option}
+                    onChange={this.handleChange}
+                    required
+                  >
+                    <option value={-1} >Choose File upload option</option>
+                    {uploadOptions.map((option) => {
+                      return (
+                        <option key={option.id} value={option.id}>{option.name}</option>
+                      )
+                    })
+                    }
+                  </CSelect>
+                </CFormGroup>
 
-            {this.state.upload_option == 1 ?
-              <CFormGroup>
-                <CLabel htmlFor="url_to_doc">Url to document</CLabel>
-                <CInput
-                  type="url"
-                  id="url_to_doc"
-                  name="url_to_doc"
-                  placeholder="https://example.com"
-                  pattern="https://.*"
-                  value={this.state.url_to_doc}
-                  onChange={this.handleChange}
-                  required />
-              </CFormGroup>
-              : <CFormGroup>
-                <CLabel htmlFor="file">File</CLabel>
-                <CInputFile id="file" name="file" onChange={this.handleFileUpload}
-                  required />
-              </CFormGroup>
-            }
-            <CFormGroup>
-              <CButton type="submit" color="dark" variant="outline" block>Create Document</CButton>
-            </CFormGroup>
-            {this.state.error
-              ? <p>{this.state.error}</p>
-              : null
-            }
-          </CForm>
+                {upload_option == 1 ?
+                  <CFormGroup >
+                    <CInput
+                      type="url"
+                      id="url_to_doc"
+                      name="url_to_doc"
+                      placeholder="URL to document"
+                      pattern="https://.*"
+                      value={url_to_doc}
+                      onChange={this.handleChange}
+                      required />
+                  </CFormGroup>
+                  : null
+                }
+                {upload_option == 2 ?
+                  <CFormGroup>
+                    <CLabel htmlFor="file">File</CLabel>
+                    <CInputFile id="file" name="file" onChange={this.handleFileUpload}
+                      required />
+                    <CFormText>Recommended formats: .doc, .docx, .xls, .xlsx, .pdf</CFormText>
+                  </CFormGroup>
+                  : null}
+                {error
+                  ? <p className={"fox-form-invalid-feedback"}>{error}</p>
+                  : null
+                }
+              </CForm>
+            </CCardBody>
+            <CCardFooter>
+              <CButton shape="pill" color="dark" variant="outline" onClick={this.handleSubmit} block>Create Document</CButton>
+            </CCardFooter>
+          </CCard>
+
+
         </CCol>
       </CRow >
     )

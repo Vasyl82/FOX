@@ -287,7 +287,7 @@ class WorkerSpecialCompetencyAdmin(admin.ModelAdmin):
 
 class PermitAdmin(admin.ModelAdmin):
     model = Permit
-    list_display = ("Project", "Worker", "issue_date", "active")
+    list_display = ("project", "worker", "issue_date", "active")
 
 
 class DocumentAdmin(admin.ModelAdmin):
