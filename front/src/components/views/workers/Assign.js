@@ -8,8 +8,14 @@ import {
   CRow,
   CCol,
   CButton,
-  CInputCheckbox,
-  CSelect
+  CSwitch,
+  CSelect,
+  CCard,
+  CCardHeader,
+  CCardBody,
+  CCardSubtitle,
+  CCardFooter,
+  CCardTitle
 } from "@coreui/react";
 import DjangoCSRFToken from 'django-react-csrftoken'
 import { FoxApiService } from '../../../services'
@@ -74,55 +80,77 @@ class WorkerAssign extends Component {
     return (
       <CRow>
         <CCol>
-          <CForm onSubmit={this.handleSubmit}>
-            <DjangoCSRFToken />
-            <CFormGroup>
-              <h4>Please, choose the responsible person among your workers.</h4>
-              <CSelect
-                id="responsible_person"
-                name="responsible_person"
-                placeholder="Choose responsible person"
-                value={this.state.responsible_person}
-                onChange={this.handleChange}
-                required
-              >
-                <option key="-1" value="-1" disabled>Choose responsible person</option>
-                {this.props.workers ? this.props.workers.map((worker) => {
-                  return (
-                    <option key={worker.id} value={worker.id}>{worker.name}</option>
-                  )
-                }) : null
+          <CCard>
+            <CCardHeader>
+              <CCardTitle>
+                Personnel Management
+            </CCardTitle>
+            </CCardHeader>
+            <CCardBody>
+              <CForm onSubmit={this.handleSubmit}>
+                <DjangoCSRFToken />
+                <CFormGroup>
+                  <CCardTitle>
+                    Please, choose the responsible person among your workers:
+                  </CCardTitle>
+                  <CSelect
+                    id="responsible_person"
+                    name="responsible_person"
+                    placeholder="Choose responsible person"
+                    value={this.state.responsible_person}
+                    onChange={this.handleChange}
+                    required
+                  >
+                    <option key="-1" value="-1" disabled>Choose responsible person</option>
+                    {this.props.workers ? this.props.workers.map((worker) => {
+                      return (
+                        <option key={worker.id} value={worker.id}>{worker.name}</option>
+                      )
+                    }) : null
+                    }
+                  </CSelect>
+                </CFormGroup>
+                <CFormGroup>
+                  <CCardTitle>
+
+                    Please, choose workers you want to assign for this project:
+                  </CCardTitle>
+                  {this.props.workers ?
+                    this.props.workers.map((worker) => {
+                      let workers = this.state.workers;
+                      return (
+                        <CFormGroup key={`fg-${worker.id}`} className="d-flex">
+                          <CSwitch
+                            key={`cb-${worker.id}`}
+
+                            className='mr-2'
+                            id={worker.id}
+                            name={worker.id}
+                            value={worker.id}
+                            shape={'pill'}
+                            variant={'3d'}
+                            color={'success'}
+                            size={"sm"}
+                            onChange={this.handleCheck}
+                            checked={workers.includes(worker.id)}
+                          />
+                          <CLabel key={`lb-${worker.id}`} variant="checkbox" className="form-check-label mr-4" htmlFor={worker.id}>{worker.name}</CLabel>
+                        </CFormGroup>
+                      )
+                    }) : null}
+                </CFormGroup>
+
+                {this.state.error
+                  ? <p>{this.state.error}</p>
+                  : null
                 }
-              </CSelect>
-            </CFormGroup>
-            <CFormGroup>
-              <h4>Please, choose workers you want to assign for this project</h4>
-              {this.props.workers ?
-                this.props.workers.map((worker) => {
-                  let workers = this.state.workers;
-                  return (
-                    <CFormGroup key={`fg-${worker.id}`} variant="checkbox" className="checkbox d-flex">
-                      <CInputCheckbox
-                        key={`cb-${worker.id}`}
-                        id={worker.id}
-                        name={worker.id}
-                        value={worker.id}
-                        onChange={this.handleCheck}
-                        checked={workers.includes(worker.id)}
-                      />
-                      <CLabel key={`lb-${worker.id}`} variant="checkbox" className="form-check-label mr-4" htmlFor={worker.id}>{worker.name}</CLabel>
-                    </CFormGroup>
-                  )
-                }) : null}
-            </CFormGroup>
-            <CFormGroup>
-              <CButton type="submit" color="dark" variant="outline" block>Save changes</CButton>
-            </CFormGroup>
-            {this.state.error
-              ? <p>{this.state.error}</p>
-              : null
-            }
-          </CForm>
+              </CForm>
+            </CCardBody>
+            <CCardFooter>
+              <CButton shape="pill" type="submit" color="dark" variant="outline" onClick={this.handleSubmit} block>Save changes</CButton>
+            </CCardFooter>
+          </CCard>
+
         </CCol >
       </CRow >
     )

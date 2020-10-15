@@ -5,7 +5,7 @@ import {
   CForm,
   CFormGroup,
   CInput,
-  CLabel, CRow,
+  CRow,
   CCol,
   CButton,
   CCard,
@@ -66,7 +66,7 @@ class ContractorCreate extends Component {
           <CCard>
             <CCardHeader>
               <CCardTitle>New Contractor</CCardTitle>
-              <CCardSubtitle>Fill up the form below to add a new Project</CCardSubtitle>
+              <CCardSubtitle>Fill up the form below to add a new Contractor</CCardSubtitle>
             </CCardHeader>
             <CCardBody>
               <CForm

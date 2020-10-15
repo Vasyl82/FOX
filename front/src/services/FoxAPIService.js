@@ -303,5 +303,11 @@ class FoxApiService {
         const res = this.post(url = url, data = data);
         return res
     }
+
+    verifyPermit = (part1, part2, part3) => {
+        let url = `${this.apiBase}permits/verification/${part1}/${part2}/${part3}/`;
+        const res = this.get(url = url);
+        return res
+    }
 }
 export default FoxApiService
