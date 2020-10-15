@@ -10,10 +10,14 @@ import { WithLoading, WithLoadingSpinner } from '../loadings'
 
 class Dashboard extends Component {
 
-  componentDidMount = async () => {
-    await this.props.getProfileFetch()
+  componentDidMount = () => {
+    this.props.getProfileFetch()
       .then(() => this.props.getDashboardLayout(this.props.currentUser.role, this.props.match.params.id))
       .then(() => this.props.changeLoadingState())
+      .catch(error => {
+        console.log(error);
+        return this.props.changeLoadingState()
+      })
   }
 
   componentDidUpdate = (prevProps) => {
@@ -58,3 +62,4 @@ const mapDispatchToProps = dispatch => ({
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(Dashboard))
+

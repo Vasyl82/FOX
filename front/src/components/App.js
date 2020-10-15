@@ -21,15 +21,16 @@ class App extends Component {
       .then(() => this.props.changeLoadingState())
       .catch(error => {
         console.log(error);
-        return () => this.props.changeLoadingState()
+        return this.props.changeLoadingState()
       })
   }
 
   render() {
+    console.log((this.props.loading));
     return (
-      <WithLoadingSpinner loading={this.props.loading}>
-        <HashRouter>
-          <Suspense fallback={<LoadingSpinner />}>
+      <HashRouter>
+        <Suspense fallback={<LoadingSpinner />}>
+          <WithLoadingSpinner loading={this.props.loading}>
             <Switch>
               <Route exact path="/permits/validate/:part1/:part2/:part3/" name="Home" render={props => <PermitVerification {...props} />} />
               <Route exact path="/register" name="Register Page" render={
@@ -53,9 +54,9 @@ class App extends Component {
               </>
             </Switch>
             <FoxEngagedModals {...this.props} />
-          </Suspense>
-        </HashRouter>
-      </WithLoadingSpinner>
+          </WithLoadingSpinner>
+        </Suspense>
+      </HashRouter>
     );
   }
 }
