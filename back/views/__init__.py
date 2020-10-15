@@ -37,3 +37,4 @@ from .approvals import ApprovalList, ApprovalDetail  # noqa F401
 from .company_doc_templates import CompanyDocUpload, CompanyDocDownload  # noqa F401
 from .activities import ActivityList  # noqa F401
 from .notifications import NotificationList, NotificationUpdate  # noqa F401
+from .template import TemplateListView, SingleTemplateView, TemplateCreateView  # noqa F401
