@@ -48,6 +48,7 @@ class ProjectList extends Component {
           tableData={this.props.projectTable.tableData}
           updateList={this.props.getProjectList}
           loading={this.props.loading}
+          showNewButton={true}
         /> :
         <FoxEntityListTable
           {...this.props}

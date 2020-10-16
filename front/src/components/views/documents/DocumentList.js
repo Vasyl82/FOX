@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import { FoxEntityListTable, FoxTableWithDeleteOption } from '../../tables'
 import { getProfileFetch, getDocumentList, clearList } from '../../../actions'
-import { connect } from 'react-redux'
+import { WithLoading } from '../../loadings'
 
 const getBadge = status => {
   switch (status) {
@@ -23,12 +24,19 @@ class DocumentList extends Component {
     await this.props.getProfileFetch()
       .then(() => {
         this.props.getDocumentList({
-          project_id: this.props.match.params.id,
-        }, false, this.props.role, this.abortController.signal);
+          params: {
+            project_id: this.props.match.params.id,
+          },
+          additional: false,
+          role: this.props.role,
+          signal: this.abortController.signal
+        });
       })
-      .then(() => this.setState({
-        loading: false
-      }))
+      .then(() => this.changeLoadingState())
+      .catch(error => {
+        console.log(error);
+        this.props.changeLoadingState()
+      })
   }
 
   abortController = new window.AbortController();
@@ -73,8 +81,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getDocumentList: (params, additional, role) => dispatch(getDocumentList(params, additional, role)),
+  getDocumentList: ({ ...kwargs }) => dispatch(getDocumentList({ ...kwargs })),
   clearList: () => dispatch(clearList())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(DocumentList)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(DocumentList))

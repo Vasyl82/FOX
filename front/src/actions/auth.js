@@ -108,7 +108,6 @@ const getProfileFetch = () => {
     }
 }
 
-
 const loginUser = userObj => ({
     type: 'LOGIN_USER',
     currentUser: userObj,

@@ -30,7 +30,7 @@ class FoxEntityListTable extends Component {
               <CCardTitle>
                 {this.props.tableName}
               </CCardTitle>
-              {this.props.tableName === "Projects" && this.props.role === "Contr"
+              {/* {this.props.tableName === "Projects" && this.props.role === "Contr"
                 ?
                 null
                 :
@@ -40,6 +40,15 @@ class FoxEntityListTable extends Component {
                 >
                   Add new
                 </CLink>
+              } */}
+              {this.props.showNewButton ?
+                <CLink
+                  className="btn btn-pill btn-outline-success"
+                  to={`${this.props.match.url}/new`}
+                >
+                  Add new
+          </CLink>
+                : null
               }
             </CCardHeader>
             <CCardBody>

@@ -38,7 +38,6 @@ class FoxTableWithDeleteOption extends Component {
   }
 
   confirmDelete = async (id) => {
-    console.log("trying to delete");
     const entity = this.props.tableName.toLowerCase().replace(' ', '_');
     await foxApi.deleteEntityOf(entity, id)
       .then(() => {
@@ -71,7 +70,7 @@ class FoxTableWithDeleteOption extends Component {
               <CCardTitle>
                 {this.props.tableName}
               </CCardTitle>
-              {this.props.tableName === "Projects" && this.props.role === "Contr"
+              {/* {this.props.tableName === "Projects" && this.props.role === "Contr"
                 ?
                 null
                 :
@@ -81,6 +80,15 @@ class FoxTableWithDeleteOption extends Component {
                 >
                   Add new
                 </CLink>
+              } */}
+              {this.props.showNewButton ?
+                <CLink
+                  className="btn btn-pill btn-outline-success"
+                  to={`${this.props.match.url}/new`}
+                >
+                  Add new
+          </CLink>
+                : null
               }
             </CCardHeader>
             <CCardBody>

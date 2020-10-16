@@ -24,7 +24,7 @@ import { WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
-class ProjectDetail extends Component {
+class ApprovalDetail extends Component {
 
   state = {
     description: "",
@@ -119,6 +119,10 @@ class ProjectDetail extends Component {
           ]).then(() => this.props.changeLoadingState())
         }
       ))
+      .catch(error => {
+        console.log(error);
+        this.props.changeLoadingState()
+      })
   }
 
   componentWillUnmount = async () => {
@@ -288,4 +292,4 @@ const mapDispatchToProps = dispatch => ({
   clearList: () => dispatch(clearList())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ProjectDetail))
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ApprovalDetail))
