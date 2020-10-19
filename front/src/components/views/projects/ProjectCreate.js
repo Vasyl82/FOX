@@ -154,6 +154,7 @@ class ProjectCreate extends Component {
                       placeholder="Project Name"
                       value={this.state.name}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -163,6 +164,7 @@ class ProjectCreate extends Component {
                       placeholder="Project Works Location"
                       value={this.state.location}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -172,6 +174,7 @@ class ProjectCreate extends Component {
                       placeholder="Short Project Description"
                       value={this.state.description}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
                       required
                     />
                   </CFormGroup>
@@ -186,6 +189,7 @@ class ProjectCreate extends Component {
                           name="start_date"
                           value={this.state.start_date}
                           onChange={this.handleChange}
+                          readOnly={this.props.submitting}
                           required
                         />
                       </CCol>
@@ -198,6 +202,7 @@ class ProjectCreate extends Component {
                           placeholder="date"
                           value={this.state.end_date}
                           onChange={this.handleChange}
+                          readOnly={this.props.submitting}
                           required
                         />
 
@@ -209,6 +214,7 @@ class ProjectCreate extends Component {
                     inputInfo="contractor"
                     inputValue={this.state.contractor}
                     handleChange={this.handleReactSelect}
+                    readOnly={this.props.submitting}
                   />
                   <FoxSwitchGroup
                     groupLabel='Choose the related hazardous work
@@ -216,6 +222,7 @@ class ProjectCreate extends Component {
                     options={permitOptions}
                     handleCheck={this.handleCheck}
                     parentState={this.state}
+                    readOnly={this.props.submitting}
                   />
                   <CButton disabled={this.props.submitting} shape="pill" onClick={this.handleDocumentCreationRedirect} color="dark" variant="outline" block><SubmitSpinner submitting={this.props.submitting} />Create Project and go to document creation</CButton>
                   {this.state.error

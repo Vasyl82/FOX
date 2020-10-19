@@ -27,6 +27,7 @@ const FoxSwitchGroup = props => {
               size={"sm"}
               onChange={props.handleCheck}
               checked={props.parentState[option]}
+              disabled={props.readOnly}
             />
             <CLabel variant="checkbox" className="form-check-label" htmlFor={option}>{makeLabel(option)}</CLabel>
           </CFormGroup>
