@@ -12,7 +12,8 @@ const initialState = {
     additionalEntityListTable: {},
     projectId: "",
     notifications: [],
-    modal: {}
+    modal: {},
+    submitting: false
 }
 
 const changeState = (state = initialState, { type, ...rest }) => {
@@ -51,6 +52,9 @@ const changeState = (state = initialState, { type, ...rest }) => {
             return { ...state, notifications: newNotifications };
         case 'UPDATE_MODAL':
             return { ...state, ...rest };
+        case 'UPDATE_SUBMIT':
+            const { submitting } = state
+            return { ...state, submitting: !submitting }
 
         default:
             return state;

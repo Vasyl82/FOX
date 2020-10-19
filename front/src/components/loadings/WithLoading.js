@@ -1,12 +1,13 @@
-import { CElementCover, CSpinner } from "@coreui/react"
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { compose } from 'redux'
+import { changeSubmitState } from '../../actions'
 
-const withLoading = (WrappedComponent) => {
+const initialWithLoading = (WrappedComponent) => {
   return class extends Component {
 
     state = {
       loading: true,
-      submitting: true
     }
 
     changeLoadingState = () => {
@@ -16,11 +17,23 @@ const withLoading = (WrappedComponent) => {
     }
 
     render = () => {
+      const { loading } = this.state
+      const { dispatch, ...rest } = this.props
       return (
-        <WrappedComponent loading={this.state.loading} changeLoadingState={this.changeLoadingState} {...this.props} />
+        <WrappedComponent loading={loading} submitting={this.props.submitting} changeLoadingState={this.changeLoadingState} changeSubmitState={this.props.changeSubmitState} {...rest} />
       )
     }
   }
 }
 
-export default withLoading
+const mapStateToProps = state => ({
+  submitting: state.submitting
+})
+
+const mapDispatchToProps = dispatch => ({
+  changeSubmitState: () => dispatch(changeSubmitState())
+})
+
+const WithLoading = compose(connect(mapStateToProps, mapDispatchToProps), initialWithLoading)
+
+export default WithLoading

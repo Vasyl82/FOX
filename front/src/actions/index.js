@@ -19,6 +19,7 @@ import { getSpecialCompetencyList } from './special_competencies'
 import { getNotifications, clearNotifications, readNotification } from './notifications'
 import { updateModal } from './modals'
 import { clearList, populateAdditionalEntityTable, populateEntityTable, } from './tables'
+import { changeSubmitState } from './submitions'
 
 const userLoggedIn = () => {
     return {
@@ -50,5 +51,6 @@ export {
     updateModal,
     clearList,
     populateEntityTable,
-    populateAdditionalEntityTable
+    populateAdditionalEntityTable,
+    changeSubmitState
 };

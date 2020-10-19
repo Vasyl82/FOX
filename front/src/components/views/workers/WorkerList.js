@@ -45,6 +45,7 @@ class WorkerList extends Component {
           tableData={this.props.workerTable.tableData}
           updateList={this.props.getWorkerList}
           loading={this.state.loading}
+          showNewButton
         />
         :
         <FoxEntityListTable

@@ -14,14 +14,14 @@ import {
   CCardHeader,
   CCardBody,
   CCardTitle,
-  CCardSubtitle
+  CCardSubtitle,
 } from "@coreui/react";
 import DjangoCSRFToken from 'django-react-csrftoken'
 import { FoxApiService } from '../../../services'
 import { FoxSwitchGroup, } from '../../../utils'
 import { FoxReactSelectFormGroup } from '../../forms'
 import { permitOptions } from './optionsLists'
-import { WithLoadingSpinner, WithLoading } from '../../loadings'
+import { WithLoadingSpinner, WithLoading, SubmitSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -85,9 +85,12 @@ class ProjectCreate extends Component {
   }
 
   handleDocumentCreationRedirect = async () => {
+    this.props.changeSubmitState()
     await this.handleSubmit()
       .then(data => {
-        this.props.history.push(`/projects/${data.id}/documents/new`)
+        data ?
+          this.props.history.push(`/projects/${data.id}/documents/new`)
+          : null
       })
       .catch((error) => {
         console.error(error);
@@ -97,6 +100,7 @@ class ProjectCreate extends Component {
             ' In case this problem repeats, please contact your administrator!'
         })
       })
+      .finally(() => this.props.changeSubmitState())
   }
 
   handleSubmit = async () => {
@@ -104,6 +108,7 @@ class ProjectCreate extends Component {
       this.setState({
         error: 'Contractor was not selected! Please, choose contractor form the list'
       })
+
     } else {
       this.formData = this.state;
       delete this.formData.error;
@@ -212,7 +217,7 @@ class ProjectCreate extends Component {
                     handleCheck={this.handleCheck}
                     parentState={this.state}
                   />
-                  <CButton shape="pill" onClick={this.handleDocumentCreationRedirect} color="dark" variant="outline" block>Create Project and go to document creation</CButton>
+                  <CButton disabled={this.props.submitting} shape="pill" onClick={this.handleDocumentCreationRedirect} color="dark" variant="outline" block><SubmitSpinner submitting={this.props.submitting} />Create Project and go to document creation</CButton>
                   {this.state.error
                     ? <p>{this.state.error}</p>
                     : null
@@ -223,7 +228,6 @@ class ProjectCreate extends Component {
           </CCard>
         </CCol>
       </CRow >
-
     )
   }
 }

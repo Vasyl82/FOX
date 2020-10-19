@@ -129,9 +129,7 @@ class FoxApiService {
             body: JSON.stringify(data) // body data type must match "Content-Type" header
         });
         if (!res.ok) {
-            if (res.status >= 500) {
-                throw new Error(`Could not fetch ${url}. Received ${res.status}`);
-            }
+            throw new Error(`Could not fetch ${url}. Received ${res.status}`);
         }
 
         return res.json();
