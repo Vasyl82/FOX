@@ -18,6 +18,9 @@ import environ
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 env = environ.Env(
+    PERMIT_VALIDATE_KEY=(str, "12345"),
+    DISPLAY_FILE_KEY=(str, "12345"),
+    SECRET_KEY=(str, "12345"),
     DEBUG=(bool, True),
     MEDIA_ROOT=(str, os.path.join(BASE_DIR, "local_files")),
     HOST_NAME=(str, "localhost"),
