@@ -40,6 +40,7 @@ class ContractorList extends Component {
           tableData={this.props.contractorTable.tableData}
           updateList={this.props.getContractorList}
           loading={this.props.loading}
+          showNewButton={true}
         />
         :
         <FoxEntityListTable

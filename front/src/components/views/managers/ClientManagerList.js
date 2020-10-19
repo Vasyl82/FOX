@@ -41,6 +41,7 @@ class ClientManagerList extends Component {
           tableData={this.props.clientManagerTable.tableData}
           updateList={this.props.getClientManagerList}
           loading={this.props.loading}
+          showNewButton={true}
         />
         :
         <FoxEntityListTable
