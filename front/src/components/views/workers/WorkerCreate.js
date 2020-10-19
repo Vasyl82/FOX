@@ -42,7 +42,6 @@ class WorkerCreate extends Component {
     safety_quiz_answer: "",
     personal_declaration: "",
     submitCallback: "",
-    registration_number: "",
     trade_competency: -1,
     error: false
   }
@@ -207,15 +206,6 @@ class WorkerCreate extends Component {
                     inputInfo="safety_green_card"
                     uploadInfo="safety_green_card_scan"
                   />
-                  <CFormGroup>
-                    <CInput
-                      id="registration_number"
-                      name='registration_number'
-                      placeholder="Registration number"
-                      value={this.state.registration_number}
-                      onChange={this.handleChange}
-                      required />
-                  </CFormGroup>
                   <CFormGroup>
                     <CLabel htmlFor="safety_quiz_answer">Safety quiz answer</CLabel>
                     <CInputFile id="safety_quiz_answer" name="safety_quiz_answer" onChange={this.handleFileUpload}
