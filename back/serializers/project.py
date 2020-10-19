@@ -75,7 +75,9 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     start_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
     end_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
-    extend_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S", required=False)
+    extend_date = serializers.DateTimeField(
+        format="%Y-%m-%dT%H:%M:%S", required=False, allow_null=True
+    )
 
     class Meta:
         model = Project
