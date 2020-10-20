@@ -16,7 +16,7 @@ import {
 } from "@coreui/react";
 import { FoxApiService } from '../../../services'
 import { getProfileFetch } from '../../../actions'
-import { WithLoading, WithLoadingSpinner } from '../../loadings'
+import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -41,12 +41,15 @@ class ContractorCreate extends Component {
 
   handleSubmit = async event => {
     event.preventDefault();
+    this.props.changeSubmitState()
     this.formData = this.state;
     delete this.formData.error;
-    await foxApi.createEntityOf('contractors', this.formData).then(() => {
-      this.props.history.goBack()
-    },
-      (error) => {
+    await foxApi.createEntityOf('contractors', this.formData)
+      .then(() => {
+        this.props.history.goBack()
+      },
+      )
+      .catch((error) => {
         console.error(error);
         this.setState({
           error: 'Contractor creation failed!' +
@@ -54,6 +57,7 @@ class ContractorCreate extends Component {
             ' In case this problem repeats, please contact your administrator!'
         })
       })
+      .finally(() => this.props.changeSubmitState())
   }
 
   componentDidMount = async () => {
@@ -83,6 +87,8 @@ class ContractorCreate extends Component {
                       placeholder="Username"
                       value={this.state.username}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -93,6 +99,9 @@ class ContractorCreate extends Component {
                       placeholder="Email"
                       value={this.state.email}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
+
                       required
                     />
                   </CFormGroup>
@@ -103,6 +112,9 @@ class ContractorCreate extends Component {
                       placeholder="Company name"
                       value={this.state.related_company}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
+
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -113,6 +125,9 @@ class ContractorCreate extends Component {
                       placeholder="Contact Person Name"
                       value={this.state.name}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
+
                       required
                     />
                   </CFormGroup>
@@ -123,10 +138,22 @@ class ContractorCreate extends Component {
                       placeholder="Contact phone number"
                       value={this.state.company_phone}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
+
                       required />
                   </CFormGroup>
                   <CFormGroup>
-                    <CButton shape="pill" type="submit" color="dark" variant="outline" block>Create contractor</CButton>
+                    <CButton
+                      shape="pill"
+                      type="submit"
+                      color="dark"
+                      variant="outline"
+                      disabled={this.props.submitting}
+                      block>
+                      <SubmitSpinner submitting={this.props.submitting} />
+                      Create contractor
+                    </CButton>
                   </CFormGroup>
                   {this.state.error
                     ? <p>{this.state.error}</p>
