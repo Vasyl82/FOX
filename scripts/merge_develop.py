@@ -16,7 +16,7 @@ def run():
             "git",
             "commit",
             "-m",
-            f'"Intermidiate commit {datetime.now().strftime("%d-%b %H:%M")}"',
+            f'Intermidiate commit {datetime.now().strftime("%d-%b %H:%M")}',
         ]
     )
     exec_command(["git", "push"])
