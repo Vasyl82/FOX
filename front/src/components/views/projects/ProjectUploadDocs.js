@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { getProfileFetch, getDocumentList, setProjectId, clearList } from '../../../actions'
+import { getProfileFetch, getDocumentList, setProjectId, clearList, changeSubmitState } from '../../../actions'
 import { connect } from 'react-redux'
 import {
   CForm,
@@ -11,7 +11,7 @@ import {
 import DjangoCSRFToken from 'django-react-csrftoken'
 import { FoxApiService } from '../../../services'
 import FoxProjectDocumentDownLoadUploadFormGroup from '../../forms/FoxProjectDocumentDownloadUploadFormGroup';
-import { WithLoading, WithLoadingSpinner } from '../../loadings'
+import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -59,6 +59,7 @@ class ProjectUploadDocs extends Component {
 
   handleSubmit = async event => {
     event.preventDefault();
+    this.props.changeSubmitState()
     const { upload_files } = this.state;
 
     Object.entries(upload_files).forEach(([key, value]) => {
@@ -84,6 +85,7 @@ class ProjectUploadDocs extends Component {
             ' In case this problem repeats, please contact your administrator!'
         })
       })
+      .finally(() => this.props.changeSubmitState())
   }
 
   componentDidMount = async () => {
@@ -112,6 +114,7 @@ class ProjectUploadDocs extends Component {
             document={document}
             handleFileUpload={this.handleFileUpload}
             downloadFile={this.downloadFile}
+            disabled={this.props.submitting}
           />
         )
       })
@@ -126,7 +129,7 @@ class ProjectUploadDocs extends Component {
               <DjangoCSRFToken />
               {documentWidgetArray}
               <CFormGroup>
-                <CButton type="submit" color="dark" variant="outline" block>Submit documents</CButton>
+                <CButton disabled={this.props.submitting} shape="pill" type="submit" color="dark" variant="outline" block><SubmitSpinner submitting={this.props.submitting} />Submit documents</CButton>
               </CFormGroup>
               {this.state.error
                 ? <p>{this.state.error}</p>

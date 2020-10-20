@@ -24,7 +24,6 @@ class FoxApiService {
         }
         return res.json();
     }
-
     async getDoc(url, signal = null) {
         const jwt = localStorage.getItem('token');
         const res = await fetch(url, {
