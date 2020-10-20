@@ -7,7 +7,6 @@ const getDocumentList = ({ params = null, additional = false, role = null, signa
   }
   else {
     return repr.displaySimpleList('documents', params, additional, signal)
-
   }
 }
 
