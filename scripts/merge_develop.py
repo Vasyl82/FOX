@@ -32,7 +32,7 @@ def get_output(cmd):
 
 
 def exec_command(cmd):
-    return subprocess.run(cmd, capture_output=True)
+    return subprocess.run(cmd)
 
 
 if __name__ == "__main__":
