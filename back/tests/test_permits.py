@@ -44,7 +44,6 @@ class PermitHandlingTestCase(APITestCase):
             license_number="111",
             passport="222",
             safety_green_card="aaa",
-            registration_number="333",
             position_in_company="Weld",
             trade_competency="Civ",
         )
@@ -57,7 +56,6 @@ class PermitHandlingTestCase(APITestCase):
             license_number="111",
             passport="222",
             safety_green_card="aaa",
-            registration_number="333",
             position_in_company="Weld",
             trade_competency="Civ",
         )
