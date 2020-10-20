@@ -1,4 +1,4 @@
-from back.models import Template,  Document
+from back.models import Template, Document
 
 
 class PredefinedDocHandlingService:
@@ -8,12 +8,24 @@ class PredefinedDocHandlingService:
 
     def create_documents(self):
         hazardous_works = [
-            "work_at_height", "lifting_work", "lifting_work",
-            "confined_space", "hot_work", "chemical_handling",
-            "work_alone", "work_at_sensitive_area", "cold_work",
+            "work_at_height",
+            "lifting_work",
+            "lifting_work",
+            "confined_space",
+            "hot_work",
+            "chemical_handling",
+            "work_alone",
+            "work_at_sensitive_area",
+            "cold_work",
         ]
-        active_hazards = [getattr(Template.HazardousWork, hazardous_work).value for hazardous_work in hazardous_works if getattr(self.project, hazardous_work) is True]
-        templates = Template.objects.filter(company=self.company, hazardous_work__in=active_hazards)
+        active_hazards = [
+            getattr(Template.HazardousWork, hazardous_work).value
+            for hazardous_work in hazardous_works
+            if getattr(self.project, hazardous_work) is True
+        ]
+        templates = Template.objects.filter(
+            company=self.company, hazardous_work__in=active_hazards
+        )
         [self._create_doc_from_template(template) for template in templates]
 
     def _create_doc_from_template(self, template):
@@ -22,5 +34,5 @@ class PredefinedDocHandlingService:
             project=self.project,
             name=f"{self.project.name}_{template.name}",
             template=template,
-            file=file_to_copy
+            file=file_to_copy,
         )
