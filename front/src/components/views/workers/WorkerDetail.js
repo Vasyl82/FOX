@@ -39,7 +39,6 @@ class WorkerDetail extends Component {
     position_in_company: "",
     safety_quiz_answer: "",
     personal_declaration: "",
-    registration_number: "",
     error: false,
     filename: "",
     doc_type: "",
@@ -252,16 +251,6 @@ class WorkerDetail extends Component {
                     uploadInfo="safety_green_card_scan"
                     downloadFile={this.downloadFile}
                   />
-                  <CFormGroup>
-                    <CLabel htmlFor="registration_number">Registration number</CLabel>
-                    <CInput
-                      id="registration_number"
-                      name='registration_number'
-                      placeholder="Enter registration number"
-                      value={this.state.registration_number}
-                      onChange={this.handleChange}
-                    />
-                  </CFormGroup>
                   <FoxFormGroupDownloadUpload
                     inputValue={this.state.safety_quiz_answer}
                     downloadValue={this.state.safety_quiz_answer_scan}

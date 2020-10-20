@@ -198,7 +198,6 @@ class WorkerAdmin(admin.ModelAdmin):
             "Working Info",
             {
                 "fields": (
-                    "registration_number",
                     "position_in_company",
                     "trade_competency",
                     "safety_quiz_answer",
