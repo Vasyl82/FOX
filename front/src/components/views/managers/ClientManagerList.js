@@ -19,8 +19,9 @@ class ClientManagerList extends Component {
 
   componentDidMount = async () => {
     await this.props.getProfileFetch()
-      .then(() => this.props.getClientManagerList(this.props.role, this.abortController.signal))
-      .then(() => this.props.changeLoadingState())
+      .then(() => this.props.getClientManagerList({ role: this.props.role, signal: this.abortController.signal }))
+      .catch(error => console.log(error))
+      .finally(() => this.props.changeLoadingState())
   }
 
   abortController = new window.AbortController();
@@ -68,7 +69,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getClientManagerList: (role) => dispatch(getClientManagerList(role)),
+  getClientManagerList: ({ ...kwargs }) => dispatch(getClientManagerList({ ...kwargs })),
   clearList: () => dispatch(clearList())
 })
 

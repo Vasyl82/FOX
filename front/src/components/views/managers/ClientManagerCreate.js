@@ -17,7 +17,7 @@ import {
 } from "@coreui/react";
 import { FoxApiService } from '../../../services'
 import { getProfileFetch } from '../../../actions'
-import { WithLoading, WithLoadingSpinner } from '../../loadings'
+import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const positions = [
   { id: -1, position: "Choose manager position" },
@@ -52,6 +52,7 @@ class ClientManagerCreate extends Component {
 
   handleSubmit = async event => {
     event.preventDefault();
+    this.props.changeSubmitState()
     if (parseInt(this.state.position) === -1) {
       this.setState({
         error: 'Client manager position was not selected! Please, choose position form the list'
@@ -71,6 +72,7 @@ class ClientManagerCreate extends Component {
               ' In case this problem repeats, please contact your administrator!'
           })
         })
+        .finally(() => this.props.changeSubmitState())
     }
   }
 
@@ -106,6 +108,8 @@ class ClientManagerCreate extends Component {
                       placeholder="Username. This will be used for login"
                       value={this.state.username}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -115,6 +119,8 @@ class ClientManagerCreate extends Component {
                       placeholder="Verbose name"
                       value={this.state.name}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -125,6 +131,8 @@ class ClientManagerCreate extends Component {
                       placeholder="Email"
                       value={this.state.email}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
                       required
                     />
                   </CFormGroup>
@@ -135,6 +143,8 @@ class ClientManagerCreate extends Component {
                       placeholder="Choose position"
                       value={this.state.position}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
                       required
                     >
                       {positions.map((option) => {
@@ -152,10 +162,21 @@ class ClientManagerCreate extends Component {
                       placeholder="Department"
                       value={this.state.department}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
-                    <CButton shape="pill" type="submit" color="dark" variant="outline" block>Create client manager</CButton>
+                    <CButton
+                      disabled={this.props.submitting}
+                      shape="pill"
+                      type="submit"
+                      color="dark"
+                      variant="outline"
+                      block>
+                      <SubmitSpinner submitting={this.props.submitting} />
+                      Create client manager
+                    </CButton>
                   </CFormGroup>
                   {this.state.error
                     ? <p>{this.state.error}</p>

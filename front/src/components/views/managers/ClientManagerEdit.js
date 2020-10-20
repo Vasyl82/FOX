@@ -16,7 +16,7 @@ import {
 } from "@coreui/react";
 import { FoxApiService } from '../../../services'
 import { getProfileFetch } from '../../../actions'
-import { WithLoading, WithLoadingSpinner } from '../../loadings'
+import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -53,7 +53,7 @@ class ClientManagerEdit extends Component {
 
   handleSubmit = async event => {
     event.preventDefault();
-
+    this.props.changeSubmitState()
     if (parseInt(this.state.position) < 0) {
       this.setState({
         error: 'Manager Position was not selected! Please, choose position form the list'
@@ -61,10 +61,11 @@ class ClientManagerEdit extends Component {
     } else {
       this.formData = this.state;
       delete this.formData.error;
-      await foxApi.updateEntityOf('client_managers', this.props.match.params.id, this.formData).then(() => {
-        this.props.history.goBack()
-      },
-        (error) => {
+      await foxApi.updateEntityOf('client_managers', this.props.match.params.id, this.formData)
+        .then(() => {
+          this.props.history.goBack()
+        })
+        .catch((error) => {
           console.error(error);
           this.setState({
             error: 'Manager update failed!' +
@@ -72,6 +73,7 @@ class ClientManagerEdit extends Component {
               ' In case this problem repeats, please contact your administrator!'
           })
         })
+        .finally(() => this.props.changeSubmitState())
     }
   }
 
@@ -79,7 +81,8 @@ class ClientManagerEdit extends Component {
     await this.props.getProfileFetch()
       .then(() => foxApi.getDetailsOf('client_managers', this.props.match.params.id))
       .then((data) => this.setState({ ...data }))
-      .then(() => this.props.changeLoadingState())
+      .catch(error => console.log(error))
+      .finally(() => this.props.changeLoadingState())
   }
 
   render = () => {
@@ -93,7 +96,6 @@ class ClientManagerEdit extends Component {
             </CCardHeader>
             <CCardBody>
               <WithLoadingSpinner loading={this.props.loading}>
-
                 <CForm
                   onSubmit={this.handleSubmit}
                 >
@@ -106,6 +108,8 @@ class ClientManagerEdit extends Component {
                       placeholder="Username"
                       value={this.state.username}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -116,6 +120,8 @@ class ClientManagerEdit extends Component {
                       placeholder="Verbose name"
                       value={this.state.name}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -127,6 +133,8 @@ class ClientManagerEdit extends Component {
                       placeholder="Email"
                       value={this.state.email}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
                       required
                     />
                   </CFormGroup>
@@ -138,6 +146,8 @@ class ClientManagerEdit extends Component {
                       placeholder="Choose position"
                       value={this.state.position}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
                       required
                     >
                       {positions.map((option) => {
@@ -156,10 +166,21 @@ class ClientManagerEdit extends Component {
                       placeholder="Department"
                       value={this.state.department}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
-                    <CButton shape="pill" type="submit" color="dark" variant="outline" block>Save changes</CButton>
+                    <CButton
+                      disabled={this.props.submitting}
+                      shape="pill"
+                      type="submit"
+                      color="dark"
+                      variant="outline"
+                      block>
+                      <SubmitSpinner submitting={this.props.submitting} />
+                      Save changes
+                    </CButton>
                   </CFormGroup>
                   {this.state.error
                     ? <p>{this.state.error}</p>
