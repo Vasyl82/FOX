@@ -21,8 +21,10 @@ def run():
     )
     exec_command(["git", "push"])
     exec_command(["git", "checkout", "develop"])
+    print(get_output(cmd))
     exec_command(["git", "pull"])
     exec_command(["git", "checkout", branch_name])
+    print(get_output(cmd))
     exec_command(["git", "merge", "develop"])
 
 
