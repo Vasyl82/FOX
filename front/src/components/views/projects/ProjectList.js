@@ -27,10 +27,8 @@ class ProjectList extends Component {
     this.props.setProjectId(this.props.match.params.id)
     await this.props.getProfileFetch()
       .then(() => this.props.getProjectList(this.props.role, this.abortController.signal))
-      .then(() => {
-        console.log(this.props.projectTable);
-        this.props.changeLoadingState()
-      })
+      .catch(error => console.log(error))
+      .finally(() => this.props.changeLoadingState())
   }
 
   componentWillUnmount = async () => {

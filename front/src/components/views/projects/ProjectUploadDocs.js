@@ -95,7 +95,8 @@ class ProjectUploadDocs extends Component {
     }
     await this.props.getProfileFetch()
       .then(() => this.props.getDocumentList({ params, additional: false, signal: this.abortController.signal }))
-      .then(() => this.props.changeLoadingState())
+      .catch(error => console.log(error))
+      .finally(() => this.props.changeLoadingState())
   }
 
   componentWillUnmount = async () => {
