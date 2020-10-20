@@ -103,7 +103,7 @@ class SafetyPresets extends Component {
                   required />
               </CFormGroup>
               <CFormGroup>
-                <CButton type="submit" color="dark" variant="outline" block><SubmitSpinner submitting={this.props.submitting} />Submit safety info</CButton>
+                <CButton shape="pill" type="submit" color="dark" variant="outline" block><SubmitSpinner submitting={this.props.submitting} />Submit safety info</CButton>
               </CFormGroup>
               {this.state.error
                 ? <p>{this.state.error}</p>

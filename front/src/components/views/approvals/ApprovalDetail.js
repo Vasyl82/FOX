@@ -20,7 +20,7 @@ import {
 } from "@coreui/react";
 import { FoxApiService } from '../../../services'
 import { DisplayFile, WorkerReview } from '../../../utils'
-import { WithLoading, WithLoadingSpinner } from '../../loadings'
+import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -59,6 +59,7 @@ class ApprovalDetail extends Component {
 
   handleSubmit = async event => {
     event.preventDefault();
+    this.props.changeSubmitState()
     if (this.state.status === "Rejected" && !this.state.description) {
       this.setState({
         error: 'Rejections reason was not provided! Please, specify the rejection reason!'
@@ -82,6 +83,7 @@ class ApprovalDetail extends Component {
               ' In case this problem repeats, please contact your administrator!'
           })
         })
+        .finally(() => this.props.changeSubmitState())
     }
   }
 
@@ -116,13 +118,13 @@ class ApprovalDetail extends Component {
           await Promise.all([
             this.props.getDocumentList({ params: { project_id: this.state.project }, additional: true, signal: this.abortController.signal }),
             this.props.getWorkerList({ params: { project_id: this.state.project }, additional: false, signal: this.abortController.signal })
-          ]).then(() => this.props.changeLoadingState())
+          ])
         }
       ))
       .catch(error => {
         console.log(error);
-        this.props.changeLoadingState()
       })
+      .finally(() => this.props.changeLoadingState())
   }
 
   componentWillUnmount = async () => {
@@ -162,7 +164,6 @@ class ApprovalDetail extends Component {
                             Open this document in Google Docs
             						</CLink>
                           :
-                          // <React.Fragment>
                           <CButton
                             variant="outline"
                             color="primary"
@@ -174,8 +175,6 @@ class ApprovalDetail extends Component {
                           >
                             Download document
               					</CButton>
-                          // {/* <DisplayFile document={document} /> */}
-                          // </React.Fragment>
                         }
                       </React.Fragment>
                     )
@@ -197,8 +196,6 @@ class ApprovalDetail extends Component {
                   this.props.workers.map((worker, idx) => {
                     return (
                       <CCard key={`card-${idx}`} className="mb-0">
-                        {/* <CCardHeader key={`ch-${idx}`} id={worker.id}>
-</CCardHeader> */}
                         <CCardBody key={`cbody-${idx}`}>
                           <h5 key={`h5-${idx}`} className="m-0 p-0">{worker.name}</h5>
                           <h6 key={`h6-${idx}`} className="m-0 p-0">{worker.position_in_company}</h6>
@@ -237,6 +234,7 @@ class ApprovalDetail extends Component {
                     name="description"
                     value={this.state.description ? this.state.description : ""}
                     onChange={this.handleChange}
+                    readOnly={this.props.submitting}
                   >
                   </CTextarea>
                 </CFormGroup>
@@ -250,7 +248,9 @@ class ApprovalDetail extends Component {
                     color="success"
                     variant="outline"
                     onClick={this.handleChange}
+                    disabled={this.props.submitting}
                   >
+                    <SubmitSpinner submitting={this.props.submitting} />
                     Approve
 										</CButton>
                   <CButton
@@ -261,7 +261,9 @@ class ApprovalDetail extends Component {
                     color="danger"
                     variant="outline"
                     onClick={this.handleChange}
+                    disabled={this.props.submitting}
                   >
+                    <SubmitSpinner submitting={this.props.submitting} />
                     Reject
 									</CButton>
                 </CFormGroup>
