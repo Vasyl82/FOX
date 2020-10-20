@@ -9,12 +9,19 @@ import {
   CLabel,
   CInput,
   CInputFile,
-  CButton
+  CButton,
+  CCard,
+  CCardHeader,
+  CCardBody,
+  CCardTitle,
+  CCardSubtitle
 } from "@coreui/react";
 import DjangoCSRFToken from 'django-react-csrftoken'
 import { FoxApiService } from '../../../services'
 
 const foxApi = new FoxApiService();
+
+// TO BE DELETED????
 
 class CompanyDocuments extends Component {
 
