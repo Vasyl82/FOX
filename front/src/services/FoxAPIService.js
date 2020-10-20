@@ -152,9 +152,7 @@ class FoxApiService {
             body: data // body data type must match "Content-Type" header
         });
         if (!res.ok) {
-            if (res.status >= 500) {
-                throw new Error(`Could not fetch ${url}. Received ${res.status}`);
-            }
+            throw new Error(`Could not fetch ${url}. Received ${res.status}`);
         }
 
         return res.json();
@@ -199,13 +197,13 @@ class FoxApiService {
         return cookieValue;
     }
 
-    getEntityList = (entity, params, signal = null) => {
+    getEntityList = async (entity, params, signal = null) => {
         let url = `${this.apiBase}${entity}/`;
         if (params) {
             url = new URL(url);
             Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
         }
-        const res = this.get(url, signal)
+        const res = await this.get(url, signal)
         return res
     }
 
