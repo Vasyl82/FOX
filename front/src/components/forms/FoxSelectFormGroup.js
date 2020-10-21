@@ -23,6 +23,8 @@ const FoxSelectFormGroup = props => {
         placeholder={makePlaceholder(props.inputInfo)}
         value={props.inputValue}
         onChange={props.handleChange}
+        readOnly={props.readOnly}
+        disabled={props.disabled}
         required
       >
         {props.options.map((option) => {

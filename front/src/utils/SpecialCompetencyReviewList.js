@@ -36,11 +36,10 @@ class SpecialCompetencyReviewList extends Component {
           competencies: data
         })
       })
-      .then(() => this.props.changeLoadingState())
       .catch(error => {
         console.log(error)
-        return this.changeLoadingState()
       })
+      .finally(this.props.changeLoadingState)
   }
 
   componentWillUnmount = async () => {

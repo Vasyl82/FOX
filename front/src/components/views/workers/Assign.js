@@ -18,7 +18,7 @@ import {
 } from "@coreui/react";
 import DjangoCSRFToken from 'django-react-csrftoken'
 import { FoxApiService } from '../../../services'
-import { WithLoading, WithLoadingSpinner } from '../../loadings'
+import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -49,21 +49,23 @@ class WorkerAssign extends Component {
 
   handleSubmit = async event => {
     event.preventDefault();
+    this.props.changeSubmitState()
     const { workers, responsible_person } = this.state;
     let requestData = { workers: workers };
     requestData = { responsible_person, ...requestData }
     await foxApi.patchEntityOf("projects", this.props.match.params.id, requestData)
       .then(() => {
         this.props.history.goBack()
-      },
-        (error) => {
-          console.error(error);
-          this.setState({
-            error: 'Workers assignment failed!' +
-              ' Please check your input and try again!' +
-              ' In case this problem repeats, please contact your administrator!'
-          })
+      })
+      .catch((error) => {
+        console.error(error);
+        this.setState({
+          error: 'Workers assignment failed!' +
+            ' Please check your input and try again!' +
+            ' In case this problem repeats, please contact your administrator!'
         })
+      })
+      .finally(this.props.submitting)
   }
 
   componentDidMount = async () => {
@@ -108,6 +110,8 @@ class WorkerAssign extends Component {
                       placeholder="Choose responsible person"
                       value={this.state.responsible_person}
                       onChange={this.handleChange}
+                      disabled={this.props.submitting}
+                      readOnly={this.props.submitting}
                       required
                     >
                       <option key="-1" value="-1" disabled>Choose responsible person</option>
@@ -130,7 +134,8 @@ class WorkerAssign extends Component {
                           <CFormGroup key={`fg-${worker.id}`} className="d-flex">
                             <CSwitch
                               key={`cb-${worker.id}`}
-
+                              disabled={this.props.submitting}
+                              readOnly={this.props.submitting}
                               className='mr-2'
                               id={worker.id}
                               name={worker.id}
@@ -155,7 +160,14 @@ class WorkerAssign extends Component {
               </WithLoadingSpinner>
             </CCardBody>
             <CCardFooter>
-              <CButton active={!this.props.loading} shape="pill" type="submit" color="dark" variant="outline" onClick={this.handleSubmit} block>Save changes</CButton>
+              <CButton
+                disabled={this.props.loading || this.props.submitting}
+                shape="pill"
+                type="submit"
+                color="dark"
+                variant="outline"
+                onClick={this.handleSubmit}
+                block><SubmitSpinner submitting={this.props.submitting} />Save changes</CButton>
             </CCardFooter>
           </CCard>
         </CCol >

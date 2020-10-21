@@ -20,7 +20,7 @@ import { getProfileFetch } from '../../../actions'
 import { FoxApiService } from '../../../services'
 import { FoxFormGroupWithUpload, FoxSelectFormGroup, FoxReactSelectFormGroup } from '../../forms'
 import { positions, tradeCompetencies } from './optionLists'
-import { WithLoading, WithLoadingSpinner } from '../../loadings'
+import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -78,6 +78,7 @@ class WorkerCreate extends Component {
       })
     }
     else {
+      this.props.changeSubmitState()
       this.requestData = this.state;
       delete this.requestData.error;
       this.formData = new FormData
@@ -87,15 +88,16 @@ class WorkerCreate extends Component {
       await foxApi.createEntityWithFile('workers', this.formData)
         .then((data) => {
           this.state.submitCallback(data.id)
-        },
-          (error) => {
-            console.error(error);
-            this.setState({
-              error: 'Worker creation failed!' +
-                ' Please check your input and try again!' +
-                ' In case this problem repeats, please contact your administrator!'
-            })
+        })
+        .catch((error) => {
+          console.error(error);
+          this.setState({
+            error: 'Worker creation failed!' +
+              ' Please check your input and try again!' +
+              ' In case this problem repeats, please contact your administrator!'
           })
+        })
+        .finally(this.props.changeSubmitState)
     }
   }
 
@@ -143,6 +145,8 @@ class WorkerCreate extends Component {
                       placeholder="Name"
                       value={this.state.name}
                       onChange={this.handleChange}
+                      disabled={this.props.submitting}
+                      readOnly={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -153,6 +157,8 @@ class WorkerCreate extends Component {
                       name="birthday"
                       value={this.state.birthday}
                       onChange={this.handleChange}
+                      disabled={this.props.submitting}
+                      readOnly={this.props.submitting}
                       required
                     />
                   </CFormGroup>
@@ -163,6 +169,8 @@ class WorkerCreate extends Component {
                       placeholder="Phone number"
                       value={this.state.phone_number}
                       onChange={this.handleChange}
+                      disabled={this.props.submitting}
+                      readOnly={this.props.submitting}
                     />
                   </CFormGroup>
                   <FoxReactSelectFormGroup
@@ -170,12 +178,16 @@ class WorkerCreate extends Component {
                     inputInfo="position_in_company"
                     inputValue={this.state.position_in_company}
                     handleChange={this.handleReactSelect}
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
                   />
                   <FoxSelectFormGroup
                     options={tradeCompetencies}
                     inputInfo="trade_competency"
                     inputValue={this.state.trade_competency}
                     handleChange={this.handleChange}
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
                   />
                   <FoxFormGroupWithUpload
                     inputValue={this.state.card_number_id}
@@ -183,6 +195,8 @@ class WorkerCreate extends Component {
                     handleFileUpload={this.handleFileUpload}
                     inputInfo="card_number_id"
                     uploadInfo="card_number_id_scan"
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
                   />
                   <FoxFormGroupWithUpload
                     inputValue={this.state.passport}
@@ -190,6 +204,8 @@ class WorkerCreate extends Component {
                     handleFileUpload={this.handleFileUpload}
                     inputInfo="passport"
                     uploadInfo="passport_scan"
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
                   />
                   <FoxFormGroupWithUpload
                     inputValue={this.state.license_number}
@@ -197,6 +213,8 @@ class WorkerCreate extends Component {
                     handleFileUpload={this.handleFileUpload}
                     inputInfo="license_number"
                     uploadInfo="license_scan"
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
                   />
                   <FoxFormGroupWithUpload
                     inputValue={this.state.safety_green_card}
@@ -204,37 +222,45 @@ class WorkerCreate extends Component {
                     handleFileUpload={this.handleFileUpload}
                     inputInfo="safety_green_card"
                     uploadInfo="safety_green_card_scan"
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
                   />
                   <CFormGroup>
                     <CLabel htmlFor="safety_quiz_answer">Safety quiz answer</CLabel>
                     <CInputFile id="safety_quiz_answer" name="safety_quiz_answer" onChange={this.handleFileUpload}
+                      disabled={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
                     <CLabel htmlFor="personal_declaration">Personal declaration</CLabel>
                     <CInputFile id="personal_declaration" name="personal_declaration" onChange={this.handleFileUpload}
+                      disabled={this.props.submitting}
+
                       required />
                   </CFormGroup>
                   <CFormGroup>
                     <CRow>
                       <CCol md="6">
                         <CButton
+                          disabled={this.props.submitting}
                           onClick={this.handleSimpleSubmit}
                           shape="pill"
                           type="submit"
                           color="dark"
                           variant="outline"
-                          block>Create Worker</CButton>
+                          block>
+                          <SubmitSpinner submitting={this.props.submitting} />Create Worker</CButton>
                       </CCol>
                       <CCol md="6">
                         <CButton
+                          disabled={this.props.submitting}
                           onClick={this.handleSubmitWithCompetencies}
                           shape="pill"
-
                           type="submit"
                           color="primary"
                           variant="outline"
-                          block>Create Worker and add special competencies</CButton>
+                          block>
+                          <SubmitSpinner submitting={this.props.submitting} />Create Worker and add special competencies</CButton>
                       </CCol>
                     </CRow>
                   </CFormGroup>
