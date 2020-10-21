@@ -32,6 +32,7 @@ class WorkerCreate extends Component {
     birthday: "",
     phone_number: "",
     card_number_id: "",
+    card_number_id_scan: "",
     license_number: "",
     license_scan: "",
     passport: "",
@@ -176,21 +177,12 @@ class WorkerCreate extends Component {
                     inputValue={this.state.trade_competency}
                     handleChange={this.handleChange}
                   />
-                  <CFormGroup>
-                    <CInput
-                      id="card_number_id"
-                      name='card_number_id'
-                      placeholder="Card number ID"
-                      value={this.state.card_number_id}
-                      onChange={this.handleChange}
-                      required />
-                  </CFormGroup>
                   <FoxFormGroupWithUpload
-                    inputValue={this.state.license_number}
+                    inputValue={this.state.card_number_id}
                     handleChange={this.handleChange}
                     handleFileUpload={this.handleFileUpload}
-                    inputInfo="license_number"
-                    uploadInfo="license_scan"
+                    inputInfo="card_number_id"
+                    uploadInfo="card_number_id_scan"
                   />
                   <FoxFormGroupWithUpload
                     inputValue={this.state.passport}
@@ -198,6 +190,13 @@ class WorkerCreate extends Component {
                     handleFileUpload={this.handleFileUpload}
                     inputInfo="passport"
                     uploadInfo="passport_scan"
+                  />
+                  <FoxFormGroupWithUpload
+                    inputValue={this.state.license_number}
+                    handleChange={this.handleChange}
+                    handleFileUpload={this.handleFileUpload}
+                    inputInfo="license_number"
+                    uploadInfo="license_scan"
                   />
                   <FoxFormGroupWithUpload
                     inputValue={this.state.safety_green_card}
