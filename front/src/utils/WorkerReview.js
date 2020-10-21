@@ -114,9 +114,6 @@ class WorkerReview extends Component {
           <SpecialCompetencyReviewList workerId={this.props.workerId} />
         </CListGroupItem>
         <CListGroupItem>
-          <p><strong>Registration number: </strong>{this.state.registration_number}</p>
-        </CListGroupItem>
-        <CListGroupItem>
           <p><strong>Position in Company: </strong>{this.state.position_in_company}</p>
         </CListGroupItem>
         <CListGroupItem>
