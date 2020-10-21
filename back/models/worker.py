@@ -43,6 +43,7 @@ class Worker(models.Model):
     )
     birthday = models.DateField()
     card_number_id = models.CharField(max_length=64)
+    card_number_id_scan = models.FileField(upload_to=project_docs_path, null=True, blank=True)
     license_number = models.CharField(max_length=64)
     license_scan = models.FileField(upload_to=project_docs_path, null=True, blank=True)
     passport = models.CharField(max_length=64, null=True)
