@@ -26,7 +26,7 @@ class ProjectList extends Component {
   componentDidMount = async () => {
     this.props.setProjectId(this.props.match.params.id)
     await this.props.getProfileFetch()
-      .then(() => this.props.getProjectList(this.props.role, this.abortController.signal))
+      .then(() => this.props.getProjectList({ role: this.props.role, signal: this.abortController.signal }))
       .catch(error => console.log(error))
       .finally(() => this.props.changeLoadingState())
   }
@@ -47,7 +47,10 @@ class ProjectList extends Component {
           fields={this.props.projectTable.fields}
           getBadge={getBadge}
           tableData={this.props.projectTable.tableData}
-          updateList={this.props.getProjectList}
+          updateList={async ({ ...kwargs }) => await this.props.getProjectList({
+            signal: this.abortController.signal,
+            ...kwargs
+          })}
           loading={this.props.loading}
           showNewButton={true}
         /> :
@@ -73,7 +76,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getProjectList: (role, signal) => dispatch(getProjectList(role, signal)),
+  getProjectList: async ({ ...kwargs }) => await dispatch(getProjectList({ ...kwargs })),
   setProjectId: () => dispatch(setProjectId()),
   clearList: () => dispatch(clearList())
 })

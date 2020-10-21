@@ -289,9 +289,9 @@ class FoxApiService {
         return `${this.apiBase}documents/downloads/${id}/`;
     }
 
-    deleteEntityOf = (entity, id, data = {}) => {
+    deleteEntityOf = async (entity, id, data = {}) => {
         let url = `${this.apiBase}${entity}/${id}/`;
-        const res = this.delete(url = url, data = data);
+        const res = await this.delete(url = url, data = data);
         return res
     }
 
