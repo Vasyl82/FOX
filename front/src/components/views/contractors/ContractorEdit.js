@@ -16,7 +16,7 @@ import {
 } from "@coreui/react";
 import { FoxApiService } from '../../../services'
 import { getProfileFetch } from '../../../actions'
-import { WithLoading, WithLoadingSpinner, WitLoadingSpinne } from '../../loadings'
+import { SubmitSpinner, WithLoading, WithLoadingSpinner, WitLoadingSpinne } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -41,12 +41,14 @@ class ContractorEdit extends Component {
 
   handleSubmit = async event => {
     event.preventDefault();
+    this.props.changeSubmitState()
     this.formData = this.state;
     delete this.formData.error;
-    await foxApi.updateEntityOf('contractors', this.props.match.params.id, this.formData).then(() => {
-      this.props.history.goBack()
-    },
-      (error) => {
+    await foxApi.updateEntityOf('contractors', this.props.match.params.id, this.formData)
+      .then(() => {
+        this.props.history.goBack()
+      })
+      .catch((error) => {
         console.error(error);
         this.setState({
           error: 'Contractor update failed!' +
@@ -54,13 +56,14 @@ class ContractorEdit extends Component {
             ' In case this problem repeats, please contact your administrator!'
         })
       })
+      .finally(() => this.props.changeSubmitState())
   }
 
   componentDidMount = async () => {
     await this.props.getProfileFetch()
       .then(() => foxApi.getDetailsOf('contractors', this.props.match.params.id))
       .then((data) => this.setState({ ...data }))
-      .then(() => this.props.changeLoadingState())
+      .finally(() => this.props.changeLoadingState())
   }
 
   render = () => {
@@ -87,6 +90,8 @@ class ContractorEdit extends Component {
                       placeholder="Username"
                       value={this.state.username}
                       onChange={this.handleChange}
+                      disabled={this.props.submitting}
+                      readOnly={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -98,6 +103,8 @@ class ContractorEdit extends Component {
                       placeholder="Email"
                       value={this.state.email}
                       onChange={this.handleChange}
+                      disabled={this.props.submitting}
+                      readOnly={this.props.submitting}
                       required
                     />
                   </CFormGroup>
@@ -109,6 +116,8 @@ class ContractorEdit extends Component {
                       placeholder="Company name"
                       value={this.state.related_company}
                       onChange={this.handleChange}
+                      disabled={this.props.submitting}
+                      readOnly={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -120,6 +129,8 @@ class ContractorEdit extends Component {
                       placeholder="Contact Person Name"
                       value={this.state.name}
                       onChange={this.handleChange}
+                      disabled={this.props.submitting}
+                      readOnly={this.props.submitting}
                       required
                     />
                   </CFormGroup>
@@ -131,15 +142,18 @@ class ContractorEdit extends Component {
                       placeholder="Contact phone number"
                       value={this.state.company_phone}
                       onChange={this.handleChange}
+                      disabled={this.props.submitting}
+                      readOnly={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
                     <CLink
                       to={`/contractors/${this.props.match.params.id}/workers_review`}
+                      disabled={this.props.submitting}
                     >Browse workers</CLink>
                   </CFormGroup>
                   <CFormGroup>
-                    <CButton shape="pill" type="submit" color="dark" variant="outline" block>Save changes</CButton>
+                    <CButton shape="pill" type="submit" color="dark" variant="outline" disabled={this.props.submitting} block><SubmitSpinner submitting={this.props.submitting} />Save changes</CButton>
                   </CFormGroup>
                   {this.state.error
                     ? <p>{this.state.error}</p>

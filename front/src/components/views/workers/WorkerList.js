@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { FoxEntityListTable, FoxTableWithDeleteOption } from '../../tables'
 import { getProfileFetch, getWorkerList, setProjectId, clearList } from '../../../actions'
 import { connect } from 'react-redux'
+import { WithLoading } from '../../loadings'
 
 
 const getBadge = status => {
@@ -23,8 +24,9 @@ class WorkerList extends Component {
   componentDidMount = async () => {
     this.props.setProjectId(this.props.match.params.id)
     await this.props.getProfileFetch()
-      .then(() => this.props.getWorkerList(this.props.role, this.abortController.signal))
-      .then(() => this.setState({ loading: false }))
+      .then(() => this.props.getWorkerList({ role: this.props.role, signal: this.abortController.signal }))
+      .catch(error => console.log(error))
+      .finally(() => this.props.changeLoadingState())
   }
 
   abortController = new window.AbortController();
@@ -44,7 +46,7 @@ class WorkerList extends Component {
           getBadge={getBadge}
           tableData={this.props.workerTable.tableData}
           updateList={this.props.getWorkerList}
-          loading={this.state.loading}
+          loading={this.props.loading}
           showNewButton={true}
         />
         :
@@ -55,7 +57,7 @@ class WorkerList extends Component {
           fields={this.props.workerTable.fields}
           getBadge={getBadge}
           tableData={this.props.workerTable.tableData}
-          loading={this.state.loading}
+          loading={this.props.loading}
         />
     )
   }
@@ -71,9 +73,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getWorkerList: (role) => dispatch(getWorkerList(role)),
+  getWorkerList: ({ ...kwargs }) => dispatch(getWorkerList({ ...kwargs })),
   setProjectId: () => dispatch(setProjectId()),
   clearList: () => dispatch(clearList())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(WorkerList)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(WorkerList))

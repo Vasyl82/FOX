@@ -18,7 +18,7 @@ import DjangoCSRFToken from 'django-react-csrftoken'
 import { FoxApiService } from '../../../services'
 import { FoxFormGroupInputDownloadUpload, FoxSelectFormGroup, FoxReactSelectFormGroup, FoxFormGroupDownloadUpload } from '../../forms'
 import { positions, tradeCompetencies } from './optionLists'
-import { WithLoading, WithLoadingSpinner } from '../../loadings'
+import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -30,6 +30,7 @@ class WorkerDetail extends Component {
     contractor: "",
     birthday: "",
     card_number_id: "",
+    card_number_id_scan: "",
     license_number: "",
     license_scan: "",
     passport: "",
@@ -62,6 +63,7 @@ class WorkerDetail extends Component {
 
   handleSubmit = async event => {
     event.preventDefault();
+    this.props.changeSubmitState()
     this.requestData = this.state;
     const { upload_files } = this.requestData;
     delete this.requestData.upload_files;
@@ -70,6 +72,7 @@ class WorkerDetail extends Component {
     delete this.requestData.doc_type;
     delete this.requestData.license_scan;
     delete this.requestData.passport_scan;
+    delete this.requestData.card_number_id_scan
     delete this.requestData.safety_green_card_scan;
     delete this.requestData.safety_quiz_answer;
     delete this.requestData.personal_declaration;
@@ -83,15 +86,16 @@ class WorkerDetail extends Component {
     await foxApi.patchEntityWithFiles('workers', this.props.match.params.id, this.formData)
       .then(() => {
         this.props.history.goBack()
-      },
-        (error) => {
-          console.error(error);
-          this.setState({
-            error: 'Worker update failed!' +
-              ' Please check your input and try again!' +
-              ' In case this problem repeats, please contact your administrator!'
-          })
+      })
+      .catch((error) => {
+        console.error(error);
+        this.setState({
+          error: 'Worker update failed!' +
+            ' Please check your input and try again!' +
+            ' In case this problem repeats, please contact your administrator!'
         })
+      })
+      .finally(this.props.changeSubmitState)
   }
 
   confirmDelete = async () => {
@@ -147,11 +151,10 @@ class WorkerDetail extends Component {
     await this.props.getProfileFetch()
       .then(() => foxApi.getDetailsOf('workers', this.props.match.params.id))
       .then((data) => this.setState({ ...data }))
-      .then(() => this.props.changeLoadingState())
       .catch(error => {
         console.log(error);
-        return this.props.changeLoadingState()
       })
+      .finally(this.props.changeLoadingState)
   }
 
   render = () => {
@@ -179,6 +182,8 @@ class WorkerDetail extends Component {
                       placeholder="Enter worker name"
                       value={this.state.name}
                       onChange={this.handleChange}
+                      disabled={this.props.submitting}
+                      readOnly={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -189,6 +194,8 @@ class WorkerDetail extends Component {
                       name="birthday"
                       value={this.state.birthday}
                       onChange={this.handleChange}
+                      disabled={this.props.submitting}
+                      readOnly={this.props.submitting}
                       required
                     />
                   </CFormGroup>
@@ -200,6 +207,8 @@ class WorkerDetail extends Component {
                       placeholder="Enter phone number"
                       value={this.state.phone_number}
                       onChange={this.handleChange}
+                      disabled={this.props.submitting}
+                      readOnly={this.props.submitting}
                       required />
                   </CFormGroup>
                   <FoxReactSelectFormGroup
@@ -207,23 +216,30 @@ class WorkerDetail extends Component {
                     inputInfo="position_in_company"
                     inputValue={this.state.position_in_company}
                     handleChange={this.handleReactSelect}
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
                   />
                   <FoxSelectFormGroup
                     options={tradeCompetencies}
                     inputInfo="trade_competency"
                     inputValue={this.state.trade_competency}
                     handleChange={this.handleChange}
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
                   />
-                  <CFormGroup>
-                    <CLabel htmlFor="card_number_id">Card number ID</CLabel>
-                    <CInput
-                      id="card_number_id"
-                      name='card_number_id'
-                      placeholder="Enter ID"
-                      value={this.state.card_number_id}
-                      onChange={this.handleChange}
-                      required />
-                  </CFormGroup>
+                  <FoxFormGroupInputDownloadUpload
+                    inputValue={this.state.card_number_id}
+                    downloadValue={this.state.card_number_id_scan}
+                    handleChange={this.handleChange}
+                    handleFileUpload={this.handleFileUpload}
+                    inputInfo="card_number_id"
+                    uploadInfo="card_number_id_scan"
+                    downloadFile={this.downloadFile}
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
+                  />
+
+
                   <FoxFormGroupInputDownloadUpload
                     inputValue={this.state.license_number}
                     downloadValue={this.state.license_scan}
@@ -232,6 +248,8 @@ class WorkerDetail extends Component {
                     inputInfo="license_number"
                     uploadInfo="license_scan"
                     downloadFile={this.downloadFile}
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
                   />
                   <FoxFormGroupInputDownloadUpload
                     inputValue={this.state.passport}
@@ -241,6 +259,8 @@ class WorkerDetail extends Component {
                     inputInfo="passport"
                     uploadInfo="passport_scan"
                     downloadFile={this.downloadFile}
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
                   />
                   <FoxFormGroupInputDownloadUpload
                     inputValue={this.state.safety_green_card}
@@ -250,6 +270,8 @@ class WorkerDetail extends Component {
                     inputInfo="safety_green_card"
                     uploadInfo="safety_green_card_scan"
                     downloadFile={this.downloadFile}
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
                   />
                   <FoxFormGroupDownloadUpload
                     inputValue={this.state.safety_quiz_answer}
@@ -259,6 +281,8 @@ class WorkerDetail extends Component {
                     inputInfo="safety_quiz_answer"
                     uploadInfo="safety_quiz_answer_scan"
                     downloadFile={this.downloadFile}
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
                   />
                   <FoxFormGroupDownloadUpload
                     inputValue={this.state.personal_declaration}
@@ -268,14 +292,34 @@ class WorkerDetail extends Component {
                     inputInfo="personal_declaration"
                     uploadInfo="personal_declaration_scan"
                     downloadFile={this.downloadFile}
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
                   />
                   <CFormGroup>
                     <CLink className="btn btn-outline-primary" to={`/workers/${this.props.match.params.id}/competencies`}>Special Competencies</CLink>
                   </CFormGroup>
                   <CFormGroup>
-                    <CButton active={!this.props.loading} shape="pill" type="submit" color="dark" variant="outline" block>Save changes</CButton>
+                    <CButton
+                      disabled={this.props.loading || this.props.submitting}
+                      shape="pill"
+                      type="submit"
+                      color="dark"
+                      variant="outline"
+                      block
+                    >
+                      <SubmitSpinner submitting={this.props.submitting} />Save changes
+                    </CButton>
                   </CFormGroup>
-                  <CButton active={!this.props.loading} shape="pill" color="danger" variant="outline" onClick={this.showDeleteModal} block>Delete Worker</CButton>
+                  <CButton
+                    disabled={this.props.loading || this.props.submitting}
+                    shape="pill"
+                    color="danger"
+                    variant="outline"
+                    onClick={this.showDeleteModal}
+                    block
+                  >
+                    <SubmitSpinner submitting={this.props.submitting} />Delete Worker
+                  </CButton>
                   {this.state.error
                     ? <p>{this.state.error}</p>
                     : null

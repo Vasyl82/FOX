@@ -26,16 +26,10 @@ class PredefinedDocumentSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def create(self, validated_data):
-        project = validated_data.pop('project')
-        print("PROJECT", project)
-        template = validated_data.pop('template')
-        print("TEMPLATE", template)
+        project = validated_data.pop("project")
+        template = validated_data.pop("template")
         file_to_copy = template.file
-        print("FILE", file_to_copy)
         document = Document.objects.create(
-            project=project,
-            template=template,
-            file=file_to_copy, 
-            **validated_data
-            )
+            project=project, template=template, file=file_to_copy, **validated_data
+        )
         return document

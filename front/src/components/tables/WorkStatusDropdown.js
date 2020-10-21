@@ -64,7 +64,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  getProjectList: () => dispatch(getProjectList()),
+  getProjectList: ({ ...kwargs }) => dispatch(getProjectList({ ...kwargs })),
   showExtendModal: ({ modalType, ...rest }) => dispatch(updateModal({ modalType, ...rest }))
 })
 

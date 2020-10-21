@@ -5,6 +5,7 @@ from back.models import Approval
 class ApprovalListSerializer(serializers.ModelSerializer):
 
     project_name = serializers.SerializerMethodField()
+    created = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
 
     class Meta:
         model = Approval

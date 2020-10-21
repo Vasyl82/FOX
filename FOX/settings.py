@@ -18,6 +18,20 @@ import environ
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 env = environ.Env(
+    EMAIL_HOST=(str, "Dummy"),
+    EMAIL_PORT=(str, "Dummy"),
+    EMAIL_HOST_USER=(str, "Dummy"),
+    EMAIL_EMAIL_FROM=(str, "Dummy"),
+    EMAIL_HOST_PASSWORD=(str, "Dummy"),
+    EMAIL_BASE_LINK=(str, "Dummy"),
+    DB_MAIN_NAME=(str, "Dummy"),
+    DB_MAIN_USER=(str, "Dummy"),
+    DB_MAIN_HOST=(str, "Dummy"),
+    DB_MAIN_PORT=(str, "Dummy"),
+    DB_MAIN_PASSWORD=(str, "Dummy"),
+    PERMIT_VALIDATE_KEY=(str, "12345"),
+    DISPLAY_FILE_KEY=(str, "12345"),
+    SECRET_KEY=(str, "12345"),
     DEBUG=(bool, True),
     MEDIA_ROOT=(str, os.path.join(BASE_DIR, "local_files")),
     HOST_NAME=(str, "localhost"),

@@ -14,14 +14,14 @@ import {
   CCardHeader,
   CCardBody,
   CCardTitle,
-  CCardSubtitle
+  CCardSubtitle,
 } from "@coreui/react";
 import DjangoCSRFToken from 'django-react-csrftoken'
 import { FoxApiService } from '../../../services'
 import { FoxSwitchGroup, } from '../../../utils'
 import { FoxReactSelectFormGroup } from '../../forms'
 import { permitOptions } from './optionsLists'
-import { WithLoadingSpinner, WithLoading } from '../../loadings'
+import { WithLoadingSpinner, WithLoading, SubmitSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -85,9 +85,12 @@ class ProjectCreate extends Component {
   }
 
   handleDocumentCreationRedirect = async () => {
+    this.props.changeSubmitState()
     await this.handleSubmit()
       .then(data => {
-        this.props.history.push(`/projects/${data.id}/documents/new`)
+        data ?
+          this.props.history.push(`/projects/${data.id}/documents/new`)
+          : null
       })
       .catch((error) => {
         console.error(error);
@@ -97,6 +100,7 @@ class ProjectCreate extends Component {
             ' In case this problem repeats, please contact your administrator!'
         })
       })
+      .finally(() => this.props.changeSubmitState())
   }
 
   handleSubmit = async () => {
@@ -104,6 +108,7 @@ class ProjectCreate extends Component {
       this.setState({
         error: 'Contractor was not selected! Please, choose contractor form the list'
       })
+
     } else {
       this.formData = this.state;
       delete this.formData.error;
@@ -149,6 +154,8 @@ class ProjectCreate extends Component {
                       placeholder="Project Name"
                       value={this.state.name}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -158,6 +165,8 @@ class ProjectCreate extends Component {
                       placeholder="Project Works Location"
                       value={this.state.location}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -167,6 +176,8 @@ class ProjectCreate extends Component {
                       placeholder="Short Project Description"
                       value={this.state.description}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
                       required
                     />
                   </CFormGroup>
@@ -181,6 +192,8 @@ class ProjectCreate extends Component {
                           name="start_date"
                           value={this.state.start_date}
                           onChange={this.handleChange}
+                          readOnly={this.props.submitting}
+                          disabled={this.props.submitting}
                           required
                         />
                       </CCol>
@@ -193,6 +206,8 @@ class ProjectCreate extends Component {
                           placeholder="date"
                           value={this.state.end_date}
                           onChange={this.handleChange}
+                          readOnly={this.props.submitting}
+                          disabled={this.props.submitting}
                           required
                         />
 
@@ -204,6 +219,8 @@ class ProjectCreate extends Component {
                     inputInfo="contractor"
                     inputValue={this.state.contractor}
                     handleChange={this.handleReactSelect}
+                    readOnly={this.props.submitting}
+                    disabled={this.props.submitting}
                   />
                   <FoxSwitchGroup
                     groupLabel='Choose the related hazardous work
@@ -211,8 +228,11 @@ class ProjectCreate extends Component {
                     options={permitOptions}
                     handleCheck={this.handleCheck}
                     parentState={this.state}
+                    readOnly={this.props.submitting}
+                    disabled={this.props.submitting}
+
                   />
-                  <CButton shape="pill" onClick={this.handleDocumentCreationRedirect} color="dark" variant="outline" block>Create Project and go to document creation</CButton>
+                  <CButton disabled={this.props.submitting} shape="pill" onClick={this.handleDocumentCreationRedirect} color="dark" variant="outline" block><SubmitSpinner submitting={this.props.submitting} />Create Project and go to document creation</CButton>
                   {this.state.error
                     ? <p>{this.state.error}</p>
                     : null
@@ -223,7 +243,6 @@ class ProjectCreate extends Component {
           </CCard>
         </CCol>
       </CRow >
-
     )
   }
 }

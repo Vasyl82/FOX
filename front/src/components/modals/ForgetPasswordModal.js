@@ -14,6 +14,7 @@ import {
 } from '@coreui/react'
 import { FoxApiService } from '../../services'
 import { updateModal } from '../../actions'
+import { WithLoading, SubmitSpinner } from '../loadings'
 
 
 const foxApi = new FoxApiService()
@@ -33,6 +34,7 @@ class ForgetPasswordModal extends Component {
   }
 
   handleSubmit = async () => {
+    this.props.changeSubmitState()
     const requestData = this.state;
     delete requestData.success;
     delete requestData.error;
@@ -51,6 +53,7 @@ class ForgetPasswordModal extends Component {
             ' In case this problem repeats, please contact your administrator!'
         })
       })
+      .finally(this.props.changeSubmitState)
   }
 
   render = () => {
@@ -71,7 +74,7 @@ class ForgetPasswordModal extends Component {
             <CForm>
               <CFormGroup>
                 <CLabel htmlFor="extend_date">Please, enter your account`s email address. An letter will be send on this address to reset your password.</CLabel>
-                <CInput type="email" name="email" value={email} onChange={this.handleChange} placeholder="Email" required />
+                <CInput disabled={this.props.submitting} readOnly={this.props.submitting} type="email" name="email" value={email} onChange={this.handleChange} placeholder="Email" required />
               </CFormGroup>
             </CForm>
           }
@@ -81,8 +84,17 @@ class ForgetPasswordModal extends Component {
           }
         </CModalBody>
         <CModalFooter>
-          {success ? null : <CButton shape="pill" color="primary" onClick={this.handleSubmit}>Confirm</CButton>}
-          {' '}<CButton shape="pill" color="dark" onClick={this.props.hideModal}>{success ? "Close" : "Cancel"}</CButton>
+          {success ?
+            null :
+            <CButton disabled={this.props.submitting} shape="pill" color="primary" onClick={this.handleSubmit}>
+              <SubmitSpinner submitting={this.props.submitting} />
+              Confirm
+            </CButton>}
+          {' '}
+          <CButton disabled={this.props.submitting} shape="pill" color="dark" onClick={this.props.hideModal}>
+            <SubmitSpinner submitting={this.props.submitting} />
+            {success ? "Close" : "Cancel"}
+          </CButton>
         </CModalFooter>
       </CModal >
     )
@@ -98,4 +110,4 @@ const mapDispatchToProps = dispatch => ({
 })
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(ForgetPasswordModal)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ForgetPasswordModal))

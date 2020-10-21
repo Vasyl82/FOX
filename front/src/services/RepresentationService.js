@@ -13,9 +13,8 @@ class RepresentationService {
             const entityTableInfo = this._generateTableInfo(data);
             this._renderList(additional, dispatch, entityTableInfo);
           }
-        }).catch(function (error) {
-          console.error(error);
         })
+      // .then(() => Promise.resolve("Success: List received!"))
     }
   }
 
@@ -33,9 +32,9 @@ class RepresentationService {
             });
             this._renderList(additional, dispatch, entityTableInfo);
           }
-        }).catch(function (error) {
-          console.error(error);
         })
+      // .then(() => Promise.resolve("Success: List received!"))
+
     }
   }
 
@@ -48,9 +47,9 @@ class RepresentationService {
             entityTableInfo.fields.splice(entityTableInfo.fields.indexOf('status'), 1);
             this._renderList(additional, dispatch, entityTableInfo);
           }
-        }).catch(function (error) {
-          console.error(error);
         })
+      // .then(() => Promise.resolve("Success: List received!"))
+
     }
   }
 
@@ -69,9 +68,9 @@ class RepresentationService {
             });
             this._renderList(additional, dispatch, entityTableInfo);
           }
-        }).catch(function (error) {
-          console.error(error);
         })
+      // .then(() => Promise.resolve("Success: List received!"))
+
     }
   }
 
@@ -104,10 +103,13 @@ class RepresentationService {
   _renderList = (additional, dispatch, entityTableInfo) => {
     if (additional === true) {
       dispatch(populateAdditionalEntityTable(entityTableInfo))
+      console.log("after list dispatch");
       return Promise.resolve("Success: List received!")
     }
     else {
-      dispatch(populateEntityTable(entityTableInfo));
+      dispatch(populateEntityTable(entityTableInfo))
+      console.log("after list dispatch");
+
       return Promise.resolve("Success: List received!")
     }
   }

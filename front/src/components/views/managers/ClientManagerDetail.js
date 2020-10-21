@@ -40,7 +40,8 @@ class ClientManagerDetail extends Component {
         data.position = positions[data.position]
         this.setState({ ...data })
       })
-      .then(() => this.props.changeLoadingState())
+      .catch(error => console.log(error))
+      .finally(() => this.props.changeLoadingState())
   }
   render = () => {
     const details = this.state;

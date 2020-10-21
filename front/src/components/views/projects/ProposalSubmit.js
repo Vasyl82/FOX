@@ -14,7 +14,7 @@ import {
 } from "@coreui/react";
 import { getProfileFetch } from '../../../actions'
 import { ProjectWorkflowService, FoxApiService } from '../../../services'
-import { WithLoading, WithLoadingSpinner } from '../../loadings'
+import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const workflow = new ProjectWorkflowService();
 const foxApi = new FoxApiService();
@@ -27,6 +27,7 @@ class ProposalSubmit extends Component {
   }
 
   handleSubmit = async () => {
+    this.props.changeSubmitState()
     await workflow.submitProposal(this.props.match.params.id)
       .then(
         this.props.history.goBack()
@@ -39,6 +40,7 @@ class ProposalSubmit extends Component {
             ' In case this problem repeats, please contact your administrator!'
         })
       })
+      .finally(() => this.props.changeSubmitState())
   }
 
   componentDidMount = async () => {
@@ -154,7 +156,7 @@ class ProposalSubmit extends Component {
                     variant="outline"
                     block
                     onClick={this.handleSubmit}
-                  >Submit Proposal</CButton>
+                  ><SubmitSpinner submitting={this.props.submitting} /> Submit Proposal</CButton>
                   {this.state.error
                     ? <p>{this.state.error}</p>
                     : null

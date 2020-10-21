@@ -41,8 +41,8 @@ class CompetencyReview extends Component {
     await foxApi.getDetailsOf('worker_special_competencies', this.props.competencyId)
       .then((data) => this.setState(
         { ...data }))
-      .then(() => this.props.changeLoadingState())
       .catch(error => console.log(error))
+      .finally(() => this.props.changeLoadingState())
   }
 
   render = () => {

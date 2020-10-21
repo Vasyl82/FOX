@@ -1,10 +1,12 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
-from back.models import Project, Activity, Document, Template, Company
+from back.models import Project, Activity
 from back.serializers import ProjectSerializer, ProjectListSerializer
-from back.services import ProjectEmailNotificationService as mail_service, PredefinedDocHandlingService
-
+from back.services import (
+    ProjectEmailNotificationService as mail_service,
+    PredefinedDocHandlingService,
+)
 
 
 class ProjectList(generics.ListAPIView):

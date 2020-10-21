@@ -21,6 +21,7 @@ import {
 import DjangoCSRFToken from 'django-react-csrftoken';
 import { FoxApiService } from '../../../services';
 import { getProfileFetch, } from '../../../actions';
+import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings';
 
 
 const foxApi = new FoxApiService();
@@ -54,7 +55,7 @@ class DocumentCreate extends Component {
 
   handleSubmit = async event => {
     event.preventDefault();
-    console.log(this.state.upload_option.toString() === "-1");
+    this.props.changeSubmitState()
     if (this.state.upload_option === -1) {
       this.setState({
         error: "Please, choose the file attachment option and attach the file itself before submitting the document"
@@ -71,21 +72,25 @@ class DocumentCreate extends Component {
       await foxApi.createEntityWithFile('documents', this.formData)
         .then(() => {
           this.props.history.push(`/projects/${this.props.match.params.id}/documents`)
-        },
-          (error) => {
-            console.error(error);
-            this.setState({
-              error: 'Document creation failed!' +
-                ' Please check your input and try again!' +
-                ' In case this problem repeats, please contact your administrator!'
-            })
+        })
+        .catch((error) => {
+          console.error(error);
+          this.setState({
+            error: 'Document creation failed!' +
+              ' Please check your input and try again!' +
+              ' In case this problem repeats, please contact your administrator!'
           })
+        })
+        .finally(() => this.props.changeSubmitState())
     }
   }
 
   componentDidMount = async () => {
     await this.props.getProfileFetch()
+      .catch(error => console.log(error))
+      .finally(() => this.props.changeLoadingState())
   }
+
 
   render = () => {
     const { upload_option, error, name, url_to_doc, } = this.state
@@ -102,71 +107,90 @@ class DocumentCreate extends Component {
               </CCardSubtitle>
             </CCardHeader>
             <CCardBody>
-              <CForm
-                onSubmit={this.handleSubmit}
-              >
-                <DjangoCSRFToken />
-                <CFormGroup>
-                  <CInput
-                    id="name"
-                    name='name'
-                    placeholder="Document name"
-                    value={name}
-                    onChange={this.handleChange}
-                    required />
-                </CFormGroup>
-                <CFormGroup>
-                  <CSelect
-                    id="upload_option"
-                    name="upload_option"
-                    value={upload_option}
-                    onChange={this.handleChange}
-                    required
-                  >
-                    <option value={-1} >Choose File upload option</option>
-                    {uploadOptions.map((option) => {
-                      return (
-                        <option key={option.id} value={option.id}>{option.name}</option>
-                      )
-                    })
-                    }
-                  </CSelect>
-                </CFormGroup>
-
-                {upload_option == 1 ?
-                  <CFormGroup >
-                    <CInput
-                      type="url"
-                      id="url_to_doc"
-                      name="url_to_doc"
-                      placeholder="URL to document"
-                      pattern="https://.*"
-                      value={url_to_doc}
-                      onChange={this.handleChange}
-                      required />
-                  </CFormGroup>
-                  : null
-                }
-                {upload_option == 2 ?
+              <WithLoadingSpinner loading={this.props.loading}>
+                <CForm
+                  onSubmit={this.handleSubmit}
+                >
+                  <DjangoCSRFToken />
                   <CFormGroup>
-                    <CLabel htmlFor="file">File</CLabel>
-                    <CInputFile id="file" name="file" onChange={this.handleFileUpload}
+                    <CInput
+                      id="name"
+                      name='name'
+                      placeholder="Document name"
+                      value={name}
+                      onChange={this.handleChange}
+                      disabled={this.props.submitting}
+                      readOnly={this.props.submitting}
                       required />
-                    <CFormText>Recommended formats: .doc, .docx, .xls, .xlsx, .pdf</CFormText>
                   </CFormGroup>
-                  : null}
-                {error
-                  ? <p className={"fox-form-invalid-feedback"}>{error}</p>
-                  : null
-                }
-              </CForm>
+                  <CFormGroup>
+                    <CSelect
+                      id="upload_option"
+                      name="upload_option"
+                      value={upload_option}
+                      onChange={this.handleChange}
+                      disabled={this.props.submitting}
+                      readOnly={this.props.submitting}
+                      required
+                    >
+                      <option value={-1} >Choose File upload option</option>
+                      {uploadOptions.map((option) => {
+                        return (
+                          <option key={option.id} value={option.id}>{option.name}</option>
+                        )
+                      })
+                      }
+                    </CSelect>
+                  </CFormGroup>
+
+                  {upload_option == 1 ?
+                    <CFormGroup >
+                      <CInput
+                        type="url"
+                        id="url_to_doc"
+                        name="url_to_doc"
+                        placeholder="URL to document"
+                        pattern="https://.*"
+                        value={url_to_doc}
+                        onChange={this.handleChange}
+                        disabled={this.props.submitting}
+                        readOnly={this.props.submitting}
+                        required />
+                    </CFormGroup>
+                    : null
+                  }
+                  {upload_option == 2 ?
+                    <CFormGroup>
+                      <CLabel htmlFor="file">File</CLabel>
+                      <CInputFile id="file"
+                        name="file"
+                        onChange={this.handleFileUpload}
+                        disabled={this.props.submitting}
+                        readOnly={this.props.submitting}
+                        required />
+                      <CFormText>Recommended formats: .doc, .docx, .xls, .xlsx, .pdf</CFormText>
+                    </CFormGroup>
+                    : null}
+                  {error
+                    ? <p className={"fox-form-invalid-feedback"}>{error}</p>
+                    : null
+                  }
+                </CForm>
+              </WithLoadingSpinner>
             </CCardBody>
             <CCardFooter>
-              <CButton shape="pill" color="dark" variant="outline" onClick={this.handleSubmit} block>Create Document</CButton>
+              <CButton
+                disabled={this.props.submitting || this.props.loading}
+                shape="pill"
+                color="dark"
+                variant="outline"
+                onClick={this.handleSubmit}
+                block>
+                <SubmitSpinner submitting={this.props.submitting} />
+                Create Document
+              </CButton>
             </CCardFooter>
           </CCard>
-
-
         </CCol>
       </CRow >
     )
@@ -183,4 +207,4 @@ const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(DocumentCreate))
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(WithLoading(DocumentCreate)))

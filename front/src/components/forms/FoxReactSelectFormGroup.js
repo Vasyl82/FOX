@@ -17,10 +17,9 @@ const getValueFromOptions = (value, options) => {
   }
 }
 
-
 const FoxReactSelectFormGroup = props => {
   return (
-    <CFormGroup>
+    <CFormGroup disabled={props.disabled}>
       <Select
         id={props.inputInfo}
         name={props.inputInfo}

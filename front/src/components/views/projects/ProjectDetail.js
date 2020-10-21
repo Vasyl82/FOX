@@ -23,7 +23,7 @@ import { ActivityLog } from '../../activity_log'
 import { FoxSwitchGroup } from '../../../utils'
 import { FoxReactSelectFormGroup } from '../../forms'
 import { permitOptions } from './optionsLists'
-import { WithLoading, WithLoadingSpinner } from '../../loadings'
+import { WithLoading, WithLoadingSpinner, SubmitSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
 
@@ -35,6 +35,7 @@ class ProjectDetail extends Component {
     description: "",
     start_date: "",
     end_date: "",
+    extend_date: "",
     company: this.props.company,
     contractor: "-1",
     work_at_height: false,
@@ -68,12 +69,14 @@ class ProjectDetail extends Component {
         error: 'Contractor was not selected! Please, choose contractor form the list'
       })
     } else {
+      this.props.changeSubmitState()
       this.formData = this.state;
       delete this.formData.error;
-      await foxApi.updateEntityOf('projects', this.props.match.params.id, this.formData).then(() => {
-        this.props.history.goBack()
-      },
-        (error) => {
+      await foxApi.patchEntityOf('projects', this.props.match.params.id, this.formData)
+        .then(() => {
+          this.props.history.goBack()
+        })
+        .catch((error) => {
           console.error(error);
           this.setState({
             error: 'Project update failed!' +
@@ -81,6 +84,7 @@ class ProjectDetail extends Component {
               ' In case this problem repeats, please contact your administrator!'
           })
         })
+        .finally(() => this.props.changeSubmitState())
     }
   }
 
@@ -123,6 +127,8 @@ class ProjectDetail extends Component {
                       placeholder="Enter project name"
                       value={this.state.name}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -133,6 +139,9 @@ class ProjectDetail extends Component {
                       placeholder="Project Works Location"
                       value={this.state.location}
                       onChange={this.handleChange}
+                      readOnly={this.props.submitting}
+                      disabled={this.props.submitting}
+
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -143,6 +152,8 @@ class ProjectDetail extends Component {
                       placeholder="Please, enter short description of the projet"
                       value={this.state.description}
                       onChange={this.handleChange}
+                      disabled={this.props.submitting}
+                      readOnly={this.props.submitting}
                       required
                     />
                   </CFormGroup>
@@ -156,6 +167,8 @@ class ProjectDetail extends Component {
                           name="start_date"
                           value={this.state.start_date}
                           onChange={this.handleChange}
+                          disabled={this.props.submitting}
+                          readOnly={this.props.submitting}
                           required
                         />
                       </CCol>
@@ -167,6 +180,8 @@ class ProjectDetail extends Component {
                           name="end_date"
                           value={this.state.end_date}
                           onChange={this.handleChange}
+                          disabled={this.props.submitting}
+                          readOnly={this.props.submitting}
                           required
                         />
                       </CCol>
@@ -177,6 +192,8 @@ class ProjectDetail extends Component {
                     inputInfo="contractor"
                     inputValue={this.state.contractor}
                     handleChange={this.handleReactSelect}
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
                   />
                   <CFormGroup>
                     <CLink
@@ -198,8 +215,10 @@ class ProjectDetail extends Component {
                     options={permitOptions}
                     handleCheck={this.handleCheck}
                     parentState={this.state}
+                    readOnly={this.props.submitting}
+                    disabled={this.props.submitting}
                   />
-                  <CButton shape="pill" type="submit" color="success" variant="outline" block>Save changes</CButton>
+                  <CButton disabled={this.props.submitting} shape="pill" type="submit" color="dark" variant="outline" block><SubmitSpinner submitting={this.props.submitting} />Save changes</CButton>
                   {this.state.error
                     ? <p>{this.state.error}</p>
                     : null

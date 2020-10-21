@@ -16,6 +16,7 @@ import {
 
 import { FoxApiService } from '../../services'
 import { updateModal } from '../../actions'
+import { WithLoading, SubmitSpinner } from '../loadings'
 
 const foxApi = new FoxApiService()
 
@@ -41,10 +42,11 @@ class ExtendModal extends Component {
       })
     }
     else {
+      this.props.changeSubmitState()
       delete requestData.error;
       await foxApi.patchEntityOf("projects", this.props.projectId, requestData)
-        .then(() => {
-          this.props.updateList("CliAdm")
+        .then(async () => {
+          await this.props.updateList({ role: "CliAdm" })
         })
         .then(() => this.props.hideModal())
         .catch((error) => {
@@ -55,6 +57,7 @@ class ExtendModal extends Component {
               ' In case this problem repeats, please contact your administrator!'
           })
         })
+        .finally(this.props.changeSubmitState)
     }
   }
 
@@ -80,8 +83,8 @@ class ExtendModal extends Component {
           </CForm>
         </CModalBody>
         <CModalFooter>
-          <CButton shape="pill" color="primary" onClick={this.handleSubmit}>Confirm</CButton>{' '}
-          <CButton shape="pill" color="dark" onClick={this.props.hideModal}>Cancel</CButton>
+          <CButton disabled={this.props.submitting} shape="pill" color="primary" onClick={this.handleSubmit}><SubmitSpinner submitting={this.props.submitting} />Confirm</CButton>{' '}
+          <CButton disabled={this.props.submitting} shape="pill" color="dark" onClick={this.props.hideModal}><SubmitSpinner submitting={this.props.submitting} />Cancel</CButton>
         </CModalFooter>
       </CModal>
     )
@@ -98,4 +101,4 @@ const mapDispatchToProps = dispatch => ({
   hideModal: () => dispatch(updateModal("", {}))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ExtendModal)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ExtendModal))

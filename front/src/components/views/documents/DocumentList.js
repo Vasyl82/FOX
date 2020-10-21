@@ -16,13 +16,9 @@ const getBadge = status => {
 
 class DocumentList extends Component {
 
-  state = {
-    loading: true
-  }
-
   componentDidMount = async () => {
     await this.props.getProfileFetch()
-      .then(() => {
+      .then(() =>
         this.props.getDocumentList({
           params: {
             project_id: this.props.match.params.id,
@@ -30,13 +26,11 @@ class DocumentList extends Component {
           additional: false,
           role: this.props.role,
           signal: this.abortController.signal
-        });
-      })
-      .then(() => this.changeLoadingState())
+        }))
       .catch(error => {
         console.log(error);
-        this.props.changeLoadingState()
       })
+      .finally(() => this.props.changeLoadingState())
   }
 
   abortController = new window.AbortController();
@@ -56,7 +50,8 @@ class DocumentList extends Component {
           getBadge={getBadge}
           tableData={this.props.documentListTable.tableData}
           updateList={this.props.getDocumentList}
-          loading={this.state.loading}
+          loading={this.props.loading}
+          showNewButton={true}
         />
         :
         <FoxEntityListTable
@@ -65,7 +60,7 @@ class DocumentList extends Component {
           fields={this.props.documentListTable.fields}
           getBadge={getBadge}
           tableData={this.props.documentListTable.tableData}
-          loading={this.state.loading}
+          loading={this.props.loading}
         />
     )
   }
