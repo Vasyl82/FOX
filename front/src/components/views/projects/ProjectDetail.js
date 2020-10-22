@@ -95,7 +95,8 @@ class ProjectDetail extends Component {
       .then((data) => this.setState({ ...data }))
       .then(() => this.props.getContractorList({ signal: this.abortController.signal }))
       .then(() => this.props.setProjectId(this.props.match.params.id))
-      .then(() => this.props.changeLoadingState())
+      .catch((error) => console.log(error))
+      .finally(() => this.props.changeLoadingState())
   }
 
   componentWillUnmount = async () => {
