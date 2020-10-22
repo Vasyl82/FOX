@@ -5,13 +5,14 @@ from back.models import Contractor
 class ContractorListSerializer(serializers.ModelSerializer):
 
     contact_person = serializers.SerializerMethodField()
+    company_or_organization = serializers.CharField(source="related_company")
 
     class Meta:
         model = Contractor
         fields = [
             "id",
             "username",
-            "related_company",
+            "company_or_organization",
             "contact_person",
             "company_phone",
         ]

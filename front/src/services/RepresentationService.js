@@ -98,6 +98,7 @@ class RepresentationService {
     let first_row = data[0];
     entityTableInfo.fields = Object.keys(first_row);
     entityTableInfo.fields.shift();
+    entityTableInfo.fields = entityTableInfo.fields.map(field => field.replace("_or_", " / "))
     return entityTableInfo;
   }
   _renderList = (additional, dispatch, entityTableInfo) => {
