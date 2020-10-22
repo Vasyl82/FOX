@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 from rest_framework.test import APITestCase
 from back.models import (
     Contractor,
@@ -27,7 +27,7 @@ class PermitHandlingTestCase(APITestCase):
             description="Test description",
             company=company,
             contractor=contractor,
-            end_date=datetime.now(),
+            end_date=timezone.localtime(),
         )
         ClientAdmin.objects.create(
             username="test_admin1",
@@ -39,7 +39,7 @@ class PermitHandlingTestCase(APITestCase):
             contractor=contractor,
             name="test_worker1",
             phone_number="000",
-            birthday=datetime.now(),
+            birthday=timezone.localtime(),
             card_number_id="000",
             license_number="111",
             passport="222",
@@ -51,7 +51,7 @@ class PermitHandlingTestCase(APITestCase):
             contractor=contractor,
             name="test_worker2",
             phone_number="000",
-            birthday=datetime.now(),
+            birthday=timezone.localtime(),
             card_number_id="000",
             license_number="111",
             passport="222",

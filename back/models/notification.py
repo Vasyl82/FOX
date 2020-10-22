@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Notification(models.Model):
@@ -8,7 +9,7 @@ class Notification(models.Model):
     receiver = models.ForeignKey(
         to="FoxUser", on_delete=models.CASCADE, related_name="notifications"
     )
-    emitted = models.DateTimeField(auto_now_add=True)
+    emitted = models.DateTimeField(default=timezone.localtime)
     unread = models.BooleanField(default=True)
 
     def __str__(self):
