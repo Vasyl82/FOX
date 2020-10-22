@@ -4,7 +4,7 @@ from django.utils import timezone
 
 class Activity(models.Model):
     message = models.TextField(null=True)
-    timestamp = models.DateTimeField(default=timezone.localtime())
+    timestamp = models.DateTimeField(default=timezone.localtime)
     project = models.ForeignKey(
         "Project", on_delete=models.SET_NULL, related_name="activities", null=True
     )
