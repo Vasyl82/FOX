@@ -48,6 +48,7 @@ class SpecialCompetencyList extends Component {
           tableData={this.props.specialCompetencyListTable.tableData}
           updateList={this.props.getSpecialCompetencyList}
           loading={this.props.loading}
+          showNewButton={true}
         />
         :
         <FoxEntityListTable
