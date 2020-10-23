@@ -65,7 +65,7 @@ class WorkerAssign extends Component {
             ' In case this problem repeats, please contact your administrator!'
         })
       })
-      .finally(this.props.submitting)
+      .finally(this.props.changeSubmitState)
   }
 
   componentDidMount = async () => {

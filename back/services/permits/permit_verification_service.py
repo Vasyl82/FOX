@@ -26,4 +26,4 @@ class PermitVerificationService:
             if permit.project.extend_date is not None
             else permit.project.end_date
         )
-        return permit.active and (timezone.now() < end_date)
+        return permit.active and (timezone.localtime() < end_date)

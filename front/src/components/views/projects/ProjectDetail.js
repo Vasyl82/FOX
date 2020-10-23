@@ -15,6 +15,7 @@ import {
   CCardBody,
   CCardHeader,
   CCardTitle,
+  CFormText
 } from "@coreui/react";
 
 import { getProfileFetch, getContractorList, setProjectId, clearList } from '../../../actions'
@@ -94,7 +95,8 @@ class ProjectDetail extends Component {
       .then((data) => this.setState({ ...data }))
       .then(() => this.props.getContractorList({ signal: this.abortController.signal }))
       .then(() => this.props.setProjectId(this.props.match.params.id))
-      .then(() => this.props.changeLoadingState())
+      .catch((error) => console.log(error))
+      .finally(() => this.props.changeLoadingState())
   }
 
   componentWillUnmount = async () => {
@@ -149,7 +151,7 @@ class ProjectDetail extends Component {
                     <CTextarea
                       id="descrption"
                       name="description"
-                      placeholder="Please, enter short description of the projet"
+                      placeholder="Please, enter short description of the project"
                       value={this.state.description}
                       onChange={this.handleChange}
                       disabled={this.props.submitting}

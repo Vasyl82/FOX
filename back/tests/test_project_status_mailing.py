@@ -1,5 +1,5 @@
 from django.core import mail
-from datetime import datetime
+from django.utils import timezone
 from back.services.permits import PermitHandlingService
 
 # from django.urls import reverse
@@ -39,7 +39,7 @@ class ProjectStatusMailingTestCase(APITestCase):
             company=company,
             contractor=contractor,
             status="Rejected",
-            end_date=datetime.now(),
+            end_date=timezone.localtime(),
         )
         Project.objects.create(
             name="Test project3",
@@ -65,7 +65,7 @@ class ProjectStatusMailingTestCase(APITestCase):
             contractor=contractor,
             name="test_worker1",
             phone_number="000",
-            birthday=datetime.now(),
+            birthday=timezone.localtime(),
             card_number_id="000",
             license_number="111",
             passport="222",
@@ -77,7 +77,7 @@ class ProjectStatusMailingTestCase(APITestCase):
             contractor=contractor,
             name="test_worker2",
             phone_number="000",
-            birthday=datetime.now(),
+            birthday=timezone.localtime(),
             card_number_id="000",
             license_number="111",
             passport="222",
