@@ -104,13 +104,10 @@ class RepresentationService {
   _renderList = (additional, dispatch, entityTableInfo) => {
     if (additional === true) {
       dispatch(populateAdditionalEntityTable(entityTableInfo))
-      console.log("after list dispatch");
       return Promise.resolve("Success: List received!")
     }
     else {
       dispatch(populateEntityTable(entityTableInfo))
-      console.log("after list dispatch");
-
       return Promise.resolve("Success: List received!")
     }
   }
