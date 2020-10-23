@@ -36,13 +36,13 @@ class ProposalSubmit(APIView):
         activity.proposal_submition_message()
 
         # send emails
-
-        mail = mail_service(
-            project=project,
-            receivers=managers,
-            issuer=project.contractor,
-        )
-        mail.send_proposal_submitted()
+        for manager in managers:
+            mail = mail_service(
+                project=project,
+                receivers=[manager],
+                issuer=project.contractor,
+            )
+            mail.send_proposal_submitted()
 
         # return response
         return JsonResponse(
