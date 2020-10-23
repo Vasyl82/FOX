@@ -295,9 +295,9 @@ class WorkerDetail extends Component {
                     disabled={this.props.submitting}
                     readOnly={this.props.submitting}
                   />
-                  <CFormGroup>
+                  {/* <CFormGroup>
                     <CLink className="btn btn-outline-primary" to={`/workers/${this.props.match.params.id}/competencies`}>Special Competencies</CLink>
-                  </CFormGroup>
+                  </CFormGroup> */}
                   <CFormGroup>
                     <CButton
                       disabled={this.props.loading || this.props.submitting}
