@@ -1,5 +1,6 @@
 from django.core import mail
 from django.utils import timezone
+from django.conf import settings
 from back.services.permits import PermitHandlingService
 
 # from django.urls import reverse
@@ -152,9 +153,9 @@ class ProjectStatusMailingTestCase(APITestCase):
         self.assertEqual(notifications.count(), 2)
         self.assertEqual(
             notifications.first().message.forward_link,
-            "https://foxmy.io/#/approvals/1",
+            f"{settings.EMAIL_BASE_LINK}approvals/1",
         )
         self.assertEqual(
             notifications.all()[1].message.forward_link,
-            "https://foxmy.io/#/approvals/2",
+            f"{settings.EMAIL_BASE_LINK}approvals/2",
         )
