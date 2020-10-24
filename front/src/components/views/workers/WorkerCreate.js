@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import DjangoCSRFToken from 'django-react-csrftoken'
-import { connect } from 'react-redux'
+import React, { Component } from "react";
+import DjangoCSRFToken from "django-react-csrftoken";
+import { connect } from "react-redux";
 import {
   CForm,
   CFormGroup,
@@ -14,18 +14,22 @@ import {
   CCardTitle,
   CCardBody,
   CCardHeader,
-  CCardSubtitle
+  CCardSubtitle,
 } from "@coreui/react";
-import { getProfileFetch } from '../../../actions'
-import { FoxApiService } from '../../../services'
-import { FoxFormGroupWithUpload, FoxSelectFormGroup, FoxReactSelectFormGroup } from '../../forms'
-import { positions, tradeCompetencies } from './optionLists'
-import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
+import { getProfileFetch } from "../../../actions";
+import { FoxApiService } from "../../../services";
+import {
+  FoxFormGroupWithUpload,
+  FoxSelectFormGroup,
+  FoxReactSelectFormGroup,
+  AlternativeInputs,
+} from "../../forms";
+import { positions, tradeCompetencies } from "./optionLists";
+import { SubmitSpinner, WithLoading, WithLoadingSpinner } from "../../loadings";
 
 const foxApi = new FoxApiService();
 
 class WorkerCreate extends Component {
-
   state = {
     name: "",
     contractor: this.props.contractor,
@@ -44,110 +48,134 @@ class WorkerCreate extends Component {
     personal_declaration: "",
     submitCallback: "",
     trade_competency: -1,
-    error: false
-  }
+    error: false,
+  };
 
-  handleChange = event => {
+  handleChange = (event) => {
     this.setState({
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
     });
-  }
+  };
 
   handleReactSelect = (option, event) => {
     this.setState({
-      [event.name]: option.value
-    })
-  }
-
-  handleFileUpload = event => {
-    this.setState({
-      [event.target.name]: event.target.files[0]
+      [event.name]: option.value,
     });
-  }
+  };
 
-  handleSubmit = async event => {
+  handleFileUpload = (event) => {
+    this.setState({
+      [event.target.name]: event.target.files[0],
+    });
+  };
+
+  handleSubmit = async (event) => {
     event.preventDefault();
     if (this.state.position_in_company === -1) {
       this.setState({
-        error: 'Worker position in company was not selected! Please, choose position form the list'
-      })
-    }
-    else if (this.state.trade_competency === -1) {
+        error:
+          "Worker position in company was not selected! Please, choose position form the list",
+      });
+    } else if (this.state.trade_competency === -1) {
       this.setState({
-        error: 'Trade competency was not selected! Please, choose competency form the list'
-      })
-    }
-    else {
-      this.props.changeSubmitState()
+        error:
+          "Trade competency was not selected! Please, choose competency form the list",
+      });
+    } else {
+      this.props.changeSubmitState();
       this.requestData = this.state;
       delete this.requestData.error;
-      this.formData = new FormData
+      this.formData = new FormData();
       Object.entries(this.requestData).forEach(([key, value]) => {
         this.formData.append(key, value);
-      })
-      await foxApi.createEntityWithFile('workers', this.formData)
+      });
+      await foxApi
+        .createEntityWithFile("workers", this.formData)
         .then((data) => {
-          this.state.submitCallback(data.id)
+          this.state.submitCallback(data.id);
         })
         .catch((error) => {
           console.error(error);
           this.setState({
-            error: 'Worker creation failed!' +
-              ' Please check your input and try again!' +
-              ' In case this problem repeats, please contact your administrator!'
-          })
+            error:
+              "Worker creation failed!" +
+              " Please check your input and try again!" +
+              " In case this problem repeats, please contact your administrator!",
+          });
         })
-        .finally(this.props.changeSubmitState)
+        .finally(this.props.changeSubmitState);
     }
-  }
+  };
 
   handleSimpleSubmit = () => {
     this.setState({
-      submitCallback: () => { return this.props.history.goBack() }
+      submitCallback: () => {
+        return this.props.history.goBack();
+      },
     });
-  }
+  };
 
   handleSubmitWithCompetencies = () => {
     this.setState({
-      submitCallback: (id) => this.props.history.push(`/workers/${id}/competencies/new`)
+      submitCallback: (id) =>
+        this.props.history.push(`/workers/${id}/competencies/new`),
     });
-  }
+  };
 
   componentDidMount = async () => {
-    await this.props.getProfileFetch()
-      .then(() => this.props.changeLoadingState())
-  }
+    await this.props
+      .getProfileFetch()
+      .then(() => this.props.changeLoadingState());
+  };
 
   render = () => {
+    const optionA = (
+      <FoxFormGroupWithUpload
+        inputValue={this.state.card_number_id}
+        handleChange={this.handleChange}
+        handleFileUpload={this.handleFileUpload}
+        inputInfo="card_number_id"
+        uploadInfo="card_number_id_scan"
+        disabled={this.props.submitting}
+        readOnly={this.props.submitting}
+      />
+    );
+    const optionB = (
+      <FoxFormGroupWithUpload
+        inputValue={this.state.passport}
+        handleChange={this.handleChange}
+        handleFileUpload={this.handleFileUpload}
+        inputInfo="passport"
+        uploadInfo="passport_scan"
+        disabled={this.props.submitting}
+        readOnly={this.props.submitting}
+      />
+    );
     return (
       <CRow>
         <CCol>
           <CCard>
             <CCardHeader>
-              <CCardTitle>
-                New Worker
-              </CCardTitle>
+              <CCardTitle>New Worker</CCardTitle>
               <CCardSubtitle>
                 Fill up the form below to add a new Worker
               </CCardSubtitle>
             </CCardHeader>
             <CCardBody>
               <WithLoadingSpinner loading={this.props.loading}>
-
-                <CForm
-                  onSubmit={this.handleSubmit}
-                >
+                <CForm onSubmit={this.handleSubmit}>
                   <DjangoCSRFToken />
                   <CFormGroup>
                     <CInput
                       id="name"
-                      name='name'
+                      name="name"
                       placeholder="Name"
                       value={this.state.name}
                       onChange={this.handleChange}
                       disabled={this.props.submitting}
                       readOnly={this.props.submitting}
-                      required />
+                      required
+                    />
                   </CFormGroup>
                   <CFormGroup>
                     <CLabel htmlFor="birthday">Date of birth</CLabel>
@@ -189,23 +217,10 @@ class WorkerCreate extends Component {
                     disabled={this.props.submitting}
                     readOnly={this.props.submitting}
                   />
-                  <FoxFormGroupWithUpload
-                    inputValue={this.state.card_number_id}
-                    handleChange={this.handleChange}
-                    handleFileUpload={this.handleFileUpload}
-                    inputInfo="card_number_id"
-                    uploadInfo="card_number_id_scan"
-                    disabled={this.props.submitting}
-                    readOnly={this.props.submitting}
-                  />
-                  <FoxFormGroupWithUpload
-                    inputValue={this.state.passport}
-                    handleChange={this.handleChange}
-                    handleFileUpload={this.handleFileUpload}
-                    inputInfo="passport"
-                    uploadInfo="passport_scan"
-                    disabled={this.props.submitting}
-                    readOnly={this.props.submitting}
+                  <AlternativeInputs
+                    optionA={optionA}
+                    optionB={optionB}
+                    submitting={this.props.submitting}
                   />
                   <FoxFormGroupWithUpload
                     inputValue={this.state.license_number}
@@ -226,17 +241,28 @@ class WorkerCreate extends Component {
                     readOnly={this.props.submitting}
                   />
                   <CFormGroup>
-                    <CLabel htmlFor="safety_quiz_answer">Safety quiz answer</CLabel>
-                    <CInputFile id="safety_quiz_answer" name="safety_quiz_answer" onChange={this.handleFileUpload}
+                    <CLabel htmlFor="safety_quiz_answer">
+                      Safety quiz answer
+                    </CLabel>
+                    <CInputFile
+                      id="safety_quiz_answer"
+                      name="safety_quiz_answer"
+                      onChange={this.handleFileUpload}
                       disabled={this.props.submitting}
-                      required />
+                      required
+                    />
                   </CFormGroup>
                   <CFormGroup>
-                    <CLabel htmlFor="personal_declaration">Personal declaration</CLabel>
-                    <CInputFile id="personal_declaration" name="personal_declaration" onChange={this.handleFileUpload}
+                    <CLabel htmlFor="personal_declaration">
+                      Personal declaration
+                    </CLabel>
+                    <CInputFile
+                      id="personal_declaration"
+                      name="personal_declaration"
+                      onChange={this.handleFileUpload}
                       disabled={this.props.submitting}
-
-                      required />
+                      required
+                    />
                   </CFormGroup>
                   <CFormGroup>
                     <CRow>
@@ -264,29 +290,28 @@ class WorkerCreate extends Component {
                       </CCol> */}
                     </CRow>
                   </CFormGroup>
-                  {this.state.error
-                    ? <p>{this.state.error}</p>
-                    : null
-                  }
+                  {this.state.error ? <p>{this.state.error}</p> : null}
                 </CForm>
               </WithLoadingSpinner>
             </CCardBody>
           </CCard>
         </CCol>
-      </CRow >
-    )
-  }
+      </CRow>
+    );
+  };
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     contractor: state.currentUser.id,
-  }
-}
+  };
+};
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-})
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(WorkerCreate))
-
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WithLoading(WorkerCreate));
