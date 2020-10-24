@@ -267,15 +267,18 @@ class WorkerCreate extends Component {
                   <CFormGroup>
                     <CRow>
                       {/* <CCol md="6"> */}
-                      <CButton
-                        disabled={this.props.submitting}
-                        onClick={this.handleSimpleSubmit}
-                        shape="pill"
-                        type="submit"
-                        color="dark"
-                        variant="outline"
-                        block>
-                        <SubmitSpinner submitting={this.props.submitting} />Create Worker</CButton>
+                      <CCol>
+
+                        <CButton
+                          disabled={this.props.submitting}
+                          onClick={this.handleSimpleSubmit}
+                          shape="pill"
+                          type="submit"
+                          color="dark"
+                          variant="outline"
+                          block>
+                          <SubmitSpinner submitting={this.props.submitting} />Create Worker</CButton>
+                      </CCol>
                       {/* </C Col> */}
                       {/* <CCol md="6">
                         <CButton
