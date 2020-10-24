@@ -266,21 +266,18 @@ class WorkerCreate extends Component {
                   </CFormGroup>
                   <CFormGroup>
                     <CRow>
-                      <CCol md="6">
-                        <CButton
-                          disabled={this.props.submitting}
-                          onClick={this.handleSimpleSubmit}
-                          shape="pill"
-                          type="submit"
-                          color="dark"
-                          variant="outline"
-                          block
-                        >
-                          <SubmitSpinner submitting={this.props.submitting} />
-                          Create Worker
-                        </CButton>
-                      </CCol>
-                      <CCol md="6">
+                      {/* <CCol md="6"> */}
+                      <CButton
+                        disabled={this.props.submitting}
+                        onClick={this.handleSimpleSubmit}
+                        shape="pill"
+                        type="submit"
+                        color="dark"
+                        variant="outline"
+                        block>
+                        <SubmitSpinner submitting={this.props.submitting} />Create Worker</CButton>
+                      {/* </C Col> */}
+                      {/* <CCol md="6">
                         <CButton
                           disabled={this.props.submitting}
                           onClick={this.handleSubmitWithCompetencies}
@@ -288,12 +285,9 @@ class WorkerCreate extends Component {
                           type="submit"
                           color="primary"
                           variant="outline"
-                          block
-                        >
-                          <SubmitSpinner submitting={this.props.submitting} />
-                          Create Worker and add special competencies
-                        </CButton>
-                      </CCol>
+                          block>
+                          <SubmitSpinner submitting={this.props.submitting} />Create Worker and add special competencies</CButton>
+                      </CCol> */}
                     </CRow>
                   </CFormGroup>
                   {this.state.error ? <p>{this.state.error}</p> : null}

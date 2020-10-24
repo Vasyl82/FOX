@@ -61,7 +61,7 @@ class ClientManagerEdit extends Component {
     } else {
       this.formData = this.state;
       delete this.formData.error;
-      await foxApi.updateEntityOf('client_managers', this.props.match.params.id, this.formData)
+      await foxApi.updateEntityOf('managers', this.props.match.params.id, this.formData)
         .then(() => {
           this.props.history.goBack()
         })
@@ -79,7 +79,7 @@ class ClientManagerEdit extends Component {
 
   componentDidMount = async () => {
     await this.props.getProfileFetch()
-      .then(() => foxApi.getDetailsOf('client_managers', this.props.match.params.id))
+      .then(() => foxApi.getDetailsOf('managers', this.props.match.params.id))
       .then((data) => this.setState({ ...data }))
       .catch(error => console.log(error))
       .finally(() => this.props.changeLoadingState())
@@ -108,16 +108,16 @@ class ClientManagerEdit extends Component {
                       placeholder="Username"
                       value={this.state.username}
                       onChange={this.handleChange}
-                      readOnly={this.props.submitting}
                       disabled={this.props.submitting}
+                      readOnly
                       required />
                   </CFormGroup>
                   <CFormGroup>
-                    <CLabel htmlFor="name">Manager verbose name</CLabel>
+                    <CLabel htmlFor="name">Manager name</CLabel>
                     <CInput
                       id="name"
                       name='name'
-                      placeholder="Verbose name"
+                      placeholder="Manager name"
                       value={this.state.name}
                       onChange={this.handleChange}
                       readOnly={this.props.submitting}
