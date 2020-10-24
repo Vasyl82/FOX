@@ -7,6 +7,7 @@ from .internal_notification_service import (
     InternalNotificationService as internal_service,
 )
 from back.services.permits import PermitHandlingService
+from back.models import Approval
 
 
 class ProjectEmailNotificationService:
@@ -39,6 +40,7 @@ class ProjectEmailNotificationService:
 
     def send_proposal_submitted(self):
         self.subject = f"Proposal submitted for project {self.project.name}"
+        self._update_link_to_approval()
         self._conduct_email_send("proposal_submitted")
         self._conduct_internal_notification()
 
@@ -86,6 +88,14 @@ class ProjectEmailNotificationService:
         }
         if self.issuer:
             self.context = {**self.context, **self.issuer.info}
+
+    def _update_link_to_approval(self):
+        approval_pk = (
+            Approval.objects.filter(project=self.project, manager=self.receivers[0])
+            .last()
+            .pk
+        )
+        self.link = f"{settings.EMAIL_BASE_LINK}approvals/{approval_pk}"
 
     def _render_email_text(self, template):
         self.email_text["html_message"] = render_to_string(
