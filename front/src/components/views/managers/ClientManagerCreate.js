@@ -116,7 +116,7 @@ class ClientManagerCreate extends Component {
                     <CInput
                       id="name"
                       name='name'
-                      placeholder="Verbose name"
+                      placeholder="Manager name"
                       value={this.state.name}
                       onChange={this.handleChange}
                       readOnly={this.props.submitting}
