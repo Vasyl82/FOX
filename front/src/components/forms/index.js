@@ -6,6 +6,7 @@ import FoxFormGroupDownloadUpload from './FoxFormGroupDownloadUpload';
 import FoxProjectDocumentDownloadUploadFormGroup from './FoxProjectDocumentDownloadUploadFormGroup';
 import FoxLoginForm from './FoxLoginForm';
 import FoxRegisterForm from './FoxRegisterForm'
+import AlternativeInputs from './AternativeInputs'
 
 export {
     FoxLoginForm,
@@ -16,4 +17,5 @@ export {
     FoxFormGroupInputDownloadUpload,
     FoxFormGroupDownloadUpload,
     FoxProjectDocumentDownloadUploadFormGroup,
+    AlternativeInputs
 }

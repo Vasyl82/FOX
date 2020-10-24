@@ -60,7 +60,7 @@ class ClientManagerCreate extends Component {
     } else {
       this.formData = this.state;
       delete this.formData.error;
-      await foxApi.createEntityOf('client_managers', this.formData)
+      await foxApi.createEntityOf('managers', this.formData)
         .then(() => {
           this.props.history.goBack()
         })
@@ -116,7 +116,7 @@ class ClientManagerCreate extends Component {
                     <CInput
                       id="name"
                       name='name'
-                      placeholder="Verbose name"
+                      placeholder="Manager name"
                       value={this.state.name}
                       onChange={this.handleChange}
                       readOnly={this.props.submitting}
@@ -175,7 +175,7 @@ class ClientManagerCreate extends Component {
                       variant="outline"
                       block>
                       <SubmitSpinner submitting={this.props.submitting} />
-                      Create client manager
+                      Create manager
                     </CButton>
                   </CFormGroup>
                   {this.state.error

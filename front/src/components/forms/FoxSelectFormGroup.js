@@ -1,20 +1,18 @@
-import React from 'react'
+import React from "react";
 
-import {
-  CFormGroup,
-  CLabel,
-  CSelect
-} from '@coreui/react'
+import { CFormGroup, CSelect } from "@coreui/react";
 
-const makeLabel = inputString => {
-  return inputString.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
-}
-const makePlaceholder = inputString => {
-  return `Choose ${makeLabel(inputString)} info`
-}
+const makeLabel = (inputString) => {
+  return inputString
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+const makePlaceholder = (inputString) => {
+  return `Choose ${makeLabel(inputString)} info`;
+};
 
-
-const FoxSelectFormGroup = props => {
+const FoxSelectFormGroup = (props) => {
   return (
     <CFormGroup>
       <CSelect
@@ -29,13 +27,14 @@ const FoxSelectFormGroup = props => {
       >
         {props.options.map((option) => {
           return (
-            <option key={option.id} value={option.id}>{option.position}</option>
-          )
-        }
-        )}
+            <option key={option.id} value={option.id}>
+              {option.position}
+            </option>
+          );
+        })}
       </CSelect>
     </CFormGroup>
-  )
-}
+  );
+};
 
-export default FoxSelectFormGroup
+export default FoxSelectFormGroup;

@@ -35,7 +35,7 @@ class ClientManagerDetail extends Component {
 
   componentDidMount = async () => {
     await this.props.getProfileFetch()
-      .then(() => foxApi.getDetailsOf('client_managers', this.props.match.params.id))
+      .then(() => foxApi.getDetailsOf('managers', this.props.match.params.id))
       .then((data) => {
         data.position = positions[data.position]
         this.setState({ ...data })
