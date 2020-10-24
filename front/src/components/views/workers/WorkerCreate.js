@@ -265,33 +265,15 @@ class WorkerCreate extends Component {
                     />
                   </CFormGroup>
                   <CFormGroup>
-                    <CRow>
-                      {/* <CCol md="6"> */}
-                      <CCol>
-
-                        <CButton
-                          disabled={this.props.submitting}
-                          onClick={this.handleSimpleSubmit}
-                          shape="pill"
-                          type="submit"
-                          color="dark"
-                          variant="outline"
-                          block>
-                          <SubmitSpinner submitting={this.props.submitting} />Create Worker</CButton>
-                      </CCol>
-                      {/* </C Col> */}
-                      {/* <CCol md="6">
-                        <CButton
-                          disabled={this.props.submitting}
-                          onClick={this.handleSubmitWithCompetencies}
-                          shape="pill"
-                          type="submit"
-                          color="primary"
-                          variant="outline"
-                          block>
-                          <SubmitSpinner submitting={this.props.submitting} />Create Worker and add special competencies</CButton>
-                      </CCol> */}
-                    </CRow>
+                    <CButton
+                      disabled={this.props.submitting}
+                      onClick={this.handleSimpleSubmit}
+                      shape="pill"
+                      type="submit"
+                      color="dark"
+                      variant="outline"
+                      block>
+                      <SubmitSpinner submitting={this.props.submitting} />Create Worker</CButton>
                   </CFormGroup>
                   {this.state.error ? <p>{this.state.error}</p> : null}
                 </CForm>
