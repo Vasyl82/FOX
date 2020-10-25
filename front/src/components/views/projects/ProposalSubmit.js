@@ -12,7 +12,7 @@ import {
   CListGroupItem,
   CCardHeader
 } from "@coreui/react";
-import { getProfileFetch } from '../../../actions'
+import { getProfileFetch, setProjectId } from '../../../actions'
 import { ProjectWorkflowService, FoxApiService } from '../../../services'
 import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
 
@@ -51,6 +51,7 @@ class ProposalSubmit extends Component {
           status: data.status
         })
       })
+      .then(() => this.props.setProjectId(this.props.match.params.id))
       .catch(error => console.log(error))
       .finally(() => this.props.changeLoadingState())
   }
@@ -166,7 +167,7 @@ class ProposalSubmit extends Component {
               </CCard>
             </CCol>
           </CRow >
-          : <Redirect to={`/projects/${this.props.match.params.id}/application_status`} />
+          : <Redirect to={`/projects/${this.props.match.params.id}`} />
         }
       </WithLoadingSpinner>
     )
@@ -175,6 +176,7 @@ class ProposalSubmit extends Component {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
+  setProjectId: (id) => dispatch(setProjectId(id))
 })
 
 export default connect(null, mapDispatchToProps)(WithLoading(ProposalSubmit))

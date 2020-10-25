@@ -1,4 +1,8 @@
+import store from '../store';
+
 const getDashboardLayout = (userRole = "Dum", projectId = null) => {
+  const checkProjectId = store.getState().projectId
+  console.log("project id inside", checkProjectId);
   return dispatch => {
     let dashboard = null;
     switch (userRole) {
@@ -224,7 +228,7 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
         break;
     }
     dispatch(initiateDashboard(dashboard));
-
+    return Promise.resolve()
   }
 }
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { getProfileFetch, getWorkerList, clearList } from '../../../actions'
+import { getProfileFetch, getWorkerList, clearList, setProjectId } from '../../../actions'
 import { connect } from 'react-redux'
 import {
   CForm,
@@ -76,7 +76,9 @@ class WorkerAssign extends Component {
         workers: data.workers,
         responsible_person: data.responsible_person
       }))
-      .then(() => this.props.changeLoadingState())
+      .then(() => this.props.setProjectId(this.props.match.params.id))
+      .catch(error => console.log(error))
+      .finally(() => this.props.changeLoadingState())
   }
 
   componentWillUnmount = async () => {
@@ -181,13 +183,15 @@ const mapStateToProps = state => {
     workers: state.entityListTable.tableData,
     company: state.currentUser.company,
     contractor: state.currentUser.id,
+    role: state.currentUser.role
   }
 }
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
   getWorkerList: ({ ...params }) => dispatch(getWorkerList({ ...params })),
-  clearList: () => dispatch(clearList())
+  clearList: () => dispatch(clearList()),
+  setProjectId: (id) => dispatch(setProjectId(id))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(WorkerAssign))
