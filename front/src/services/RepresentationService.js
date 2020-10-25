@@ -99,8 +99,6 @@ class RepresentationService {
     const entityTableInfo = {};
     const updatedData = []
     this._translateKeys(data, updatedData);
-    console.log(data);
-    console.log(updatedData);
     entityTableInfo.tableData = updatedData;
     let first_row = updatedData[0];
     entityTableInfo.fields = Object.keys(first_row);

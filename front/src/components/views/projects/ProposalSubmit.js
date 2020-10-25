@@ -51,7 +51,8 @@ class ProposalSubmit extends Component {
           status: data.status
         })
       })
-      .then(() => this.props.changeLoadingState())
+      .catch(error => console.log(error))
+      .finally(() => this.props.changeLoadingState())
   }
 
   render = () => {

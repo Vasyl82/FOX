@@ -125,7 +125,8 @@ class WorkerCreate extends Component {
   componentDidMount = async () => {
     await this.props
       .getProfileFetch()
-      .then(() => this.props.changeLoadingState());
+      .catch(error => console.log(error))
+      .finally(() => this.props.changeLoadingState());
   };
 
   render = () => {
