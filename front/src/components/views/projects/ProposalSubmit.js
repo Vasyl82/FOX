@@ -29,8 +29,7 @@ class ProposalSubmit extends Component {
   handleSubmit = async () => {
     this.props.changeSubmitState()
     await workflow.submitProposal(this.props.match.params.id)
-      .then(
-        this.props.history.goBack()
+      .then(() => Promise.resolve(this.props.history.goBack())
       )
       .catch((error) => {
         console.error(error);
@@ -175,7 +174,7 @@ class ProposalSubmit extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  getProfileFetch: () => dispatch(getProfileFetch()),
+  getProfileFetch: async () => await dispatch(getProfileFetch()),
   setProjectId: (id) => dispatch(setProjectId(id))
 })
 
