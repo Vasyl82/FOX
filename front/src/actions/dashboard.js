@@ -1,5 +1,3 @@
-import store from '../store';
-
 const getDashboardLayout = (userRole = "Dum", projectId = null) => {
   return dispatch => {
     let dashboard = null;
