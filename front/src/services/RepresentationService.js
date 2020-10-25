@@ -1,6 +1,7 @@
 import FoxApiService from './FoxAPIService'
 import { populateAdditionalEntityTable, populateEntityTable, } from '../actions'
-
+import _T from './localization'
+import { element } from 'prop-types';
 
 const foxApi = new FoxApiService();
 
@@ -92,13 +93,19 @@ class RepresentationService {
     type: 'CLEAR_ENTITY_TABLE',
   })
 
+  // Object.entries(row).map(([key, value]) => { row[_T(key)] = value })
+
   _generateTableInfo(data) {
     const entityTableInfo = {};
-    entityTableInfo.tableData = data;
-    let first_row = data[0];
+    const updatedData = []
+    this._translateKeys(data, updatedData);
+    console.log(data);
+    console.log(updatedData);
+    entityTableInfo.tableData = updatedData;
+    let first_row = updatedData[0];
     entityTableInfo.fields = Object.keys(first_row);
     entityTableInfo.fields.shift();
-    entityTableInfo.fields = entityTableInfo.fields.map(field => field.replace("_or_", " / "))
+    // entityTableInfo.fields = entityTableInfo.fields.map(field => field.replace("_or_", " / "))
     return entityTableInfo;
   }
   _renderList = (additional, dispatch, entityTableInfo) => {
@@ -110,6 +117,19 @@ class RepresentationService {
       dispatch(populateEntityTable(entityTableInfo))
       return Promise.resolve("Success: List received!")
     }
+  }
+
+  _translateKeys(data, updatedData) {
+    data.forEach((element, index) => {
+      updatedData[index] = {};
+      Object.entries(element).forEach(
+        ([key, value]) => {
+          updatedData[index][_T(key)] = value;
+        }
+      );
+    }
+
+    );
   }
 }
 
