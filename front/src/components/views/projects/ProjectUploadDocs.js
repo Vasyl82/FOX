@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { getProfileFetch, getDocumentList, setProjectId, clearList, changeSubmitState } from '../../../actions'
+import { getProfileFetch, getDocumentList, setProjectId, clearList } from '../../../actions'
 import { connect } from 'react-redux'
 import {
   CForm,
@@ -93,6 +93,7 @@ class ProjectUploadDocs extends Component {
       target_type: "Contractor",
       project_id: this.props.match.params.id
     }
+    this.props.setProjectId(this.props.match.params.id)
     await this.props.getProfileFetch()
       .then(() => this.props.getDocumentList({ params, additional: false, signal: this.abortController.signal }))
       .catch(error => console.log(error))
@@ -102,6 +103,7 @@ class ProjectUploadDocs extends Component {
   componentWillUnmount = async () => {
     this.abortController.abort();
     await this.props.clearList();
+    this.props.setProjectId("")
   }
 
   abortController = new window.AbortController();
@@ -109,9 +111,10 @@ class ProjectUploadDocs extends Component {
   render = () => {
     let documentWidgetArray = []
     if (this.props.documents) {
-      documentWidgetArray = this.props.documents.map((document) => {
+      documentWidgetArray = this.props.documents.map((document, idx) => {
         return (
           <FoxProjectDocumentDownLoadUploadFormGroup
+            key={idx}
             document={document}
             handleFileUpload={this.handleFileUpload}
             downloadFile={this.downloadFile}

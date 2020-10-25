@@ -90,11 +90,11 @@ class ProjectDetail extends Component {
   }
 
   componentDidMount = async () => {
+    this.props.setProjectId(this.props.match.params.id)
     await this.props.getProfileFetch()
       .then(() => foxApi.getDetailsOf('projects', this.props.match.params.id))
       .then((data) => this.setState({ ...data }))
       .then(() => this.props.getContractorList({ signal: this.abortController.signal }))
-      .then(() => this.props.setProjectId(this.props.match.params.id))
       .catch((error) => console.log(error))
       .finally(() => this.props.changeLoadingState())
   }
@@ -102,6 +102,7 @@ class ProjectDetail extends Component {
   componentWillUnmount = async () => {
     this.abortController.abort();
     await this.props.clearList();
+    this.props.setProjectId("")
   }
 
   abortController = new window.AbortController();

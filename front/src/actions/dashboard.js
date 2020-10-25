@@ -224,7 +224,7 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
         break;
     }
     dispatch(initiateDashboard(dashboard));
-
+    return Promise.resolve()
   }
 }
 

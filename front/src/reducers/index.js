@@ -1,4 +1,5 @@
 const initialState = {
+    language: "en-en",
     sidebarShow: 'responsive',
     currentUser: {},
     loginError: false,
