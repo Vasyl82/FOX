@@ -93,9 +93,9 @@ class ProjectUploadDocs extends Component {
       target_type: "Contractor",
       project_id: this.props.match.params.id
     }
+    this.props.setProjectId(this.props.match.params.id)
     await this.props.getProfileFetch()
       .then(() => this.props.getDocumentList({ params, additional: false, signal: this.abortController.signal }))
-      .then(() => this.props.setProjectId(this.props.match.params.id))
       .catch(error => console.log(error))
       .finally(() => this.props.changeLoadingState())
   }
@@ -103,6 +103,7 @@ class ProjectUploadDocs extends Component {
   componentWillUnmount = async () => {
     this.abortController.abort();
     await this.props.clearList();
+    this.props.setProjectId("")
   }
 
   abortController = new window.AbortController();

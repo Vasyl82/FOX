@@ -55,6 +55,10 @@ class ProposalSubmit extends Component {
       .finally(() => this.props.changeLoadingState())
   }
 
+  componentWillUnmount = () => {
+    this.props.setProjectId("")
+  }
+
   render = () => {
     return (
       <WithLoadingSpinner loading={this.props.loading}>
