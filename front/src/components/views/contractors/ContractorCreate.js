@@ -50,7 +50,7 @@ class ContractorCreate extends Component {
       },
       )
       .catch((error) => {
-        console.error(error);
+        console.warn(error.email);
         this.setState({
           error: 'Contractor creation failed!' +
             ' Please check your input and try again!' +

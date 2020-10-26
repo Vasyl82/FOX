@@ -19,6 +19,7 @@ class FoxUser(AbstractUser):
         default=Role.dummy,
     )
     name = models.CharField(max_length=128, default="BarFoo")
+    email = models.EmailField(_("email address"), blank=False, unique=True)
     deleted = models.BooleanField(default=False)
     is_active = models.BooleanField(
         _("active"),

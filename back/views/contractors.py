@@ -3,7 +3,11 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import generics, status
 from back.models import Contractor
-from back.serializers import ContractorSerializer, ContractorListSerializer
+from back.serializers import (
+    ContractorSerializer,
+    ContractorListSerializer,
+    ContractorCreateSerializer,
+)
 
 
 class ContractorList(generics.ListAPIView):
@@ -17,7 +21,7 @@ class ContractorList(generics.ListAPIView):
 
 class ContractorCreate(generics.CreateAPIView):
     queryset = Contractor.objects.all()
-    serializer_class = ContractorSerializer
+    serializer_class = ContractorCreateSerializer
 
 
 class ContractorDetail(generics.RetrieveUpdateDestroyAPIView):

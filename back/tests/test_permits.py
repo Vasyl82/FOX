@@ -32,7 +32,7 @@ class PermitHandlingTestCase(APITestCase):
         ClientAdmin.objects.create(
             username="test_admin1",
             password="ZAQ!XSW@",
-            email="lysak.ipr@gmail.com",
+            email="lysak1.ipr@gmail.com",
             role=FoxUser.Role.client_admin,
         )
         worker1 = Worker.objects.create(

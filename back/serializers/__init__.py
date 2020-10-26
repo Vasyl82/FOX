@@ -9,7 +9,11 @@ from .client_manager import (  # noqa F401
     ClientManagerSerializer,
     ClientManagerListSerializer,
 )
-from .contractor import ContractorSerializer, ContractorListSerializer  # noqa F401
+from .contractor import (  # noqa F401
+    ContractorSerializer,
+    ContractorListSerializer,
+    ContractorCreateSerializer,
+)  # noqa F401
 from .worker import WorkerListSerializer, WorkerSerializer  # noqa F401
 from .document import (  # noqa F401
     DocumentListSerializer,

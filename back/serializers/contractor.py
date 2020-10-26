@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from back.models import Contractor
+from back.models import Contractor, FoxUser
 
 
 class ContractorListSerializer(serializers.ModelSerializer):
@@ -21,6 +21,43 @@ class ContractorListSerializer(serializers.ModelSerializer):
         return obj.name
 
 
+class ContractorCreateSerializer(serializers.ModelSerializer):
+
+    default = ""
+    email = serializers.EmailField(required=True)
+
+    def validate_email(self, value):
+        user = FoxUser.objects.filter(email=value).first()
+        if user is None:
+            return value
+        if user.role != FoxUser.Role.contractor.value:
+            raise serializers.ValidationError(
+                {"email_occupied": "User with this email already exists"}, 400
+            )
+        raise serializers.ValidationError(
+            {
+                "contractor_already_exists": "There is a contractor with this email",
+                "companies": [
+                    company.id for company in user.contractor.companies.all()
+                ],
+            },
+            403,
+        )
+
+    class Meta:
+        model = Contractor
+        fields = [
+            "id",
+            "username",
+            "name",
+            "email",
+            "companies",
+            "company_phone",
+            "role",
+            "related_company",
+        ]
+
+
 class ContractorSerializer(serializers.ModelSerializer):
 
     default = ""
@@ -32,9 +69,8 @@ class ContractorSerializer(serializers.ModelSerializer):
             "username",
             "name",
             "email",
-            "company",
+            "companies",
             "company_phone",
             "role",
             "related_company",
-            # "is_active",
         ]
