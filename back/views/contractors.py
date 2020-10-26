@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import generics, status
 from back.models import Contractor
 from back.serializers import ContractorSerializer, ContractorListSerializer
@@ -31,8 +32,10 @@ class ContractorDetail(generics.RetrieveUpdateDestroyAPIView):
         queryset = self.get_queryset()
         contractor = get_object_or_404(queryset, pk=pk)
         contractor.deleted = True
+        contractor.username += f"(deleted-{timezone.now().strftime('%d-%m-%y %H:%M')})"
+        contractor.email += f"(deleted-{timezone.now().strftime('%d-%m-%y %H:%M')})"
         contractor.save()
         return JsonResponse(
-            data={"response": f"contractor {contractor.username} deleted."},
+            data={"response": f"Сontractor {contractor.username} deleted."},
             status=status.HTTP_204_NO_CONTENT,
         )
