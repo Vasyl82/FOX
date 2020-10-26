@@ -1,4 +1,8 @@
-from .auth_serializer import UserSerializer, UserSerializerWithToken  # noqa F401
+from .auth_serializer import (  # noqa F401
+    UserSerializer,
+    UserSerializerWithToken,
+    FoxJSONWebTokenSerializer,
+)
 from .dashboard import DashboardSerializer  # noqa F401
 from .project import ProjectSerializer, ProjectListSerializer  # noqa F401
 from .client_manager import (  # noqa F401
@@ -7,7 +11,11 @@ from .client_manager import (  # noqa F401
 )
 from .contractor import ContractorSerializer, ContractorListSerializer  # noqa F401
 from .worker import WorkerListSerializer, WorkerSerializer  # noqa F401
-from .document import DocumentListSerializer, DocumentSerializer, PredefinedDocumentSerializer  # noqa F401
+from .document import (  # noqa F401
+    DocumentListSerializer,
+    DocumentSerializer,
+    PredefinedDocumentSerializer,
+)
 from .worker_special_competency import (  # noqa F401
     WorkerSpecialCompetencyListSerializer,
     WorkerSpecialCompetencySerializer,
