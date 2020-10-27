@@ -1,10 +1,10 @@
 ##########################################
 ## build frontend
 ##########################################
-FROM node:latest as front_build
+FROM node:12-buster as front_build
 WORKDIR /usr/src/app
 COPY ./front/package.json .
-RUN npm install -g npm@7.0.5
+# RUN npm install npm@7.0.5
 RUN npm install
 COPY ./front/. .
 RUN npm run build
