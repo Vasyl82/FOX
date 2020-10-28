@@ -15,42 +15,37 @@ import {
 import CIcon from '@coreui/icons-react'
 import WorkStatusDropdown from './WorkStatusDropdown'
 import { FoxApiService } from '../../services'
-import { DeleteModal } from '../modals'
-
+import { updateModal } from '../../actions'
 
 const foxApi = new FoxApiService();
+
 
 class FoxTableWithDeleteOption extends Component {
 
   state = {
-    delete_id: "",
     error: "",
-    modal: false
   }
 
   getEntityFromTableName = () => {
     this.props.tableName.toLowercase()
   }
 
-  callDeleteModal = (id) => {
-    this.setState({
-      delete_id: id
-    }, this.setModalVisibility)
-  }
 
-  setModalVisibility = () => {
-    this.setState({
-      modal: !this.state.modal
+  callDeleteModal = (id) => {
+    this.props.updateModal({
+      modalType: "deleteModal",
+      entity: "entity",
+      confirmDelete: () => this.confirmDelete(id)
     })
   }
 
   confirmDelete = async (id) => {
     const entity = this.props.tableName.toLowerCase().replace(' ', '_');
     await foxApi.deleteEntityOf(entity, id)
-      .then(() => {
-        this.props.updateList(this.props.role)
-        this.setModalVisibility()
+      .then(async () => {
+        await this.props.updateList({ role: this.props.role })
       })
+      .then(() => this.props.updateModal("", {}))
       .catch((error) => {
         console.error(error);
         this.setState({
@@ -61,13 +56,8 @@ class FoxTableWithDeleteOption extends Component {
       })
   }
 
-  alertOnClick = (id, e) => {
-    this.props.history.push(`${this.props.match.url}/${id}`)
-  }
-
   render = () => {
     const linkName = this.props.fields ? this.props.fields[0] : "username"
-    const { delete_id, modal } = this.state
     return (
       <CRow>
         <CCol>
@@ -77,33 +67,36 @@ class FoxTableWithDeleteOption extends Component {
               <CCardTitle>
                 {this.props.tableName}
               </CCardTitle>
-              {this.props.tableName === "Projects" && this.props.role === "Contr"
-                ?
-                null
-                :
+              {this.props.showNewButton ?
                 <CLink
                   className="btn btn-pill btn-outline-success"
                   to={`${this.props.match.url}/new`}
                 >
                   Add new
-                </CLink>
+          </CLink>
+                : null
               }
             </CCardHeader>
-            <CCardBody>
+            <CCardBody className="card text-white bg-info mb-3">
               <CDataTable
                 items={this.props.tableData ? this.props.tableData : []}
                 fields={this.props.fields}
+                loading={this.props.loading}
                 clickableRows
                 hover
-                striped
+                style="z-index:20000000000"
+                // striped
+                dark
                 bordered
                 sorter
                 tableFilter
                 columnFilter
                 size="sm"
-                itemsPerPage={10}
+                itemsPerPage={5}
                 itemsPerPageSelect
                 pagination
+                // zIndex='100000000'
+                // style="width:100%"
                 scopedSlots={{
                   [linkName]:
                     (item) => (
@@ -142,12 +135,6 @@ class FoxTableWithDeleteOption extends Component {
               />
             </CCardBody>
           </CCard>
-          <DeleteModal
-            setModalVisibility={this.setModalVisibility}
-            danger={modal}
-            entity="entity"
-            confirmDelete={() => this.confirmDelete(delete_id)}
-          />
         </CCol>
       </CRow >
     )
@@ -158,4 +145,8 @@ const mapStateToProps = state => ({
   role: state.currentUser.role
 })
 
-export default connect(mapStateToProps, null)(FoxTableWithDeleteOption)
+const mapDispatchToProps = dispatch => ({
+  updateModal: ({ modalType, ...rest }) => dispatch(updateModal({ modalType, ...rest }))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(FoxTableWithDeleteOption)

@@ -11,7 +11,11 @@ const initialState = {
     entityListTable: {},
     additionalEntityListTable: {},
     projectId: "",
-    notifications: []
+    notifications: [],
+    modal: {},
+    submitting: false,
+    projectDocs: []
+
 }
 
 const changeState = (state = initialState, { type, ...rest }) => {
