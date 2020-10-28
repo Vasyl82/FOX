@@ -57,8 +57,8 @@ class FoxApiService {
     });
     if (!res.ok) {
       // throw new Error(`Could not fetch ${url}. Received ${res.status}`);
-      res.json()
-        .then(res => { throw res })
+      const error = await res.json();
+      throw error;
     }
     return res.json();
   }
@@ -69,12 +69,10 @@ class FoxApiService {
     const res = await fetch(url, {
       method: 'POST',
       headers: jwt ? {
-        // 'Content-Type': 'multipart/form-data',
         'Authorization': `JWT ${jwt}`,
         'X-CSRFToken': csrftoken ? csrftoken : '',
         'Accept': 'application/json',
       } : {
-          // 'Content-Type': 'multipart/form-data',
           'X-CSRFToken': csrftoken ? csrftoken : '',
           'Accept': 'application/json',
         },
@@ -308,5 +306,12 @@ class FoxApiService {
     const res = this.get(url = url);
     return res
   }
+
+  connectContractorToCompany = (id, data) => {
+    let url = `${this.apiBase}contractors/${id}/add_company/`;
+    const res = this.patch(url = url, data = data);
+    return res
+  }
 }
+
 export default FoxApiService

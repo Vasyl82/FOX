@@ -15,7 +15,7 @@ import {
   CCardSubtitle
 } from "@coreui/react";
 import { FoxApiService } from '../../../services'
-import { getProfileFetch } from '../../../actions'
+import { getProfileFetch, updateModal } from '../../../actions'
 import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
 
 const foxApi = new FoxApiService();
@@ -28,7 +28,7 @@ class ContractorCreate extends Component {
     name: "",
     related_company: "",
     company_phone: "",
-    company: this.props.company,
+    companies: [this.props.company],
     role: "Contr",
     error: false
   }
@@ -50,12 +50,25 @@ class ContractorCreate extends Component {
       },
       )
       .catch((error) => {
-        console.warn(error.email);
-        this.setState({
-          error: 'Contractor creation failed!' +
-            ' Please check your input and try again!' +
-            ' In case this problem repeats, please contact your administrator!'
-        })
+        if (!error.email.contractor_already_exists) {
+          const errors = Object.values(error).join("\n")
+          console.log(errors);
+          this.setState({
+            error: errors
+            //  +
+            //   ' Please check your input and try again!' +
+            //   ' In case this problem repeats, please contact your administrator!'
+          });
+          return;
+        }
+        if (error.email.companies.includes(this.props.company.toString())) {
+          this.setState({
+            error: 'Contractor with this email is already registered in your company.'
+          });
+          return;
+        }
+        console.log(error.email.contractor_already_exists);
+        this.props.updateModal({ modalType: "contractorConfirmModal", companies: error.email.companies, contractorId: error.email.contractor_id, message: error.email.contractor_already_exists });
       })
       .finally(() => this.props.changeSubmitState())
   }
@@ -101,7 +114,6 @@ class ContractorCreate extends Component {
                       onChange={this.handleChange}
                       readOnly={this.props.submitting}
                       disabled={this.props.submitting}
-
                       required
                     />
                   </CFormGroup>
@@ -114,7 +126,6 @@ class ContractorCreate extends Component {
                       onChange={this.handleChange}
                       readOnly={this.props.submitting}
                       disabled={this.props.submitting}
-
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -127,7 +138,6 @@ class ContractorCreate extends Component {
                       onChange={this.handleChange}
                       readOnly={this.props.submitting}
                       disabled={this.props.submitting}
-
                       required
                     />
                   </CFormGroup>
@@ -140,7 +150,6 @@ class ContractorCreate extends Component {
                       onChange={this.handleChange}
                       readOnly={this.props.submitting}
                       disabled={this.props.submitting}
-
                       required />
                   </CFormGroup>
                   <CFormGroup>
@@ -156,7 +165,7 @@ class ContractorCreate extends Component {
                     </CButton>
                   </CFormGroup>
                   {this.state.error
-                    ? <p>{this.state.error}</p>
+                    ? <p className="fox-form-invalid-feedback">{this.state.error}</p>
                     : null
                   }
                 </CForm>
@@ -177,7 +186,8 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  getProfileFetch: () => dispatch(getProfileFetch())
+  getProfileFetch: () => dispatch(getProfileFetch()),
+  updateModal: ({ ...kwargs }) => dispatch(updateModal({ ...kwargs }))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ContractorCreate))

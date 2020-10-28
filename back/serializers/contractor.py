@@ -32,14 +32,18 @@ class ContractorCreateSerializer(serializers.ModelSerializer):
             return value
         if user.role != FoxUser.Role.contractor.value:
             raise serializers.ValidationError(
-                {"email_occupied": "User with this email already exists"}, 400
+                "A user with that email already exists", 400
             )
         raise serializers.ValidationError(
             {
-                "contractor_already_exists": "There is a contractor with this email",
+                "contractor_already_exists": "The email you're trying to use is already occupied by contractor"
+                + " with username '{0}' from company {1} (contact person: {2}).".format(
+                    user.username, user.contractor.related_company, user.name
+                ),
                 "companies": [
                     company.id for company in user.contractor.companies.all()
                 ],
+                "contractor_id": user.pk,
             },
             403,
         )
