@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { render } from "react-dom";
 import { CForm, CFormGroup, CInput, CLabel, CContainer, CRow, CCol } from "@coreui/react";
 
 class FoxLoginForm extends Component {

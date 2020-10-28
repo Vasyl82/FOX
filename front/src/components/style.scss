@@ -60,6 +60,14 @@ $theme-colors: (
     border-radius: 1.5rem 1.5rem 0 0;
 }
 
+.card-footer{
+  border-radius: 0 0 1.5rem 1.5rem;
+}
+
+.card-footer:last-child{
+  border-radius: 0 0 1.5rem 1.5rem;
+}
+
 .card-header:first-child{
     border-radius: 1.5rem 1.5rem 0 0;
 }
@@ -147,7 +155,7 @@ html:not([dir=rtl]) .input-group > .form-control:not(:last-child), html:not([dir
   width: 100%;
   margin-top: 0.25rem;
   font-size: 80%;
-  color: #e55353;
+  color: #e15353;
 }
 
 .fox-login-welcome{

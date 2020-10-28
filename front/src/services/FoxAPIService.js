@@ -1,12 +1,15 @@
 const SERVER_ADDRESS = `${window.location.origin}/`
 
+// const controller = new AbortController();
 class FoxApiService {
 
     apiBase = `${SERVER_ADDRESS}api/`;
 
-    async get(url) {
+    async get(url, signal = null) {
         const jwt = localStorage.getItem('token');
         const res = await fetch(url, {
+            // signal: controller.signal,
+            signal: signal,
             headers: jwt ? {
                 'Authorization': `JWT ${jwt}`,
                 'Accept': 'application/json',
@@ -21,10 +24,10 @@ class FoxApiService {
         }
         return res.json();
     }
-
-    async getDoc(url) {
+    async getDoc(url, signal = null) {
         const jwt = localStorage.getItem('token');
         const res = await fetch(url, {
+            signal: signal,
             headers: jwt ? {
                 'Authorization': `JWT ${jwt}`,
             } : {}
@@ -81,8 +84,6 @@ class FoxApiService {
         return res.json();
     }
 
-
-
     async put(url, data = {}) {
         const jwt = localStorage.getItem('token');
         const csrftoken = this.getCookie('csrftoken');
@@ -127,9 +128,7 @@ class FoxApiService {
             body: JSON.stringify(data) // body data type must match "Content-Type" header
         });
         if (!res.ok) {
-            if (res.status >= 500) {
-                throw new Error(`Could not fetch ${url}. Received ${res.status}`);
-            }
+            throw new Error(`Could not fetch ${url}. Received ${res.status}`);
         }
 
         return res.json();
@@ -153,9 +152,7 @@ class FoxApiService {
             body: data // body data type must match "Content-Type" header
         });
         if (!res.ok) {
-            if (res.status >= 500) {
-                throw new Error(`Could not fetch ${url}. Received ${res.status}`);
-            }
+            throw new Error(`Could not fetch ${url}. Received ${res.status}`);
         }
 
         return res.json();
@@ -200,14 +197,14 @@ class FoxApiService {
         return cookieValue;
     }
 
-
-    getEntityList = (entity, params) => {
+    getEntityList = async (entity, params, signal = null) => {
         let url = `${this.apiBase}${entity}/`;
         if (params) {
             url = new URL(url);
             Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
         }
-        return this.get(url)
+        const res = await this.get(url, signal)
+        return res
     }
 
     createEntityOf = (entity, data) => {
@@ -222,9 +219,9 @@ class FoxApiService {
         return res
     }
 
-    getDetailsOf = (entity, id) => {
+    getDetailsOf = (entity, id, signal = null) => {
         let url = `${this.apiBase}${entity}/${id}/`;
-        const res = this.get(url = url);
+        const res = this.get(url = url, signal);
         return res
     }
 
@@ -292,15 +289,21 @@ class FoxApiService {
         return `${this.apiBase}documents/downloads/${id}/`;
     }
 
-    deleteEntityOf = (entity, id, data = {}) => {
+    deleteEntityOf = async (entity, id, data = {}) => {
         let url = `${this.apiBase}${entity}/${id}/`;
-        const res = this.delete(url = url, data = data);
+        const res = await this.delete(url = url, data = data);
         return res
     }
 
     resetPassword = data => {
         let url = `${this.apiBase}password_reset/`;
         const res = this.post(url = url, data = data);
+        return res
+    }
+
+    verifyPermit = (part1, part2, part3) => {
+        let url = `${this.apiBase}permits/verification/${part1}/${part2}/${part3}/`;
+        const res = this.get(url = url);
         return res
     }
 }

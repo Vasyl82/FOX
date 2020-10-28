@@ -6,18 +6,28 @@ import {
 } from '@coreui/react'
 import { FoxSidebar, FoxHeader, FoxContent } from '../layout';
 import { matchPath } from 'react-router-dom'
+import { WithLoading, WithLoadingSpinner } from '../loadings'
 
 class Dashboard extends Component {
 
   componentDidMount = async () => {
+    const updatedMatch = matchPath(this.props.location.pathname, {
+      path: "/projects/:id/",
+      exact: false
+    });
+    const projectId = updatedMatch ? updatedMatch.params.id : this.props.match.params.id
     await this.props.getProfileFetch()
-      .then(() => this.props.getDashboardLayout(this.props.currentUser.role, this.props.match.params.id))
+      .then(async () => await this.props.getDashboardLayout(this.props.currentUser.role, projectId))
+      .catch(error => {
+        console.log(error);
+      })
+      .finally(this.props.changeLoadingState)
   }
 
   componentDidUpdate = (prevProps) => {
     const updatedMatch = matchPath(this.props.location.pathname, {
-      path: "/projects/:id",
-      exact: true
+      path: "/projects/:id/",
+      exact: false
     });
     if (updatedMatch && (prevProps.location.pathname != this.props.location.pathname)) {
       this.props.getDashboardLayout(this.props.currentUser.role, updatedMatch.params.id);
@@ -25,17 +35,21 @@ class Dashboard extends Component {
   }
 
   render() {
-    return (this.props.currentUser.username ?
-      <div className="c-app c-default-layout">
-        <FoxSidebar />
-        <div className="c-wrapper">
-          <FoxHeader />
-          <div className="c-body">
-            <FoxContent />
+    const { loading, ...props } = this.props
+    return (
+      <WithLoadingSpinner loading={loading}>
+        {props.currentUser.username ?
+          <div className="c-app c-default-layout">
+            <FoxSidebar />
+            <div className="c-wrapper">
+              <FoxHeader />
+              <div className="c-body">
+                <FoxContent />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      : <Redirect to="/login" />
+          : <Redirect to="/login" />}
+      </WithLoadingSpinner>
     )
   }
 }
@@ -48,9 +62,9 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  getProfileFetch: () => dispatch(getProfileFetch()),
-  getDashboardLayout: (userRole, projectId) => dispatch(getDashboardLayout(userRole, projectId))
+  getProfileFetch: async () => await dispatch(getProfileFetch()),
+  getDashboardLayout: async (userRole, projectId) => await dispatch(getDashboardLayout(userRole, projectId))
 })
 
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(Dashboard))
 
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

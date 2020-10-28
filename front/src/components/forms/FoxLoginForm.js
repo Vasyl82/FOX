@@ -16,16 +16,14 @@ import {
 } from "@coreui/react";
 import CIcon from '@coreui/icons-react'
 import DjangoCSRFToken from 'django-react-csrftoken'
-import { userLoginFetch } from '../../actions'
+import { userLoginFetch, updateModal } from '../../actions'
 import { FoxPasswordInput } from './inputs'
-import { ForgetPasswordModal } from '../modals'
 
 class FoxLoginForm extends Component {
 
   state = {
     username: "",
     password: "",
-    showModal: false
   }
 
   handleChange = event => {
@@ -34,10 +32,9 @@ class FoxLoginForm extends Component {
     });
   }
 
-  setModalVisibility = () => {
-    const { showModal } = this.state
-    this.setState({
-      showModal: !showModal
+  showForgetPasswordModal = () => {
+    this.props.updateModal({
+      modalType: "forgetPasswordModal",
     })
   }
 
@@ -48,7 +45,7 @@ class FoxLoginForm extends Component {
   }
 
   render() {
-    const { username, password, showModal } = this.state
+    const { username, password, } = this.state
     return (
       <CRow alignHorizontal="center">
         <CCol md="6">
@@ -112,12 +109,11 @@ class FoxLoginForm extends Component {
                     <CButton shape="pill" type="submit" value="Submit" color="dark" block >Login</CButton>
                   </CFormGroup>
                 </CForm>
-                <CButton type="link" size="sm" className="align-self-center" onClick={this.setModalVisibility}>Forgot password?</CButton>
+                <CButton type="link" size="sm" className="align-self-center" onClick={this.showForgetPasswordModal}>Forgot password?</CButton>
               </CCol>
             </CRow>
           </CContainer >
         </CCol>
-        <ForgetPasswordModal show={showModal} setModalVisibility={this.setModalVisibility} />
       </CRow >
     )
   }
@@ -131,7 +127,8 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  userLoginFetch: userInfo => dispatch(userLoginFetch(userInfo))
+  userLoginFetch: userInfo => dispatch(userLoginFetch(userInfo)),
+  updateModal: ({ modalType, ...rest }) => dispatch(updateModal({ modalType, ...rest }))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(FoxLoginForm)

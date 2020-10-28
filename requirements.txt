@@ -12,3 +12,5 @@ pytest-django
 django-filter
 django-environ
 Pillow
+pyqrcode
+pypng

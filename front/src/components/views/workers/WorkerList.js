@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { FoxEntityListTable, FoxTableWithDeleteOption } from '../../tables'
-import { getProfileFetch, getWorkerList, setProjectId } from '../../../actions'
+import { getProfileFetch, getWorkerList, setProjectId, clearList } from '../../../actions'
 import { connect } from 'react-redux'
+import { WithLoading } from '../../loadings'
 
 
 const getBadge = status => {
@@ -16,10 +17,23 @@ const getBadge = status => {
 
 class WorkerList extends Component {
 
+  state = {
+    loading: true
+  }
+
   componentDidMount = async () => {
     this.props.setProjectId(this.props.match.params.id)
     await this.props.getProfileFetch()
-      .then(() => this.props.getWorkerList(this.props.role))
+      .then(() => this.props.getWorkerList({ role: this.props.role, signal: this.abortController.signal }))
+      .catch(error => console.log(error))
+      .finally(() => this.props.changeLoadingState())
+  }
+
+  abortController = new window.AbortController();
+
+  componentWillUnmount = () => {
+    this.abortController.abort()
+    this.props.clearList()
   }
 
   render = () => {
@@ -32,6 +46,8 @@ class WorkerList extends Component {
           getBadge={getBadge}
           tableData={this.props.workerTable.tableData}
           updateList={this.props.getWorkerList}
+          loading={this.props.loading}
+          showNewButton={true}
         />
         :
         <FoxEntityListTable
@@ -41,6 +57,7 @@ class WorkerList extends Component {
           fields={this.props.workerTable.fields}
           getBadge={getBadge}
           tableData={this.props.workerTable.tableData}
+          loading={this.props.loading}
         />
     )
   }
@@ -56,8 +73,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getWorkerList: (role) => dispatch(getWorkerList(role)),
-  setProjectId: () => dispatch(setProjectId())
+  getWorkerList: ({ ...kwargs }) => dispatch(getWorkerList({ ...kwargs })),
+  setProjectId: () => dispatch(setProjectId()),
+  clearList: () => dispatch(clearList())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(WorkerList)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(WorkerList))

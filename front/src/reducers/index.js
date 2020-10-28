@@ -1,4 +1,5 @@
 const initialState = {
+    language: "en-en",
     sidebarShow: 'responsive',
     currentUser: {},
     loginError: false,
@@ -52,6 +53,11 @@ const changeState = (state = initialState, { type, ...rest }) => {
             const newNotifications = [...state.notifications]
             newNotifications[newNotifications.findIndex(element => element.id === rest.notification.id)] = rest.notification;
             return { ...state, notifications: newNotifications };
+        case 'UPDATE_MODAL':
+            return { ...state, ...rest };
+        case 'UPDATE_SUBMIT':
+            const { submitting } = state
+            return { ...state, submitting: !submitting }
 
         default:
             return state;

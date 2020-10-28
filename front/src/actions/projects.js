@@ -1,29 +1,12 @@
 import { RepresentationService } from '../services'
 
-
 const repr = new RepresentationService
-const getProjectList = (role) => {
+const getProjectList = ({ role = null, params = null, additional = false, signal = null }) => {
     if (role === "CliAdm") {
-        return repr.displayDeleteListWithoutStatus('projects', null, false);
+        return repr.displayDeleteListWithoutStatus('projects', params, additional, signal);
     } else {
-        return repr.displaySimpleListWithoutStatus('projects', null, false);
+        return repr.displaySimpleListWithoutStatus('projects', params, additional, signal);
     }
-
-}
-
-const getProject = () => {
-
-}
-
-const createProject = () => {
-
-}
-
-const updateProject = () => {
-
-}
-
-const deleteProject = () => {
 
 }
 

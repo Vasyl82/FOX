@@ -1,12 +1,12 @@
 import React, { Component, Suspense } from 'react'
 import { connect } from 'react-redux'
-import { FoxApiService } from '../services'
-import { getProfileFetch } from '../actions'
 import {
   CButton,
-  CListGroup,
   CListGroupItem,
 } from "@coreui/react";
+import { FoxApiService } from '../services'
+import { getProfileFetch } from '../actions'
+import { WithLoading, WithLoadingSpinner } from '../components/loadings'
 
 const foxApi = new FoxApiService();
 
@@ -38,31 +38,31 @@ class CompetencyReview extends Component {
   }
 
   componentDidMount = async () => {
-    await this.props.getProfileFetch()
-      .then(() => foxApi.getDetailsOf('worker_special_competencies', this.props.competencyId))
+    await foxApi.getDetailsOf('worker_special_competencies', this.props.competencyId)
       .then((data) => this.setState(
         { ...data }))
       .catch(error => console.log(error))
+      .finally(() => this.props.changeLoadingState())
   }
 
   render = () => {
     const { name, issued_by } = this.state
     return (
-      // <CListGroup flush>
-      <CListGroupItem>
-        <div>
-          <p><strong>Competency name: </strong>{name}</p>
-          <CButton
-            variant="outline"
-            color="success"
-            id="file"
-            onClick={this.downloadFile}
-          >Download scan</CButton>
-        </div>
-        {/* <p><strong>Competency scan: </strong></p> */}
-        <p><strong>Issued_by: </strong>{issued_by}</p>
-      </CListGroupItem>
-      // {/* </CListGroup> */ }
+      <WithLoadingSpinner loading={this.props.loading}>
+        <CListGroupItem>
+          <div>
+            <p><strong>Competency name: </strong>{name}</p>
+            <CButton
+              variant="outline"
+              color="success"
+              id="file"
+              onClick={this.downloadFile}
+            >Download scan</CButton>
+          </div>
+          {/* <p><strong>Competency scan: </strong></p> */}
+          <p><strong>Issued_by: </strong>{issued_by}</p>
+        </CListGroupItem>
+      </WithLoadingSpinner>
     )
   }
 }
@@ -71,5 +71,5 @@ const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
 })
 
-export default connect(null, mapDispatchToProps)(CompetencyReview)
+export default connect(null, mapDispatchToProps)(WithLoading(CompetencyReview))
 

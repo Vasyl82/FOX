@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { FoxEntityListTable, FoxTableWithDeleteOption } from '../../tables'
-import { getProfileFetch, getDocumentList, } from '../../../actions'
 import { connect } from 'react-redux'
+import { FoxEntityListTable, FoxTableWithDeleteOption } from '../../tables'
+import { getProfileFetch, getDocumentList, clearList } from '../../../actions'
+import { WithLoading } from '../../loadings'
 
 const getBadge = status => {
   switch (status) {
@@ -17,12 +18,26 @@ class DocumentList extends Component {
 
   componentDidMount = async () => {
     await this.props.getProfileFetch()
-      .then(() => {
+      .then(() =>
         this.props.getDocumentList({
-          project_id: this.props.match.params.id,
-        }, false, this.props.role);
+          params: {
+            project_id: this.props.match.params.id,
+          },
+          additional: false,
+          role: this.props.role,
+          signal: this.abortController.signal
+        }))
+      .catch(error => {
+        console.log(error);
       })
+      .finally(() => this.props.changeLoadingState())
+  }
 
+  abortController = new window.AbortController();
+
+  componentWillUnmount = () => {
+    this.abortController.abort()
+    this.props.clearList()
   }
 
   render = () => {
@@ -35,6 +50,8 @@ class DocumentList extends Component {
           getBadge={getBadge}
           tableData={this.props.documentListTable.tableData}
           updateList={this.props.getDocumentList}
+          loading={this.props.loading}
+          showNewButton={true}
         />
         :
         <FoxEntityListTable
@@ -43,6 +60,7 @@ class DocumentList extends Component {
           fields={this.props.documentListTable.fields}
           getBadge={getBadge}
           tableData={this.props.documentListTable.tableData}
+          loading={this.props.loading}
         />
     )
   }
@@ -58,7 +76,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getDocumentList: (params, additional, role) => dispatch(getDocumentList(params, additional, role))
+  getDocumentList: ({ ...kwargs }) => dispatch(getDocumentList({ ...kwargs })),
+  clearList: () => dispatch(clearList())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(DocumentList)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(DocumentList))

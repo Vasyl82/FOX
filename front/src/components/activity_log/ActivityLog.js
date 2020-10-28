@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { CCard, CCardHeader, CCardBody, CListGroup, CListGroupItem, CButton, CCollapse } from '@coreui/react'
 import { FoxApiService } from '../../services'
-import { connect } from 'react-redux'
+import { WithLoading, WithLoadingSpinner } from '../loadings'
 
 const foxApi = new FoxApiService()
 
@@ -25,6 +25,7 @@ class ActivityLog extends Component {
           items: data
         })
       })
+      .then(() => this.props.changeLoadingState())
       .catch(error => console.log(error))
   }
 
@@ -35,7 +36,9 @@ class ActivityLog extends Component {
         <CCardHeader>
           <strong>Activity log</strong>
           <CButton color="link" onClick={this.handleClick}>{show ? 'Hide' : 'Show'}</CButton>
-          <CCollapse show={show}>
+        </CCardHeader>
+        <CCollapse show={show}>
+          <WithLoadingSpinner loading={this.props.loading}>
             <CCardBody>
               <CListGroup flush>
                 {items ?
@@ -49,12 +52,11 @@ class ActivityLog extends Component {
                   : null}
               </CListGroup>
             </CCardBody>
-          </CCollapse>
-
-        </CCardHeader>
+          </WithLoadingSpinner>
+        </CCollapse>
       </CCard>
     )
   }
 }
 
-export default ActivityLog
+export default WithLoading(ActivityLog)

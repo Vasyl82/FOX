@@ -25,11 +25,18 @@ const UserDetailCard = props => {
               </CListGroupItem>
             )
           })}
+          {props.userRole == "Contractor" ?
+            <CListGroupItem>
+              <CLink
+                to={`/contractors/${props.match.params.id}/workers_review`}
+              >Browse workers</CLink>
+            </CListGroupItem>
+            : null
+          }
         </CListGroup>
       </CCardBody>
     </CCard>
   )
-
 }
 
 export default UserDetailCard

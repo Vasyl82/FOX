@@ -7,7 +7,7 @@ from .client_manager import (  # noqa F401
 )
 from .contractor import ContractorSerializer, ContractorListSerializer  # noqa F401
 from .worker import WorkerListSerializer, WorkerSerializer  # noqa F401
-from .document import DocumentListSerializer, DocumentSerializer  # noqa F401
+from .document import DocumentListSerializer, DocumentSerializer, PredefinedDocumentSerializer  # noqa F401
 from .worker_special_competency import (  # noqa F401
     WorkerSpecialCompetencyListSerializer,
     WorkerSpecialCompetencySerializer,
@@ -19,3 +19,4 @@ from .notification import (  # noqa F401
     NotificationUpdateSerializer,
     NotificationListSerializer,
 )
+from .template import TemplateSerializer, TemplateListSerializer  # noqa F401

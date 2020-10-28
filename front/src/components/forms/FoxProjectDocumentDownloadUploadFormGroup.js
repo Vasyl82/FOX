@@ -28,6 +28,7 @@ const FoxProjectDocumentDownLoadUploadFormGroup = props => {
                   href={props.document.url_to_doc}
                   target="_blank"
                   className="btn btn-ghost-primary"
+                  disabled={props.disabled}
                 >Open this document in Google Docs
                 </CLink>
               </CCol>
@@ -43,6 +44,7 @@ const FoxProjectDocumentDownLoadUploadFormGroup = props => {
                   name={props.document.id}
                   value={props.document.filename}
                   onClick={props.downloadFile}
+                  disabled={props.disabled}
                 >Download template for this document
                 </CButton>
               </CCol>
@@ -52,6 +54,7 @@ const FoxProjectDocumentDownLoadUploadFormGroup = props => {
                   id={`file-${props.document.id}`}
                   name={`${props.document.id}`}
                   onChange={props.handleFileUpload}
+                  disabled={props.disabled}
                 />
               </CCol>
             </CRow>
@@ -59,9 +62,7 @@ const FoxProjectDocumentDownLoadUploadFormGroup = props => {
         </CFormGroup>
       </CCardBody>
     </CCard>
-
   )
-
 }
 
 export default FoxProjectDocumentDownLoadUploadFormGroup

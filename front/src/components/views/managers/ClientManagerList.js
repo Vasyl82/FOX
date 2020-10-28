@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
-import { FoxEntityListTable, FoxTableWithDeleteOption } from '../../tables'
-import { getProfileFetch, getClientManagerList, } from '../../../actions'
 import { connect } from 'react-redux'
-
-
+import { FoxEntityListTable, FoxTableWithDeleteOption } from '../../tables'
+import { getProfileFetch, getClientManagerList, clearList } from '../../../actions'
+import { WithLoading } from '../../loadings'
 
 const getBadge = status => {
   switch (status) {
@@ -20,7 +19,16 @@ class ClientManagerList extends Component {
 
   componentDidMount = async () => {
     await this.props.getProfileFetch()
-      .then(() => this.props.getClientManagerList(this.props.role))
+      .then(() => this.props.getClientManagerList({ role: this.props.role, signal: this.abortController.signal }))
+      .catch(error => console.log(error))
+      .finally(() => this.props.changeLoadingState())
+  }
+
+  abortController = new window.AbortController();
+
+  componentWillUnmount = () => {
+    this.abortController.abort()
+    this.props.clearList()
   }
 
   render = () => {
@@ -33,6 +41,8 @@ class ClientManagerList extends Component {
           getBadge={getBadge}
           tableData={this.props.clientManagerTable.tableData}
           updateList={this.props.getClientManagerList}
+          loading={this.props.loading}
+          showNewButton={true}
         />
         :
         <FoxEntityListTable
@@ -42,6 +52,7 @@ class ClientManagerList extends Component {
           fields={this.props.clientManagerTable.fields}
           getBadge={getBadge}
           tableData={this.props.clientManagerTable.tableData}
+          loading={this.props.loading}
         />
 
     )
@@ -58,7 +69,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getClientManagerList: (role) => dispatch(getClientManagerList(role))
+  getClientManagerList: ({ ...kwargs }) => dispatch(getClientManagerList({ ...kwargs })),
+  clearList: () => dispatch(clearList())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ClientManagerList)
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ClientManagerList))

@@ -142,19 +142,6 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
           header_nav: [
             {
               _tag: "CHeaderNavItem",
-              id: "head_nav_managers",
-              className: "px-3",
-              _children: [
-                {
-                  _tag: "FoxHeaderNavLink",
-                  id: "head_nav_link_managers",
-                  to: "/managers",
-                  linktext: "Managers",
-                }
-              ],
-            },
-            {
-              _tag: "CHeaderNavItem",
               id: "head_nav_projects",
               className: "px-3",
               _children: [
@@ -163,6 +150,19 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
                   id: "head_nav_link_projects",
                   to: "/projects",
                   linktext: "Projects",
+                }
+              ],
+            },
+            {
+              _tag: "CHeaderNavItem",
+              id: "head_nav_managers",
+              className: "px-3",
+              _children: [
+                {
+                  _tag: "FoxHeaderNavLink",
+                  id: "head_nav_link_managers",
+                  to: "/managers",
+                  linktext: "Managers",
                 }
               ],
             },
@@ -224,7 +224,7 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
         break;
     }
     dispatch(initiateDashboard(dashboard));
-
+    return Promise.resolve()
   }
 }
 

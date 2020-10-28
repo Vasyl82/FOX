@@ -44,10 +44,7 @@ class ProjectCreate extends Component {
     work_alone: false,
     work_at_sensitive_area: false,
     cold_work: false,
-    input_document_name: "",
-    file: "",
     error: false,
-
   }
 
   handleFileUpload = (event) => {

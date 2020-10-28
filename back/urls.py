@@ -29,9 +29,9 @@ urlpatterns = [
     path("projects/new/", views.ProjectCreate.as_view(), name="project-create"),
     path("projects/<int:pk>/", views.ProjectDetail.as_view()),
     path("projects/<int:pk>/workflow/submit_proposal/", views.ProposalSubmit.as_view()),
-    path("client_managers/", views.ClientManagerList.as_view()),
-    path("client_managers/new/", views.ClientManagerCreate.as_view()),
-    path("client_managers/<int:pk>/", views.ClientManagerDetail.as_view()),
+    path("managers/", views.ClientManagerList.as_view()),
+    path("managers/new/", views.ClientManagerCreate.as_view()),
+    path("managers/<int:pk>/", views.ClientManagerDetail.as_view()),
     path("contractors/", views.ContractorList.as_view()),
     path("contractors/new/", views.ContractorCreate.as_view()),
     path("contractors/<int:pk>/", views.ContractorDetail.as_view()),
@@ -45,6 +45,7 @@ urlpatterns = [
     path("ptw/<int:pk>", views.ptw),
     path("documents/", views.DocumentList.as_view()),
     path("documents/new/", views.DocumentCreate.as_view()),
+    path("documents/predefined/", views.PredefinedDocumentCreate.as_view()),
     path("documents/<int:pk>/", views.DocumentDetail.as_view()),
     path("documents/downloads/<int:pk>/", views.DocumentDownload.as_view()),
     path(
@@ -75,4 +76,11 @@ urlpatterns = [
     path("activities/", views.ActivityList.as_view()),
     path("notifications/", views.NotificationList.as_view()),
     path("notifications/<int:pk>/", views.NotificationUpdate.as_view()),
+    path(
+        "permits/verification/<str:part1>/<str:part2>/<str:part3>/",
+        views.PermitVerification.as_view(),
+    ),
+    path("templates/", views.TemplateListView.as_view()),
+    path("templates/<int:pk>/", views.SingleTemplateView.as_view()),
+    path("templates/new/", views.TemplateCreateView.as_view()),
 ]
