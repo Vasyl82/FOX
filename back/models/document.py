@@ -27,7 +27,11 @@ class Document(models.Model):
         max_length=25, choices=HazardousWork.choices, default=HazardousWork.none
     )
     template = models.ForeignKey(
-        "back.Template", on_delete=models.SET_NULL, related_name="templates", null=True, blank=True
+        "back.Template",
+        on_delete=models.SET_NULL,
+        related_name="templates",
+        null=True,
+        blank=True,
     )
     deleted = models.BooleanField(default=False)
     url_to_doc = models.URLField(null=True, blank=True)

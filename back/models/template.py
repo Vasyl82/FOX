@@ -23,9 +23,9 @@ class Template(models.Model):
     company = models.ForeignKey(
         to="Company", on_delete=models.CASCADE, related_name="templates", null=True
     )
-    hazardous_work = models.CharField(
-        max_length=25, choices=HazardousWork.choices, default=HazardousWork.none
-    )
+    # hazardous_work = models.CharField(
+    #     max_length=25, choices=HazardousWork.choices, default=HazardousWork.none
+    # )
     file = models.FileField(upload_to=project_docs_path, null=False, blank=False)
     deleted = models.BooleanField(default=False)
 

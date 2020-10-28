@@ -21,7 +21,7 @@ from back.models import (
     Document,
     DocumentAssign,
     WorkerSpecialCompetency,
-    Template
+    Template,
 )
 
 FoxUser = get_user_model()
@@ -178,7 +178,6 @@ class WorkerAdmin(admin.ModelAdmin):
                 "fields": ("name", "phone_number", "birthday"),
             },
         ),
-
         (
             "Documents and Scans",
             {
@@ -189,11 +188,10 @@ class WorkerAdmin(admin.ModelAdmin):
                     "passport",
                     "passport_scan",
                     "safety_green_card",
-                    "safety_green_card_scan"
+                    "safety_green_card_scan",
                 ),
             },
         ),
-
         (
             "Working Info",
             {
@@ -201,11 +199,10 @@ class WorkerAdmin(admin.ModelAdmin):
                     "position_in_company",
                     "trade_competency",
                     "safety_quiz_answer",
-                    "personal_declaration"
+                    "personal_declaration",
                 ),
             },
         ),
-
         (
             "General Info",
             {
@@ -234,37 +231,32 @@ class ProjectAdmin(admin.ModelAdmin):
         (
             "General Info",
             {
-                "fields":
-                (
+                "fields": (
                     "name",
                     "description",
                     "location",
                     "status",
                     "company",
-                    "deleted"
+                    "deleted",
                 ),
             },
         ),
-
         (
             "Deadlines",
             {
                 "fields": ("start_date", "end_date", "extend_date"),
             },
         ),
-
         (
             "Participants",
             {
                 "fields": ("contractor", "workers", "responsible_person"),
             },
         ),
-
         (
             "Type of work",
             {
-                "fields":
-                (
+                "fields": (
                     "work_at_height",
                     "lifting_work",
                     "confined_space",
@@ -272,7 +264,7 @@ class ProjectAdmin(admin.ModelAdmin):
                     "chemical_handling",
                     "work_alone",
                     "work_at_sensitive_area",
-                    "cold_work"
+                    "cold_work",
                 ),
             },
         ),
@@ -300,7 +292,7 @@ class DocumentAssignAdmin(admin.ModelAdmin):
 
 class TemplateAdmin(admin.ModelAdmin):
     model = Template
-    list_display = ("name", "company", "hazardous_work", "file", "deleted")
+    list_display = ("name", "company", "file", "hazardous_work", "deleted")
 
 
 admin.site.site_header = "Fox Project Admin Panel"
