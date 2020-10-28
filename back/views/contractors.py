@@ -40,10 +40,9 @@ class ContractorDetail(generics.RetrieveUpdateDestroyAPIView):
         contractor.companies.remove(request.user.company)
         if contractor.companies.count() < 1:
             contractor.deleted = True
-            contractor.username += (
-                f"(deleted-{timezone.now().strftime('%d-%m-%y %H:%M')})"
-            )
-            contractor.email += f"(deleted-{timezone.now().strftime('%d-%m-%y %H:%M')})"
+            now = timezone.now().strftime("%d-%m-%y %H:%M")
+            contractor.username += f"(deleted-{now})"
+            contractor.email += f"(deleted-{now})"
             contractor.save()
         return JsonResponse(
             data={"response": f"Сontractor {contractor.username} deleted."},

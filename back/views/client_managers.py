@@ -31,8 +31,9 @@ class ClientManagerDetail(generics.RetrieveUpdateDestroyAPIView):
         queryset = self.get_queryset()
         manager = get_object_or_404(queryset, pk=pk)
         manager.deleted = True
-        manager.username += f"(deleted-{timezone.now().strftime('%d-%m-%y %H:%M')})"
-        manager.email += f"(deleted-{timezone.now().strftime('%d-%m-%y %H:%M')})"
+        now = timezone.now().strftime("%d-%m-%y %H:%M")
+        manager.username += f"(deleted-{now})"
+        manager.email += f"(deleted-{now})"
         manager.save()
         return JsonResponse(
             data={"response": f"manager {manager.username} deleted."},
