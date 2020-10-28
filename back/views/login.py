@@ -5,7 +5,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from rest_framework_jwt.views import ObtainJSONWebToken
-from back.serializers import UserSerializer, UserSerializerWithToken
+from back.serializers import (
+    UserSerializer,
+    UserSerializerWithToken,
+    FoxJSONWebTokenSerializer,
+)
 from back.models import Company
 
 
@@ -24,6 +28,8 @@ def current_user(request):
 class ObtainFoxJWTToken(ObtainJSONWebToken):
     def pre_save(self, obj):
         obj.company = Company()
+
+    serializer_class = FoxJSONWebTokenSerializer
 
 
 class UserList(APIView):

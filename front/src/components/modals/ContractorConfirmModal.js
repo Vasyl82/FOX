@@ -14,7 +14,7 @@ import { WithLoading, SubmitSpinner } from '../loadings'
 
 const foxApi = new FoxApiService()
 
-class ResetPasswordModal extends Component {
+class ContractorConfirmModal extends Component {
 
   state = {
     error: false,
@@ -23,7 +23,7 @@ class ResetPasswordModal extends Component {
 
   handleSubmit = async () => {
     this.props.changeSubmitState()
-    await foxApi.resetPassword({ email: this.props.email })
+    await foxApi.connectContractorToCompany(this.props.contractorId, { company_id: this.props.company })
       .then(() => {
         this.setState({
           success: true,
@@ -33,8 +33,8 @@ class ResetPasswordModal extends Component {
       .catch((error) => {
         console.error(error);
         this.setState({
-          error: 'Could not reset your password!' +
-            ' Please check your the email you entered and try again!' +
+          error: 'Could not add contractor!' +
+            ' Please try one more time!' +
             ' In case this problem repeats, please contact your administrator!'
         })
       })
@@ -45,18 +45,21 @@ class ResetPasswordModal extends Component {
     const { error, success } = this.state
     return (
       <CModal
-        show={this.props.modalType === "resetPasswordModal"}
+        show={this.props.modalType === "contractorConfirmModal"}
         onClose={this.props.hideModal}
         color="dark"
       >
         <CModalHeader closeButton>
-          <CModalTitle>Request password reset</CModalTitle>
+          <CModalTitle>This contractor already exists</CModalTitle>
         </CModalHeader>
         <CModalBody>
           {success ?
-            <p className="fox-form-valid-feedback">Password reset application was successful. Please check your email for further instructions</p>
+            <p className="fox-form-valid-feedback">Contractor added to your company</p>
             :
-            <p>Are you sure you want to reset your password?</p>
+            <>
+              <p>{this.props.message}</p>
+              <p>Do you want to add this contractor to your company?</p>
+            </>
           }
           {error
             ? <p className="fox-form-invalid-feedback">{error}</p>
@@ -87,11 +90,14 @@ class ResetPasswordModal extends Component {
 
 const mapStateToProps = state => ({
   modalType: state.modal.modalType,
-  email: state.modal.email
+  contractorId: state.modal.contractorId,
+  companies: state.modal.companies,
+  message: state.modal.message,
+  company: state.currentUser.company,
 })
 
 const mapDispatchToProps = dispatch => ({
   hideModal: () => dispatch(updateModal("", {}))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ResetPasswordModal))
+export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ContractorConfirmModal))

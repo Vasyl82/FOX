@@ -26,7 +26,7 @@ class WorkerSpecialCompetencyList(generics.ListAPIView):
                 worker__contractor=user, deleted=False
             )
         return WorkerSpecialCompetency.objects.filter(
-            worker__contractor__company=user.company, deleted=False
+            worker__contractor__companies=user.company, deleted=False
         )
 
 
@@ -47,7 +47,7 @@ class WorkerSpecialCompetencyDetail(generics.RetrieveUpdateDestroyAPIView):
                 worker__contractor=user, deleted=False
             )
         return WorkerSpecialCompetency.objects.filter(
-            worker__contractor__company=user.company, deleted=False
+            worker__contractor__companies=user.company, deleted=False
         )
 
     def destroy(self, request, pk):
