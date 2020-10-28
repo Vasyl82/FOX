@@ -44,20 +44,20 @@ class InternalNotificationsTestCase(APITestCase):
         ClientAdmin.objects.create(
             username="test_admin1",
             password="ZAQ!XSW@",
-            email="lysak.ipr@gmail.com",
+            email="lysak1.ipr@gmail.com",
             role=FoxUser.Role.client_admin,
         )
         ClientManager.objects.create(
             username="test_man1",
             password="ZAQ!XSW@",
-            email="lysak.ipr@gmail.com",
+            email="lysak2.ipr@gmail.com",
             role=ClientManager.Role.client_manager,
             position=ClientManager.Position.safety_manager,
         )
         ClientManager.objects.create(
             username="test_man2",
             password="ZAQ!XSW@",
-            email="lysak.ipr@gmail.com",
+            email="lysak3.ipr@gmail.com",
             role=ClientManager.Role.client_manager,
             position=ClientManager.Position.safety_manager,
         )

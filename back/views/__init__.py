@@ -10,7 +10,12 @@ from .client_managers import (  # noqa F401
     ClientManagerDetail,
     ClientManagerCreate,
 )  # noqa F401
-from .contractors import ContractorList, ContractorDetail, ContractorCreate  # noqa F401
+from .contractors import (  # noqa F401
+    ContractorList,
+    ContractorDetail,
+    ContractorCreate,
+    ContractorAddCompany,
+)
 from .workers import (  # noqa F401
     WorkerList,
     WorkerDetail,

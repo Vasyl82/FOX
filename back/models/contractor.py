@@ -19,6 +19,9 @@ class Contractor(FoxUser):
 
     related_company = models.CharField(max_length=128, null=True)
     company_phone = models.CharField(max_length=64, null=True)
+    companies = models.ManyToManyField(
+        "Company", related_name="contractors", blank=True
+    )
 
     class Meta:
         verbose_name = "Contractor"
