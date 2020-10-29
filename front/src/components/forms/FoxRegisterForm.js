@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { CForm, CFormGroup, CInput, CContainer, CRow, CCol, CImg, CButton } from "@coreui/react";
-import CIcon from '@coreui/icons-react'
+import { CForm, CFormGroup, CContainer, CRow, CCol, CImg, CButton, CPopover } from "@coreui/react";
 import DjangoCSRFToken from 'django-react-csrftoken'
 import { userRegisterFetch, registerError, allowRegistration } from '../../actions'
 import { FoxPasswordInput } from './inputs'
@@ -64,26 +63,29 @@ class FoxRegisterForm extends Component {
                   onSubmit={this.handleSubmit}
                 >
                   <DjangoCSRFToken />
-                  <CFormGroup>
-                    <FoxPasswordInput
-                      inputName="password"
-                      password={password}
-                      placeholder="Password"
-                      submitError={this.props.registerErrorFlag}
-                      handleChange={this.handleChange}
-                    />
-                    <FoxPasswordInput
-                      inputName="password2"
-                      password={password2}
-                      placeholder="Confirm password"
-                      submitError={this.props.registerErrorFlag}
-                      handleChange={this.handleChange}
-                    />
-                    {this.props.registerErrorFlag
-                      ? <p className={"fox-form-invalid-feedback"}>The suggested password is inappropriate. Please, Try to choose more sophisticated password and try again.</p>
-                      : null
-                    }
-                  </CFormGroup>
+
+                  <CPopover content={<><p>Your password must contain at least 8 characters.</p><p> Your password can’t be a commonly used password.</p><p> "Your password can’t be too similar to your other personal information.</p></>}>
+                    <CFormGroup>
+                      <FoxPasswordInput
+                        inputName="password"
+                        password={password}
+                        placeholder="Password"
+                        submitError={this.props.registerErrorFlag}
+                        handleChange={this.handleChange}
+                      />
+                      <FoxPasswordInput
+                        inputName="password2"
+                        password={password2}
+                        placeholder="Confirm password"
+                        submitError={this.props.registerErrorFlag}
+                        handleChange={this.handleChange}
+                      />
+                      {this.props.registerErrorFlag
+                        ? <p className={"fox-form-invalid-feedback"}>The suggested password is inappropriate. Please, Try to choose more sophisticated password and try again.</p>
+                        : null
+                      }
+                    </CFormGroup>
+                  </CPopover>
                   <CFormGroup>
                     <CButton shape="pill" block type="submit" color="dark" disabled={this.state.password !== this.state.password2} >Register</CButton>
                   </CFormGroup>
