@@ -50,25 +50,33 @@ class ContractorCreate extends Component {
       },
       )
       .catch((error) => {
-        if (!error.email.contractor_already_exists) {
-          const errors = Object.values(error).join("\n")
-          console.log(errors);
-          this.setState({
-            error: errors
-            //  +
-            //   ' Please check your input and try again!' +
-            //   ' In case this problem repeats, please contact your administrator!'
-          });
-          return;
+        const { errorEmail, ...rest } = error
+        console.log(errorEmail);
+        console.log(rest);
+        if (error.email) {
+          if (error.email.contractor_already_exists) {
+            // const errors = Object.values(error).join("\n")
+            // console.log(errors);
+            // this.setState({
+            //   error: errors
+            // });
+            // return;
+            if (!error.email.companies.includes(this.props.company.toString())) {
+              console.log(error.email.contractor_already_exists);
+              this.props.updateModal({ modalType: "contractorConfirmModal", companies: error.email.companies, contractorId: error.email.contractor_id, message: error.email.contractor_already_exists });
+              return;
+            }
+            error.email = ['Contractor with this email is already registered in your company.']
+            // this.setState({
+            //   error: 'Contractor with this email is already registered in your company.'
+            // });
+          }
         }
-        if (error.email.companies.includes(this.props.company.toString())) {
-          this.setState({
-            error: 'Contractor with this email is already registered in your company.'
-          });
-          return;
-        }
-        console.log(error.email.contractor_already_exists);
-        this.props.updateModal({ modalType: "contractorConfirmModal", companies: error.email.companies, contractorId: error.email.contractor_id, message: error.email.contractor_already_exists });
+        const errors = Object.values(error).join("\n")
+        console.log(errors);
+        this.setState({
+          error: errors
+        });
       })
       .finally(() => this.props.changeSubmitState())
   }
