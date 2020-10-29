@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 import {
   CButton,
   CModal,
@@ -41,12 +42,17 @@ class ContractorConfirmModal extends Component {
       .finally(this.props.changeSubmitState)
   }
 
+  redirectToContractorList = () => {
+    this.props.hideModal();
+    this.props.history.push("/contractors")
+  }
+
   render = () => {
     const { error, success } = this.state
     return (
       <CModal
         show={this.props.modalType === "contractorConfirmModal"}
-        onClose={this.props.hideModal}
+        onClose={success ? this.redirectToContractorList : this.props.hideModal}
         color="dark"
       >
         <CModalHeader closeButton>
@@ -79,7 +85,7 @@ class ContractorConfirmModal extends Component {
             disabled={this.props.submitting}
             shape="pill"
             color="dark"
-            onClick={this.props.hideModal}>
+            onClick={success ? this.redirectToContractorList : this.props.hideModal}>
             <SubmitSpinner submitting={this.props.submitting} />{success ? "Close" : "Cancel"}
           </CButton>
         </CModalFooter>
@@ -100,4 +106,4 @@ const mapDispatchToProps = dispatch => ({
   hideModal: () => dispatch(updateModal("", {}))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ContractorConfirmModal))
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(WithLoading(ContractorConfirmModal)))
