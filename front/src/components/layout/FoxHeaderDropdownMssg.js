@@ -8,7 +8,7 @@ import {
   CImg
 } from '@coreui/react'
 import { NotificationCountBadge } from '../badges'
-import { getNotifications } from '../../actions'
+import { clearNotifications, getNotifications } from '../../actions'
 import { NotificationMessage } from '../../utils'
 
 class TheHeaderDropdownMssg extends Component {
@@ -18,15 +18,19 @@ class TheHeaderDropdownMssg extends Component {
   }
 
   componentDidMount = () => {
-    this.props.getNotifications()
+    this.props.getNotifications({ signal: this.abortController.signal })
     const timer = setInterval(this.props.getNotifications, 60000)
     this.setState({
       timer: timer
     })
   }
 
+  abortController = new window.AbortController();
+
   componentWillUnmount = () => {
-    clearInterval(this.state.timer)
+    this.abortController.abort();
+    clearInterval(this.state.timer);
+    this.props.clearNotifications()
   }
 
   render = () => {
@@ -65,7 +69,8 @@ const mapStateToProps = state => ({
 )
 
 const mapDispatchToProps = dispatch => ({
-  getNotifications: () => dispatch(getNotifications())
+  getNotifications: ({ ...kwargs }) => dispatch(getNotifications({ ...kwargs })),
+  clearNotifications: () => dispatch(clearNotifications())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(TheHeaderDropdownMssg)
