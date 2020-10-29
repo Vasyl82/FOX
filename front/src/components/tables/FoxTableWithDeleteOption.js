@@ -77,26 +77,21 @@ class FoxTableWithDeleteOption extends Component {
                 : null
               }
             </CCardHeader>
-            <CCardBody className="card text-white bg-info mb-3">
+            <CCardBody>
               <CDataTable
                 items={this.props.tableData ? this.props.tableData : []}
                 fields={this.props.fields}
                 loading={this.props.loading}
                 clickableRows
                 hover
-                style="z-index:20000000000"
-                // striped
-                dark
-                bordered
+                striped
                 sorter
                 tableFilter
                 columnFilter
                 size="sm"
-                itemsPerPage={5}
+                itemsPerPage={10}
                 itemsPerPageSelect
                 pagination
-                // zIndex='100000000'
-                // style="width:100%"
                 scopedSlots={{
                   [linkName]:
                     (item) => (
