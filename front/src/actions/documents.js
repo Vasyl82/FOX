@@ -10,6 +10,27 @@ const getDocumentList = ({ params = null, additional = false, role = null, signa
   }
 }
 
+const addNewDocument = (document) => {
+  return dispatch => dispatch(_updateDocument(document))
+}
+
+const deleteDocument = (docId) => {
+  return dispatch => dispatch(_deleteDocument(docId))
+
+}
+
+const _updateDocument = docInfo => ({
+  type: "UPDATE_DOCUMENT",
+  docInfo: docInfo
+})
+
+const _deleteDocument = (docId) => ({
+  type: "DELETE_DOCUMENT",
+  docId: docId
+})
+
 export {
-  getDocumentList
+  getDocumentList,
+  addNewDocument,
+  deleteDocument
 }

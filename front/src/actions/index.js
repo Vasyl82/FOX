@@ -11,7 +11,7 @@ import {
 import getDashboardLayout from './dashboard'
 import { getProjectList, setProjectId } from './projects'
 import { getClientManagerList } from './client_managers'
-import { getDocumentList } from './documents'
+import { getDocumentList, addNewDocument } from './documents'
 import { getContractorList } from './contractors'
 import { getWorkerList } from './workers'
 import { getApprovalList } from './approvals'
@@ -40,6 +40,7 @@ export {
     getProjectList,
     getClientManagerList,
     getDocumentList,
+    addNewDocument,
     getContractorList,
     getWorkerList,
     setProjectId,

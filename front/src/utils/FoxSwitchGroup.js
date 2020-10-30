@@ -16,6 +16,10 @@ const makeLabel = inputString => {
   return inputString.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
 }
 
+const makeChoiceName = inputString => {
+  return inputString.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('_')
+}
+
 
 const FoxSwitchGroup = props => {
   return (
@@ -63,7 +67,7 @@ const FoxSwitchGroup = props => {
                     <CCol lg="2">
 
                     </CCol> */}
-                    <HazardousWorkDocList />
+                    <HazardousWorkDocList hazardousWork={makeChoiceName(option)} />
                   </>
                   : null}
 

@@ -15,8 +15,7 @@ const initialState = {
     notifications: [],
     modal: {},
     submitting: false,
-    projectDocs: []
-
+    projectDocs: [],
 }
 
 const changeState = (state = initialState, { type, ...rest }) => {
@@ -58,6 +57,15 @@ const changeState = (state = initialState, { type, ...rest }) => {
         case 'UPDATE_SUBMIT':
             const { submitting } = state
             return { ...state, submitting: !submitting }
+        case 'UPDATE_DOCUMENT':
+            const newDocs = [...state.projectDocs];
+            const searchIndex = newDocs.findIndex(element => element.docId === rest.docInfo.docId);
+            searchIndex < 0 ? newDocs.push(rest.docInfo) : newDocs.splice(searchIndex, 1, rest.docInfo)
+            return { ...state, projectDocs: newDocs };
+        case 'DELETE_DOCUMENT':
+            const newDeleteDocs = [...state.projectDocs];
+            newDeleteDocs.splice(newDeleteDocs.findIndex(element => element.docId === rest.docId), 1)
+            return { ...state, projectDocs: newDeleteDocs };
 
         default:
             return state;

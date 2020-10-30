@@ -1,68 +1,120 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import CIcon from '@coreui/icons-react'
-import { CButton, CCol } from '@coreui/react'
-import { FoxFormGroupWithUpload } from '../components/forms'
+import { CButton, CCol, CInputFile } from '@coreui/react'
+import { addNewDocument } from '../actions'
+import { deleteDocument } from '../actions/documents'
+import { array, element, func } from 'prop-types'
+// import { FoxFormGroupWithUpload } from '../components/forms'
 
 class HazardousWorkDocList extends Component {
 
-    state = {
-        items: [{ id: 1 }, { id: 2 }],
-        itemsCount: 2
-    }
+  state = {
+    lastIndex: 1
+  }
 
-    handleRowAdd = () => {
-        console.log("Row added");
-    }
+  handleRowAdd = (document) => {
+    const { lastIndex } = this.state
+    this.props.addNewDocument(document)
+    this.setState({ lastIndex: lastIndex + 1 })
+  }
 
-    handleRowRemove = () => {
-        console.log("Row removed");
-    }
+  handleRowRemove = (documentId) => {
+    this.props.deleteDocument(documentId)
+  }
 
-    componentDidMount = () => {
-        console.log("list mounted");
-    }
+  handleFileUpload = (event) => {
+    let docName = event.target.files[0].name.split(".")
+    docName.pop()
+    docName = docName.join('.')
+    console.log(docName);
+    this.props.addNewDocument(
+      {
+        docId: event.target.name,
+        name: docName,
+        file: event.target.files[0],
+        project: null,
+        hazardous_work: this.props.hazardousWork,
+      }
+    )
+  }
 
-    render() {
-        const { items, itemsCount } = this.state
+  componentDidMount = () => {
+    const initialDocs = this.props.docs.filter(doc => doc.hazardous_work == this.props.hazardousWork)
+    if (initialDocs.length < 1) {
+      this.handleRowAdd({
+        docId: `${this.state.lastIndex}-${this.props.hazardousWork}`,
+        name: '',
+        file: '',
+        project: null,
+        hazardous_work: this.props.hazardousWork,
+      })
+    }
+    else {
+      const docIdx = initialDocs.map(doc => parseInt(doc.docId.split("-")[0]))
+      const lastIndex = Math.max(...docIdx)
+      this.setState({
+        lastIndex: lastIndex + 1
+      })
+    }
+  }
+
+  componentWillUnmount = () => {
+
+  };
+
+  render() {
+    console.log(this.props.docs);
+    const { lastIndex } = this.state
+    const docs = this.props.docs.filter(doc => doc.hazardous_work == this.props.hazardousWork)
+    const docsCount = docs.length
+    return (
+      docs ? docs.map((doc, idx) => {
         return (
-            items ? items.map((item) => {
-                console.log(item);
-                const [key, value] = Object.entries(item)[0]
-                console.log(value, itemsCount);
-                return (
-                    < React.Fragment key={value} >
-                        <CCol lg="7">
-                            <FoxFormGroupWithUpload
-                                inputValue='check'
-                                handleChange={this.props.handleChange}
-                                handleFileUpload={this.props.handleFileUpload}
-                                inputInfo="input_document_name"
-                                uploadInfo="file"
-                                disabled={this.props.submitting}
-                                readOnly={this.props.submitting}
-                            />
-                        </CCol>
-                        <CCol lg="2">
-                            {value == itemsCount ? <CButton shape="pill" color="success" onClick={this.handleRowAdd}>
-                                <CIcon name="cilPlus" /></CButton> : <CButton shape="pill" color="danger" onClick={this.handleRowRemove}>
-                                    <CIcon name="cilTrash" /></CButton>}
-                        </CCol>
-                    </React.Fragment >
-                )
-            }
-            )
-                : null
+          < React.Fragment key={doc.docId} >
+            <CCol md="6">
+              <CInputFile
+                name={doc.docId}
+                onChange={this.handleFileUpload}
+                disabled={this.props.submitting}
+                required={this.props.submitting}
+              />
+            </CCol>
+            <CCol md="2">
+              {idx === docsCount - 1 ?
+                <CButton size="sm" shape="pill" color="success" onClick={() => this.handleRowAdd({
+                  docId: `${lastIndex}-${this.props.hazardousWork}`,
+                  name: '',
+                  file: '',
+                  project: null,
+                  hazardous_work: this.props.hazardousWork,
+                })}>
+                  <CIcon name="cilPlus" />
+                </CButton>
+                :
+                <CButton size="sm" shape="pill" color="danger" onClick={
+                  () => this.handleRowRemove(doc.docId)
+                }>
+                  <CIcon name="cilTrash" />
+                </CButton>}
+            </CCol>
+          </React.Fragment >
         )
-    }
+      }
+      )
+        : null
+    )
+  }
 }
 
-const mapStateToProps = state => {
-    docs: state.projectDocs
-}
+const mapStateToProps = state => ({
+  docs: state.projectDocs,
+  submitting: state.submitting,
+})
 
-// const mapDispatchToProps = dispatch => {
-//   pass
-// }
+const mapDispatchToProps = dispatch => ({
+  addNewDocument: (document) => dispatch(addNewDocument(document)),
+  deleteDocument: (document) => dispatch(deleteDocument(document))
+})
 
-export default connect(mapStateToProps, null)(HazardousWorkDocList)
+export default connect(mapStateToProps, mapDispatchToProps)(HazardousWorkDocList)
