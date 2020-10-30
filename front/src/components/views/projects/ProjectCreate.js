@@ -127,12 +127,12 @@ class ProjectCreate extends Component {
             filledDocs[idx].project = data.id;
             delete filledDocs[idx].docId
           });
-          return Promise.all(filledDocs.forEach(doc => {
+          return Promise.all(filledDocs.map(doc => {
             const formData = new FormData
             Object.entries(doc).forEach(([key, value]) => {
               formData.append(key, value);
             })
-            foxApi.createEntityWithFile('documents', formData)
+            return foxApi.createEntityWithFile('documents', formData)
           }))
         }).then(() => {
           this.props.history.goBack()
