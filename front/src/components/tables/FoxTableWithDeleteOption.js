@@ -85,7 +85,7 @@ class FoxTableWithDeleteOption extends Component {
                 striped
                 bordered
                 sorter
-                tableFilter
+                tableFilter={{ placeholder: " " }}
                 columnFilter
                 size="sm"
                 itemsPerPage={10}
