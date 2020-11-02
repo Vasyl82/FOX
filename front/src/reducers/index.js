@@ -66,6 +66,10 @@ const changeState = (state = initialState, { type, ...rest }) => {
             const newDeleteDocs = [...state.projectDocs];
             newDeleteDocs.splice(newDeleteDocs.findIndex(element => element.docId === rest.docId), 1)
             return { ...state, projectDocs: newDeleteDocs };
+        case "DELETE_DOCUMENTS_FROM_STORE":
+            return { ...state, projectDocs: [] };
+        case "ADD_ALL_DOCUMENTS_TO_STORE":
+            return { ...state, ...rest };
 
         default:
             return state;

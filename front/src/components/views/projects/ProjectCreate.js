@@ -23,6 +23,7 @@ import { FoxSwitchGroup, } from '../../../utils'
 import { FoxReactSelectFormGroup, FoxFormGroupWithUpload } from '../../forms'
 import { permitOptions } from './optionsLists'
 import { WithLoadingSpinner, WithLoading, SubmitSpinner } from '../../loadings'
+import { deleteDocumentsFromStore } from '../../../../src/actions/documents'
 
 const foxApi = new FoxApiService();
 
@@ -116,7 +117,7 @@ class ProjectCreate extends Component {
       this.setState({
         error: 'Contractor was not selected! Please, choose contractor form the list'
       })
-
+      this.props.changeSubmitState()
     } else {
       this.formData = this.state;
       delete this.formData.error;
@@ -157,6 +158,7 @@ class ProjectCreate extends Component {
 
   componentWillUnmount = async () => {
     this.abortController.abort();
+    this.props.deleteDocumentsFromStore();
     await this.props.clearList();
   }
 
@@ -299,7 +301,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
   getContractorList: ({ ...params }) => dispatch(getContractorList({ ...params })),
-  clearList: () => dispatch(clearList())
+  clearList: () => dispatch(clearList()),
+  deleteDocumentsFromStore: () => dispatch(deleteDocumentsFromStore())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ProjectCreate))

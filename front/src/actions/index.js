@@ -11,7 +11,7 @@ import {
 import getDashboardLayout from './dashboard'
 import { getProjectList, setProjectId } from './projects'
 import { getClientManagerList } from './client_managers'
-import { getDocumentList, addNewDocument } from './documents'
+import { getDocumentList, addNewDocument, deleteDocumentsFromStore, getDocuments } from './documents'
 import { getContractorList } from './contractors'
 import { getWorkerList } from './workers'
 import { getApprovalList } from './approvals'
@@ -36,12 +36,14 @@ export {
     userRegisterValidationFetch,
     registerError,
     allowRegistration,
+    deleteDocumentsFromStore,
     getDashboardLayout,
     getProjectList,
     getClientManagerList,
     getDocumentList,
     addNewDocument,
     getContractorList,
+    getDocuments,
     getWorkerList,
     setProjectId,
     getApprovalList,

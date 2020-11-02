@@ -18,7 +18,7 @@ import {
   CFormText
 } from "@coreui/react";
 
-import { getProfileFetch, getContractorList, setProjectId, clearList } from '../../../actions'
+import { getProfileFetch, getContractorList, setProjectId, clearList, getDocuments } from '../../../actions'
 import { FoxApiService } from '../../../services'
 import { ActivityLog } from '../../activity_log'
 import { FoxSwitchGroup } from '../../../utils'
@@ -250,7 +250,8 @@ const mapStateToProps = state => {
   return {
     company: state.currentUser.company,
     options: state.entityListTable.tableData,
-    role: state.currentUser.role
+    role: state.currentUser.role,
+    docs: state.projectDocs,
   }
 }
 
@@ -258,7 +259,8 @@ const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
   getContractorList: ({ ...params }) => dispatch(getContractorList({ ...params })),
   setProjectId: (id) => dispatch(setProjectId(id)),
-  clearList: () => dispatch(clearList())
+  clearList: () => dispatch(clearList()),
+  getDocuments: (documents) => dispatch(getDocuments(documents))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ProjectDetail))

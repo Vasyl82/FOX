@@ -4,8 +4,7 @@ import CIcon from '@coreui/icons-react'
 import { CButton, CCol, CInputFile } from '@coreui/react'
 import { addNewDocument } from '../actions'
 import { deleteDocument } from '../actions/documents'
-import { array, element, func } from 'prop-types'
-// import { FoxFormGroupWithUpload } from '../components/forms'
+
 
 class HazardousWorkDocList extends Component {
 
@@ -51,7 +50,8 @@ class HazardousWorkDocList extends Component {
       })
     }
     else {
-      const docIdx = initialDocs.map(doc => parseInt(doc.docId.split("-")[0]))
+
+      const docIdx = initialDocs.map(doc => doc.docId ? parseInt(doc.docId.split("-")[0]) : doc.id)
       const lastIndex = Math.max(...docIdx)
       this.setState({
         lastIndex: lastIndex + 1
@@ -60,7 +60,6 @@ class HazardousWorkDocList extends Component {
   }
 
   componentWillUnmount = () => {
-
   };
 
   render() {
