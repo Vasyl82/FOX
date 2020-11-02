@@ -32,7 +32,7 @@ class ContractorDetail extends Component {
   }
   render = () => {
     const details = this.state;
-    ["id", "company", "role"].forEach(option => {
+    ["id", "company", "companies", "role"].forEach(option => {
       delete details[option]
     })
     return (
