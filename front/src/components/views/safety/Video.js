@@ -64,6 +64,7 @@ class SafetyVideo extends Component {
   }
 
   render = () => {
+    const { personal_declaration_template, safety_quiz_template, safety_video_url } = this.state
     return (
       this.props.username ?
         <CCard>
@@ -76,30 +77,33 @@ class SafetyVideo extends Component {
             <WithLoadingSpinner loading={this.props.loading}>
               <CRow>
                 <CCol >
-                  <CButton
-                    shape="pill"
-                    className='mr-3 mb-3'
-                    variant="outline"
-                    color="info"
-                    id={this.state.personal_declaration_template}
-                    name="personal_declaration_template"
-                    value={this.state.personal_declaration_template}
-                    onClick={this.downloadFile}
-                  >
-                    Personal Declaration
-      				</CButton>
-                  <CButton
-                    shape="pill"
-                    className='mr-3 mb-3'
-                    variant="outline"
-                    color="info"
-                    id={this.state.safety_quiz_template}
-                    name="safety_quiz_template"
-                    value={this.state.safety_quiz_template}
-                    onClick={this.downloadFile}
-                  >
-                    Safety Quiz
-      				</CButton>
+                  {personal_declaration_template ?
+                    <CButton
+                      shape="pill"
+                      className='mr-3 mb-3'
+                      variant="outline"
+                      color="info"
+                      id={personal_declaration_template}
+                      name="personal_declaration_template"
+                      value={personal_declaration_template}
+                      onClick={this.downloadFile}
+                    >Personal Declaration</CButton>
+                    :
+                    <p>The company hasn't added personal declaration template yet.</p>
+                  }
+                  {safety_quiz_template ?
+
+                    <CButton
+                      shape="pill"
+                      className='mr-3 mb-3'
+                      variant="outline"
+                      color="info"
+                      id={safety_quiz_template}
+                      name="safety_quiz_template"
+                      value={safety_quiz_template}
+                      onClick={this.downloadFile}
+                    >Safety Quiz</CButton>
+                    : <p>The company hasn't added safety quiz template yet.</p>}
                 </CCol>
               </CRow>
               <CRow alignHorizontal="center">
@@ -107,7 +111,7 @@ class SafetyVideo extends Component {
                   <CEmbed
                     ratio="16by9"
                   >
-                    <iframe src={this.state.safety_video_url}
+                    <iframe src={safety_video_url}
                       frameBorder="0"
                       allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen>
