@@ -50,7 +50,7 @@ class FoxEntityListTable extends Component {
                 striped
                 bordered
                 sorter
-                tableFilter={{ placeholder: " " }}
+                tableFilter={{ placeholder: "Search..." }}
                 columnFilter
                 size="sm"
                 itemsPerPage={10}
