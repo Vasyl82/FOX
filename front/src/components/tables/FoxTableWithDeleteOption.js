@@ -86,7 +86,7 @@ class FoxTableWithDeleteOption extends Component {
                 hover
                 striped
                 sorter
-                tableFilter
+                tableFilter={{ placeholder: " " }}
                 columnFilter
                 size="sm"
                 itemsPerPage={10}

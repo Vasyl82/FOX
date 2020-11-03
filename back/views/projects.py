@@ -16,7 +16,9 @@ class ProjectList(generics.ListAPIView):
         user = self.request.user
         if user.role == "Contr":
             return Project.objects.filter(
-                company__in=user.contractor.companies, contractor=user, deleted=False
+                company__in=user.contractor.companies.all(),
+                contractor=user,
+                deleted=False,
             )
         return Project.objects.filter(company=user.company, deleted=False)
 
@@ -46,9 +48,7 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         user = self.request.user
         if user.role == "Contr":
-            return Project.objects.filter(
-                contractor__companies=user.company, deleted=False
-            )
+            return Project.objects.filter(contractor__pk=user.pk, deleted=False)
         return Project.objects.filter(company=user.company, deleted=False)
 
     def patch(self, request, *args, **kwargs):

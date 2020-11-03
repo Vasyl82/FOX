@@ -13,7 +13,7 @@ class ProposalSubmit(APIView):
         project = get_object_or_404(Project, pk=pk)
 
         # get companies managers
-        managers = get_list_or_404(ClientManager, company=request.user.company)
+        managers = get_list_or_404(ClientManager, company=project.company)
 
         # create approval for each manager
         for manager in managers:
