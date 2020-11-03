@@ -18,7 +18,7 @@ const DeleteModal = props => {
   const handleDelete = async () => {
     props.changeSubmitState()
     await props.confirmDelete()
-      .then(() => props.changeSubmitState())
+      .finally(() => props.changeSubmitState())
   }
   return (
     <CModal

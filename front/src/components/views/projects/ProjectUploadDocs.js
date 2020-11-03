@@ -136,7 +136,7 @@ class ProjectUploadDocs extends Component {
                 <CButton disabled={this.props.submitting} shape="pill" type="submit" color="dark" variant="outline" block><SubmitSpinner submitting={this.props.submitting} />Submit documents</CButton>
               </CFormGroup>
               {this.state.error
-                ? <p>{this.state.error}</p>
+                ? <p className="fox-form-invalid-feedback">{this.state.error}</p>
                 : null
               }
             </CForm>

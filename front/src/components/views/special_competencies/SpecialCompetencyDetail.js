@@ -78,15 +78,15 @@ class SpecialCompetencyDetail extends Component {
       .then(() => {
         this.props.history.goBack()
         this.props.updateModal("", {})
-      },
-        (error) => {
-          console.error(error);
-          this.setState({
-            error: 'Could not delete competency!' +
-              ' Please check your input and try again!' +
-              ' In case this problem repeats, please contact your administrator!'
-          })
+      })
+      .catch((error) => {
+        console.error(error);
+        this.setState({
+          error: 'Could not delete competency!' +
+            ' Please check your input and try again!' +
+            ' In case this problem repeats, please contact your administrator!'
         })
+      })
   }
 
   downloadFile = async (e) => {
