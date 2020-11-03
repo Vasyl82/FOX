@@ -17,6 +17,7 @@ class DocumentListSerializer(serializers.ModelSerializer):
             "url_to_doc",
             "filename",
             "docId",
+            "hazardous_work",
         ]
 
     def get_filename(self, obj):

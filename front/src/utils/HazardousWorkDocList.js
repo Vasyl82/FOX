@@ -26,7 +26,6 @@ class HazardousWorkDocList extends Component {
     let docName = event.target.files[0].name.split(".")
     docName.pop()
     docName = docName.join('.')
-    console.log(docName);
     this.props.addNewDocument(
       {
         docId: event.target.name,
@@ -57,6 +56,7 @@ class HazardousWorkDocList extends Component {
         lastIndex: lastIndex + 1
       })
     }
+    console.log("did mount finished");
   }
 
   componentWillUnmount = () => {
@@ -66,45 +66,54 @@ class HazardousWorkDocList extends Component {
     console.log(this.props.docs);
     const { lastIndex } = this.state
     const docs = this.props.docs.filter(doc => doc.hazardous_work == this.props.hazardousWork)
+    console.log(docs);
     const docsCount = docs.length
-    return (
-      docs ? docs.map((doc, idx) => {
-        return (
-          < React.Fragment key={doc.docId} >
-            <CCol md="6">
-              <CInputFile
-                name={doc.docId}
-                onChange={this.handleFileUpload}
-                disabled={this.props.submitting}
-                required={this.props.submitting}
-              />
-            </CCol>
-            <CCol md="2">
-              {idx === docsCount - 1 ?
-                <CButton size="sm" shape="pill" color="success" onClick={() => this.handleRowAdd({
-                  docId: `${lastIndex}-${this.props.hazardousWork}`,
-                  name: '',
-                  file: '',
-                  project: null,
-                  hazardous_work: this.props.hazardousWork,
-                })}>
-                  <CIcon name="cilPlus" />
-                </CButton>
-                :
-                <CButton size="sm" shape="pill" color="danger" onClick={
-                  () => this.handleRowRemove(doc.docId)
-                }>
-                  <CIcon name="cilTrash" />
-                </CButton>}
-            </CCol>
-          </React.Fragment >
-        )
-      }
-      )
-        : null
+
+    return(
+      docs ? 
+      <CCol>
+        {
+          docs.map(
+            (doc, idx) => {
+              return (
+                <>
+                  <CInputFile
+                    name={doc.docId}
+                    onChange={this.handleFileUpload}
+                    disabled={this.props.submitting}
+                    required={this.props.submitting}
+                  />
+
+                  {idx === docsCount - 1 ?
+                    <CButton variant="ghost" size="sm" shape="pill" color="success" onClick={() => this.handleRowAdd({
+                      docId: `${lastIndex}-${this.props.hazardousWork}`,
+                      name: '',
+                      file: '',
+                      project: null,
+                      hazardous_work: this.props.hazardousWork,
+                    })}>
+                      <CIcon name="cilPlus" />
+                     </CButton>
+
+                  :
+
+                  <CButton variant="ghost" size="sm" shape="pill" color="danger" onClick={() => this.handleRowRemove(doc.docId)}>
+                    <CIcon name="cilTrash" />
+                  </CButton>
+                  }
+                </>
+              )
+            }
+            
+            )
+        }
+      </CCol> 
+      : 
+      null
     )
   }
-}
+}   
+
 
 const mapStateToProps = state => ({
   docs: state.projectDocs,

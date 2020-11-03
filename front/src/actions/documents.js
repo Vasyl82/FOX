@@ -1,4 +1,6 @@
-import { RepresentationService } from '../services'
+import { RepresentationService, FoxApiService } from '../services'
+
+const foxApi = new FoxApiService()
 
 const repr = new RepresentationService
 const getDocumentList = ({ params = null, additional = false, role = null, signal = null }) => {

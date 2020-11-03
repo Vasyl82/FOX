@@ -21,7 +21,7 @@ import {
 import { getProfileFetch, getContractorList, setProjectId, clearList, getDocuments } from '../../../actions'
 import { FoxApiService } from '../../../services'
 import { ActivityLog } from '../../activity_log'
-import { FoxSwitchGroup } from '../../../utils'
+import { FoxSwitchGroupWithDownload } from '../../../utils'
 import { FoxReactSelectFormGroup } from '../../forms'
 import { permitOptions } from './optionsLists'
 import { WithLoading, WithLoadingSpinner, SubmitSpinner } from '../../loadings'
@@ -90,14 +90,23 @@ class ProjectDetail extends Component {
   }
 
   componentDidMount = async () => {
-    this.props.setProjectId(this.props.match.params.id)
+    const projectId = this.props.match.params.id
+    this.props.setProjectId(projectId)
     await this.props.getProfileFetch()
-      .then(() => foxApi.getDetailsOf('projects', this.props.match.params.id))
-      .then((data) => this.setState({ ...data }))
-      .then(() => this.props.getContractorList({ signal: this.abortController.signal }))
-      .catch((error) => console.log(error))
-      .finally(() => this.props.changeLoadingState())
-  }
+      .then(() => foxApi.getDetailsOf('projects', projectId))
+      .then((data) => this.setState(
+        { ...data } , async () => {
+          await Promise.all([
+            this.props.getDocuments({ params: { project_id: projectId }, signal: this.abortController.signal }),
+            this.props.getContractorList({ signal: this.abortController.signal })
+          ])
+        }
+      ))
+        .catch(error => {
+          console.log(error);
+        })
+        .finally(() => this.props.changeLoadingState())
+    }
 
   componentWillUnmount = async () => {
     this.abortController.abort();
@@ -212,7 +221,7 @@ class ProjectDetail extends Component {
                       Attached Documents
               </CLink>
                   </CFormGroup>
-                  <FoxSwitchGroup
+                  <FoxSwitchGroupWithDownload
                     groupLabel='Choose the related hazardous work
                   from the list below:'
                     options={permitOptions}
@@ -257,10 +266,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getContractorList: ({ ...params }) => dispatch(getContractorList({ ...params })),
+  getContractorList: async ({ ...kwargs }) => await dispatch(getContractorList({ ...kwargs })),
   setProjectId: (id) => dispatch(setProjectId(id)),
   clearList: () => dispatch(clearList()),
-  getDocuments: (documents) => dispatch(getDocuments(documents))
+  getDocuments: async ({...kwargs}) => await dispatch(getDocuments({...kwargs}))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ProjectDetail))
