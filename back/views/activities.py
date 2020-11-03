@@ -14,7 +14,7 @@ class ActivityList(ListAPIView):
     def get_queryset(self):
         user = self.request.user
         if user.role == "Contr":
-            return Activity.objects.filter(contractor__companies=user.company).order_by(
-                "-pk"
-            )
+            return Activity.objects.filter(
+                company__in=user.contractor.companies.all()
+            ).order_by("-pk")
         return Activity.objects.filter(company=user.company).order_by("-pk")
