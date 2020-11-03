@@ -21,7 +21,8 @@ class ProjectUploadDocs extends Component {
     filename: "",
     file_id: "",
     project: this.props.match.params.id,
-    url_to_doc: "",
+    
+    : "",
     upload_files: {},
     error: false,
   }
