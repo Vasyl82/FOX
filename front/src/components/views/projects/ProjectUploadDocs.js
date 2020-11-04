@@ -12,6 +12,7 @@ import DjangoCSRFToken from 'django-react-csrftoken'
 import { FoxApiService } from '../../../services'
 import FoxProjectDocumentDownLoadUploadFormGroup from '../../forms/FoxProjectDocumentDownloadUploadFormGroup';
 import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
+import { handleError } from '../../errors'
 
 const foxApi = new FoxApiService();
 
@@ -21,8 +22,7 @@ class ProjectUploadDocs extends Component {
     filename: "",
     file_id: "",
     project: this.props.match.params.id,
-    
-    : "",
+    url_to_doc: "",
     upload_files: {},
     error: false,
   }
@@ -44,8 +44,15 @@ class ProjectUploadDocs extends Component {
           link.parentNode.removeChild(link);
         })
         .catch((error) => {
-          console.error('File download failed!');
-          console.error(error)
+          const errors = handleError(
+            {
+              error: error,
+              operation: "File download",
+              validationFields: ["name", "file"]
+            });
+          this.setState({
+            error: errors
+          });
         })
     })
   }
@@ -79,12 +86,15 @@ class ProjectUploadDocs extends Component {
         this.props.history.goBack()
       })
       .catch((error) => {
-        console.error(error);
+        const errors = handleError(
+          {
+            error: error,
+            operation: "Document update",
+            validationFields: ["name", "file"]
+          });
         this.setState({
-          error: 'Document update failed!' +
-            ' Please check your input and try again!' +
-            ' In case this problem repeats, please contact your administrator!'
-        })
+          error: errors
+        });
       })
       .finally(() => this.props.changeSubmitState())
   }
@@ -160,5 +170,6 @@ const mapDispatchToProps = dispatch => ({
   setProjectId: (id) => dispatch(setProjectId(id)),
   clearList: () => dispatch(clearList())
 })
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ProjectUploadDocs))

@@ -55,12 +55,18 @@ class SafetyPresets extends Component {
         this.props.history.push(`/safety/video`)
       })
       .catch((error) => {
-        console.error(error);
+        const errors = handleError(
+          {
+            error: error,
+            operation: "Safety info upload",
+            validationFields: [
+              "personal_declaration_template",
+              "safety_quiz_template",
+              "safety_video_url"]
+          });
         this.setState({
-          error: 'Safety info upload failed!' +
-            ' Please check your input and try again!' +
-            ' In case this problem repeats, please contact your administrator!'
-        })
+          error: errors
+        });
       })
       .finally(() => this.props.changeSubmitState())
   }
