@@ -161,3 +161,19 @@ html:not([dir=rtl]) .input-group > .form-control:not(:last-child), html:not([dir
 .fox-login-welcome{
   text-align: center;
 }
+
+
+html:not([dir=rtl]) .page-item:first-child .page-link {
+  border-radius: 1.5rem 0 0 1.5rem;
+}
+
+html:not([dir=rtl]) .page-item:last-child .page-link {
+  border-radius: 0 1.5rem 1.5rem 0;
+}
+
+.page-item.active .page-link {
+  z-index: 3;
+  color: #fff;
+  background-color: #de0048;
+  border-color: #de0048;
+}
