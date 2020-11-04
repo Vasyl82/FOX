@@ -17,7 +17,7 @@ const handleClose = (event) => {
   console.log("Close Button clicked!");
 };
 
-export default function DocumentWidget() {
+export default function DocumentWidget(props) {
   return (
     <CCol xs="12" sm="6" md="2">
       <CFade in={true}>
@@ -32,7 +32,7 @@ export default function DocumentWidget() {
             </CRow>
             <CRow>
               <CCol>
-                <CCardText>docname.doc</CCardText>
+                <CCardText>{props.name}</CCardText>
               </CCol>
             </CRow>
           </CCardBody>
