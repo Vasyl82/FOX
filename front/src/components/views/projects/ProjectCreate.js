@@ -19,11 +19,12 @@ import {
 } from "@coreui/react";
 import DjangoCSRFToken from 'django-react-csrftoken'
 import { FoxApiService } from '../../../services'
-import { FoxSwitchGroup, } from '../../../utils'
+import { FoxSwitchGroup, MultipleFileUploadButton } from '../../../utils'
 import { FoxReactSelectFormGroup, FoxFormGroupWithUpload } from '../../forms'
 import { permitOptions } from './optionsLists'
 import { WithLoadingSpinner, WithLoading, SubmitSpinner } from '../../loadings'
 import { deleteDocumentsFromStore } from '../../../../src/actions/documents'
+import {DocumentWidget} from '../../widgets'
 
 const foxApi = new FoxApiService();
 
@@ -274,7 +275,12 @@ class ProjectCreate extends Component {
                     </CContainer>
                   </CFormGroup>
 
-
+                  <MultipleFileUploadButton />
+                  <CFormGroup>
+                    <CRow>
+                      <DocumentWidget />
+                    </CRow>
+                  </CFormGroup>
                   <CButton disabled={this.props.submitting} shape="pill" onClick={this.handleSubmit} color="dark" variant="outline" block><SubmitSpinner submitting={this.props.submitting} />Create Project and go to document creation</CButton>
                   {this.state.error
                     ? <p>{this.state.error}</p>

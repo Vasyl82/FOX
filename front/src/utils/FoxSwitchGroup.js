@@ -10,7 +10,7 @@ import {
   CIcon
 } from "@coreui/react";
 import { FoxFormGroupWithUpload } from '../../src/components/forms'
-import HazardousWorkDocList from './HazardousWorkDocList'
+// import HazardousWorkDocList from './HazardousWorkDocList'
 
 const makeLabel = inputString => {
   return inputString.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
@@ -50,27 +50,6 @@ const FoxSwitchGroup = props => {
                 <CCol lg="2">
                   <CLabel variant="checkbox" className="form-check-label" htmlFor={option}>{makeLabel(option)}</CLabel>
                 </CCol>
-                {props.parentState[option] ?
-                  <>
-                    {/* <CCol lg="8">
-                      <FoxFormGroupWithUpload
-                        inputValue=''
-                        handleChange={props.handleChange}
-                        handleFileUpload={props.handleFileUpload}
-                        inputInfo="input_document_name"
-                        uploadInfo="file"
-                        disabled={props.submitting}
-                        readOnly={props.submitting}
-                      /> 
-                    </CCol>
-
-                    <CCol lg="2">
-
-                    </CCol> */}
-                    <HazardousWorkDocList hazardousWork={makeChoiceName(option)} />
-                  </>
-                  : null}
-
               </CRow>
             </CContainer>
           </CFormGroup>

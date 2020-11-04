@@ -21,7 +21,7 @@ import {
 import { getProfileFetch, getContractorList, setProjectId, clearList, getDocuments } from '../../../actions'
 import { FoxApiService } from '../../../services'
 import { ActivityLog } from '../../activity_log'
-import { FoxSwitchGroupWithDownload } from '../../../utils'
+import { FoxSwitchGroup } from '../../../utils'
 import { FoxReactSelectFormGroup } from '../../forms'
 import { permitOptions } from './optionsLists'
 import { WithLoading, WithLoadingSpinner, SubmitSpinner } from '../../loadings'
@@ -221,7 +221,7 @@ class ProjectDetail extends Component {
                       Attached Documents
               </CLink>
                   </CFormGroup>
-                  <FoxSwitchGroupWithDownload
+                  <FoxSwitchGroup
                     groupLabel='Choose the related hazardous work
                   from the list below:'
                     options={permitOptions}
