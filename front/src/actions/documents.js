@@ -37,8 +37,8 @@ const addNewDocument = (document) => {
   return (dispatch) => dispatch(_updateDocument(document));
 };
 
-const deleteDocument = (docId) => {
-  return (dispatch) => dispatch(_deleteDocument(docId));
+const deleteDocument = (name) => {
+  return (dispatch) => dispatch(_deleteDocument(name));
 };
 
 const deleteDocumentsFromStore = (allDocuments) => {
@@ -50,9 +50,9 @@ const _updateDocument = (docInfo) => ({
   docInfo: docInfo,
 });
 
-const _deleteDocument = (docId) => ({
+const _deleteDocument = (name) => ({
   type: "DELETE_DOCUMENT",
-  docId: docId,
+  name: name,
 });
 
 const _addAllDocumentsToStore = (documents) => ({

@@ -2,11 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import CIcon from "@coreui/icons-react";
 import { CCol, CFormGroup, CInputFile, CLabel, CRow } from "@coreui/react";
-import {
-  addNewDocument,
-  deleteDocument,
-  putAllDocumentsToStore,
-} from "../actions";
+import { addNewDocument, putAllDocumentsToStore } from "../actions";
 
 const MultipleFileUploadButton = (props) => {
   const handleFilesUpload = (event) => {
@@ -39,7 +35,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   addNewDocument: (document) => dispatch(addNewDocument(document)),
-  deleteDocument: (document) => dispatch(deleteDocument(document)),
   putAllDocumentsToStore: (documents) =>
     dispatch(putAllDocumentsToStore(documents)),
 });

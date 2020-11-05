@@ -73,7 +73,7 @@ const changeState = (state = initialState, { type, ...rest }) => {
     case "DELETE_DOCUMENT":
       const newDeleteDocs = [...state.projectDocs];
       newDeleteDocs.splice(
-        newDeleteDocs.findIndex((element) => element.docId === rest.docId),
+        newDeleteDocs.findIndex((element) => element.name === rest.name),
         1
       );
       return { ...state, projectDocs: newDeleteDocs };
