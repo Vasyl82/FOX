@@ -122,7 +122,7 @@ class FoxTableWithDeleteOption extends Component {
                   'delete_item':
                     (item, index) => (
                       <td>
-                        <CButton color="danger" variant="ghost" size="sm" onClick={() => this.callDeleteModal(item.id)} block><CIcon name={'cilTrash'} /></CButton>
+                        <CButton shape="pill" color="danger" variant="ghost" size="sm" onClick={() => this.callDeleteModal(item.id)} block><CIcon name={'cilTrash'} /></CButton>
                       </td>
                     )
                 }}

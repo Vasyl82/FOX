@@ -34,8 +34,8 @@ const DeleteModal = props => {
         {`Are you sure you want to delete this ${props.entity}?`}
       </CModalBody>
       <CModalFooter>
-        <CButton disabled={props.submitting} color="danger" onClick={handleDelete}><SubmitSpinner submitting={props.submitting} />Confirm</CButton>{' '}
-        <CButton disabled={props.submitting} color="secondary" onClick={props.hideModal}><SubmitSpinner submitting={props.submitting} />Cancel</CButton>
+        <CButton shape="pill" disabled={props.submitting} color="danger" onClick={handleDelete}><SubmitSpinner submitting={props.submitting} />Confirm</CButton>{' '}
+        <CButton shape="pill" disabled={props.submitting} color="secondary" onClick={props.hideModal}><SubmitSpinner submitting={props.submitting} />Cancel</CButton>
       </CModalFooter>
     </CModal>
   )
