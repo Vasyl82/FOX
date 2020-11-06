@@ -17,6 +17,7 @@ import {
 import { FoxApiService } from '../../../services'
 import { getProfileFetch } from '../../../actions'
 import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
+import { handleError } from '../../errors'
 
 const foxApi = new FoxApiService();
 
@@ -66,11 +67,15 @@ class ClientManagerEdit extends Component {
           this.props.history.goBack()
         })
         .catch((error) => {
-          console.error(error);
+          const errorMessage = handleError(
+            {
+              error: error,
+              validationFields: ["username", "email", "name", "position", "department", "company"],
+              operation: "Client manager edition"
+            }
+          )
           this.setState({
-            error: 'Manager update failed!' +
-              ' Please check your input and try again!' +
-              ' In case this problem repeats, please contact your administrator!'
+            error: errorMessage
           })
         })
         .finally(() => this.props.changeSubmitState())
@@ -183,7 +188,7 @@ class ClientManagerEdit extends Component {
                     </CButton>
                   </CFormGroup>
                   {this.state.error
-                    ? <p>{this.state.error}</p>
+                    ? <p className="fox-form-invalid-feedback">{this.state.error}</p>
                     : null
                   }
                 </CForm>

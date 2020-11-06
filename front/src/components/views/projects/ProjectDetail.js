@@ -25,6 +25,7 @@ import { FoxSwitchGroup } from '../../../utils'
 import { FoxReactSelectFormGroup } from '../../forms'
 import { permitOptions } from './optionsLists'
 import { WithLoading, WithLoadingSpinner, SubmitSpinner } from '../../loadings'
+import { handleError } from '../../errors'
 
 const foxApi = new FoxApiService();
 
@@ -78,12 +79,34 @@ class ProjectDetail extends Component {
           this.props.history.goBack()
         })
         .catch((error) => {
-          console.error(error);
+          const errors = handleError(
+            {
+              error: error,
+              operation: "Project update",
+              validationFields: [
+                "name",
+                "location",
+                "description",
+                "start_date",
+                "end_date",
+                "company",
+                "contractor",
+                "work_at_height",
+                "lifting_work",
+                "confined_space",
+                "hot_work",
+                "chemical_handling",
+                "work_alone",
+                "work_at_sensitive_area",
+                "cold_work",
+                "file",
+                "template",
+                "url_to_doc"
+              ]
+            });
           this.setState({
-            error: 'Project update failed!' +
-              ' Please check your input and try again!' +
-              ' In case this problem repeats, please contact your administrator!'
-          })
+            error: errors
+          });
         })
         .finally(() => this.props.changeSubmitState())
     }
@@ -223,7 +246,7 @@ class ProjectDetail extends Component {
                   />
                   <CButton disabled={this.props.submitting} shape="pill" type="submit" color="dark" variant="outline" block><SubmitSpinner submitting={this.props.submitting} />Save changes</CButton>
                   {this.state.error
-                    ? <p>{this.state.error}</p>
+                    ? <p className="fox-form-invalid-feedback">{this.state.error}</p>
                     : null
                   }
                 </CForm>
