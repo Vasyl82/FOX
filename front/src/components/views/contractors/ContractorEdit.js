@@ -49,12 +49,21 @@ class ContractorEdit extends Component {
         this.props.history.goBack()
       })
       .catch((error) => {
-        console.error(error);
+        if (error.email) {
+          if (error.email.contractor_already_exists) {
+            if (!error.email.companies.includes(this.props.company.toString())) {
+              console.log(error.email.contractor_already_exists);
+              this.props.updateModal({ modalType: "contractorConfirmModal", companies: error.email.companies, contractorId: error.email.contractor_id, message: error.email.contractor_already_exists });
+              return;
+            }
+            error.email = ['Contractor with this email is already registered in your company.']
+          }
+        }
+        const errors = Object.values(error).join("\n")
+        console.log(errors);
         this.setState({
-          error: 'Contractor update failed!' +
-            ' Please check your input and try again!' +
-            ' In case this problem repeats, please contact your administrator!'
-        })
+          error: errors
+        });
       })
       .finally(() => this.props.changeSubmitState())
   }
@@ -156,7 +165,7 @@ class ContractorEdit extends Component {
                     <CButton shape="pill" type="submit" color="dark" variant="outline" disabled={this.props.submitting} block><SubmitSpinner submitting={this.props.submitting} />Save changes</CButton>
                   </CFormGroup>
                   {this.state.error
-                    ? <p>{this.state.error}</p>
+                    ? <p className="fox-form-invalid-feedback">{this.state.error}</p>
                     : null
                   }
                 </CForm>

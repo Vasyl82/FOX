@@ -85,7 +85,7 @@ class FoxTableWithDeleteOption extends Component {
                 striped
                 bordered
                 sorter
-                tableFilter={{ placeholder: " " }}
+                tableFilter={{ placeholder: "Search..." }}
                 columnFilter
                 size="sm"
                 itemsPerPage={10}
@@ -122,7 +122,7 @@ class FoxTableWithDeleteOption extends Component {
                   'delete_item':
                     (item, index) => (
                       <td>
-                        <CButton color="danger" variant="ghost" size="sm" onClick={() => this.callDeleteModal(item.id)} block><CIcon name={'cilTrash'} /></CButton>
+                        <CButton shape="pill" color="danger" variant="ghost" size="sm" onClick={() => this.callDeleteModal(item.id)} block><CIcon name={'cilTrash'} /></CButton>
                       </td>
                     )
                 }}

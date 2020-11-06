@@ -12,6 +12,7 @@ import DjangoCSRFToken from 'django-react-csrftoken'
 import { FoxApiService } from '../../../services'
 import FoxProjectDocumentDownLoadUploadFormGroup from '../../forms/FoxProjectDocumentDownloadUploadFormGroup';
 import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
+import { handleError } from '../../errors'
 
 const foxApi = new FoxApiService();
 
@@ -43,8 +44,15 @@ class ProjectUploadDocs extends Component {
           link.parentNode.removeChild(link);
         })
         .catch((error) => {
-          console.error('File download failed!');
-          console.error(error)
+          const errors = handleError(
+            {
+              error: error,
+              operation: "File download",
+              validationFields: ["name", "file"]
+            });
+          this.setState({
+            error: errors
+          });
         })
     })
   }
@@ -78,12 +86,15 @@ class ProjectUploadDocs extends Component {
         this.props.history.goBack()
       })
       .catch((error) => {
-        console.error(error);
+        const errors = handleError(
+          {
+            error: error,
+            operation: "Document update",
+            validationFields: ["name", "file"]
+          });
         this.setState({
-          error: 'Document update failed!' +
-            ' Please check your input and try again!' +
-            ' In case this problem repeats, please contact your administrator!'
-        })
+          error: errors
+        });
       })
       .finally(() => this.props.changeSubmitState())
   }
@@ -136,7 +147,7 @@ class ProjectUploadDocs extends Component {
                 <CButton disabled={this.props.submitting} shape="pill" type="submit" color="dark" variant="outline" block><SubmitSpinner submitting={this.props.submitting} />Submit documents</CButton>
               </CFormGroup>
               {this.state.error
-                ? <p>{this.state.error}</p>
+                ? <p className="fox-form-invalid-feedback">{this.state.error}</p>
                 : null
               }
             </CForm>
@@ -159,5 +170,6 @@ const mapDispatchToProps = dispatch => ({
   setProjectId: (id) => dispatch(setProjectId(id)),
   clearList: () => dispatch(clearList())
 })
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ProjectUploadDocs))
