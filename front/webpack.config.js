@@ -8,7 +8,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "/static/front"),
     publicPath: "/static/front/",
-    filename: "[name]-bundle.[contenthash].js",
+    filename: "bundle.[contenthash].js",
   },
   plugins: [
     new ErrorOverlayPlugin(),
