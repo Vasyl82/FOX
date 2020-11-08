@@ -1,16 +1,23 @@
-const ErrorOverlayPlugin = require('error-overlay-webpack-plugin');
-const path = require('path');
-
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ErrorOverlayPlugin = require("error-overlay-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const path = require("path");
 
 module.exports = {
-  entry: './src/index.js',
+  entry: "./src/index.js",
   output: {
-    path: path.resolve(__dirname, '/static/front'),
-    publicPath: '/static/front/',
-    filename: 'main.js'
+    path: path.resolve(__dirname, "/static/front"),
+    publicPath: "/static/front/",
+    filename: "[name]-bundle.[contenthash].js",
   },
   plugins: [
     new ErrorOverlayPlugin(),
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      title: "Fox Output Management",
+      template: "src/index.html",
+      filename: "../../templates/front/index.html",
+    }),
   ],
 
   module: {
@@ -19,33 +26,33 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader"
-        }
+          loader: "babel-loader",
+        },
       },
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        use: ["style-loader", "css-loader"],
       },
       {
         test: /\.s[ac]ss$/i,
         use: [
           // Creates `style` nodes from JS strings
-          'style-loader',
+          "style-loader",
           // Translates CSS into CommonJS
-          'css-loader',
+          "css-loader",
           // Compiles Sass to CSS
-          'sass-loader',
+          "sass-loader",
         ],
       },
-    ]
+    ],
   },
   devServer: {
-    contentBase: path.join(__dirname, 'templates/dev-front'),
-    publicPath: '/static/front',
+    contentBase: path.join(__dirname, "templates/dev-front"),
+    publicPath: "/static/front",
     historyApiFallback: true,
     proxy: {
-      '/api': 'http://localhost:8000'
-    }
+      "/api": "http://localhost:8000",
+    },
   },
-  devtool: 'cheap-module-source-map'
+  devtool: "cheap-module-source-map",
 };
