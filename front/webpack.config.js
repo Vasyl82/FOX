@@ -6,7 +6,7 @@ const path = require("path");
 module.exports = {
   entry: "./src/index.js",
   output: {
-    path: path.resolve(__dirname, "/static/front"),
+    path: path.resolve(__dirname, "static/front"),
     publicPath: "/static/front/",
     filename: "bundle.[contenthash].js",
   },

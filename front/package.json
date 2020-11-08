@@ -8,8 +8,7 @@
     "start": "webpack-dev-server",
     "dev": "webpack --mode development --output ./static/front/main.js",
     "dev-watch": "webpack --mode development --output ./static/front/main.js --watch",
-    "build": "webpack --mode production",
-
+    "build": "webpack --mode production"
   },
   "keywords": [],
   "author": "",
