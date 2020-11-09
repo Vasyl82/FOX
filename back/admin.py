@@ -282,6 +282,7 @@ class PermitAdmin(admin.ModelAdmin):
 
 class DocumentAdmin(admin.ModelAdmin):
     model = Document
+    list_display = ("name", "project", "template")
 
 
 class DocumentAssignAdmin(admin.ModelAdmin):
