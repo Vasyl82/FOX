@@ -4,6 +4,7 @@ import {
   getContractorList,
   clearList,
 } from "../../../actions";
+
 import { connect } from "react-redux";
 import {
   CForm,
@@ -96,26 +97,6 @@ class ProjectCreate extends Component {
       });
   };
 
-  handleDocumentCreationRedirect = async () => {
-    this.props.changeSubmitState();
-    await this.handleSubmit()
-      .then((data) => {
-        data
-          ? this.props.history.push(`/projects/${data.id}/documents/new`)
-          : null;
-      })
-      .catch((error) => {
-        console.error(error);
-        this.setState({
-          error:
-            "Project creation failed!" +
-            " Please check your input and try again!" +
-            " In case this problem repeats, please contact your administrator!",
-        });
-      })
-      .finally(() => this.props.changeSubmitState());
-  };
-
   handleSubmit = async () => {
     this.props.changeSubmitState();
     if (parseInt(this.state.contractor) < 0) {
@@ -129,14 +110,26 @@ class ProjectCreate extends Component {
       delete this.formData.error;
       await foxApi
         .createEntityOf("projects", this.formData)
-        .then((data) => {
-          const filledDocs = this.props.docs.filter((doc) => doc.file !== "");
-          filledDocs.forEach((doc, idx) => {
-            filledDocs[idx].project = data.id;
-            delete filledDocs[idx].docId;
+
+        .then((newProjectInfo) => {
+          const filesFromStore = [...this.props.docs];
+          const arrayWithDocsForUpload = [];
+
+          filesFromStore.forEach((fileFromStore) => {
+            let docFileName = fileFromStore.name.split(".");
+            docFileName.pop();
+            docFileName = docFileName.join(".");
+
+            const fileObject = {
+              name: docFileName,
+              file: fileFromStore,
+              project: newProjectInfo.id,
+            };
+            arrayWithDocsForUpload.push(fileObject);
           });
+
           return Promise.all(
-            filledDocs.map((doc) => {
+            arrayWithDocsForUpload.map((doc) => {
               const formData = new FormData();
               Object.entries(doc).forEach(([key, value]) => {
                 formData.append(key, value);
@@ -145,6 +138,7 @@ class ProjectCreate extends Component {
             })
           );
         })
+
         .then(() => {
           this.props.history.goBack();
         })
@@ -157,8 +151,20 @@ class ProjectCreate extends Component {
               " In case this problem repeats, please contact your administrator!",
           });
         })
+
         .finally(() => this.props.changeSubmitState());
     }
+  };
+
+  handleChange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
+  };
+  handleFileUpload = (event) => {
+    this.setState({
+      [event.target.name]: event.target.files[0],
+    });
   };
 
   componentDidMount = async () => {
@@ -293,30 +299,27 @@ class ProjectCreate extends Component {
                       </CRow>
                     </CContainer>
                   </CFormGroup>
-
-                  <MultipleFileUploadButton />
-                  <CFormGroup>
-                    <CRow>
-                      {this.props.docs
-                        ? this.props.docs.map((doc, idx) => (
-                            <DocumentWidget key={idx} name={doc.name} />
-                          ))
-                        : null}
-                    </CRow>
-                  </CFormGroup>
-                  <CButton
-                    disabled={this.props.submitting}
-                    shape="pill"
-                    onClick={this.handleSubmit}
-                    color="dark"
-                    variant="outline"
-                    block
-                  >
-                    <SubmitSpinner submitting={this.props.submitting} />
-                    Create Project and go to document creation
-                  </CButton>
-                  {this.state.error ? <p>{this.state.error}</p> : null}
                 </CForm>
+                <MultipleFileUploadButton />
+                <CRow>
+                  {this.props.docs
+                    ? this.props.docs.map((doc, idx) => (
+                        <DocumentWidget key={idx} name={doc.name} />
+                      ))
+                    : null}
+                </CRow>
+                <CButton
+                  disabled={this.props.submitting}
+                  shape="pill"
+                  onClick={this.handleSubmit}
+                  color="dark"
+                  variant="outline"
+                  block
+                >
+                  <SubmitSpinner submitting={this.props.submitting} />
+                  Create Project
+                </CButton>
+                {this.state.error ? <p>{this.state.error}</p> : null}
               </WithLoadingSpinner>
             </CCardBody>
           </CCard>

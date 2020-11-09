@@ -1,14 +1,16 @@
 import React from "react";
 import { connect } from "react-redux";
-import CIcon from "@coreui/icons-react";
-import { CCol, CFormGroup, CInputFile, CLabel, CRow } from "@coreui/react";
+import { CCol, CInputFile, CLabel } from "@coreui/react";
 import { addNewDocument, putAllDocumentsToStore } from "../actions";
 
 const MultipleFileUploadButton = (props) => {
   const handleFilesUpload = (event) => {
     event.preventDefault();
+    console.log(event.target.files);
     const docs = [...event.target.files];
     props.putAllDocumentsToStore(docs);
+    event.target.value = null;
+    console.log(event.target.files);
   };
 
   return (
