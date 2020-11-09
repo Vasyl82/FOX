@@ -78,10 +78,10 @@ class ApprovalDetail extends Component {
         .catch((error) => {
           console.error(error);
           this.setState({
-            error: 'Project update failed!' +
+            error: 'Approval resolution failed!' +
               ' Please check your input and try again!' +
               ' In case this problem repeats, please contact your administrator!'
-          })
+          });
         })
         .finally(() => this.props.changeSubmitState())
     }
@@ -222,7 +222,6 @@ class ApprovalDetail extends Component {
               </WithLoadingSpinner>
             </CCardBody>
           </CCard>
-
           <CCard>
             <CCardBody>
               <CForm onSubmit={this.handleSubmit}>

@@ -58,12 +58,18 @@ class WorkerAssign extends Component {
         this.props.history.goBack()
       })
       .catch((error) => {
-        console.error(error);
+        const errors = handleError(
+          {
+            error: error,
+            operation: "Worker creation",
+            validationFields: [
+              "workers",
+              "responsible_person",
+            ]
+          });
         this.setState({
-          error: 'Workers assignment failed!' +
-            ' Please check your input and try again!' +
-            ' In case this problem repeats, please contact your administrator!'
-        })
+          error: errors
+        });
       })
       .finally(this.props.changeSubmitState)
   }

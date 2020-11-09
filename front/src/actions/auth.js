@@ -106,6 +106,7 @@ const getProfileFetch = () => {
           }
         });
     } else {
+      dispatch(logoutUser());
       return Promise.reject("User is not logged in");
     }
   };

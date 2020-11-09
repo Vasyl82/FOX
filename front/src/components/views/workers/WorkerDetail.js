@@ -101,12 +101,32 @@ class WorkerDetail extends Component {
         this.props.history.goBack();
       })
       .catch((error) => {
-        console.error(error);
+        const errors = handleError(
+          {
+            error: error,
+            operation: "Worker creation",
+            validationFields: [
+              "name",
+              "contractor",
+              "birthday",
+              "phone_number",
+              "card_number_id",
+              "card_number_id_scan",
+              "license_number",
+              "license_scan",
+              "passport",
+              "passport_scan",
+              "safety_green_card",
+              "safety_green_card_scan",
+              "position_in_company",
+              "safety_quiz_answer",
+              "personal_declaration",
+              "submitCallback",
+              "trade_competency",
+            ]
+          });
         this.setState({
-          error:
-            "Worker update failed!" +
-            " Please check your input and try again!" +
-            " In case this problem repeats, please contact your administrator!",
+          error: errors
         });
       })
       .finally(this.props.changeSubmitState);

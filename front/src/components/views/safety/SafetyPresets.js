@@ -10,7 +10,12 @@ import {
   CCol,
   CButton,
   CInputFile,
-  CLink
+  CLink,
+  CCard,
+  CCardBody,
+  CCardHeader,
+  CCardTitle,
+  CCardSubtitle,
 } from "@coreui/react";
 import DjangoCSRFToken from 'django-react-csrftoken';
 import { FoxApiService } from '../../../services';
@@ -48,19 +53,25 @@ class SafetyPresets extends Component {
     requestData.safety_video_url = requestData.safety_video_url.replace("watch?v=", "embed/");
     const formData = new FormData
     Object.entries(requestData).forEach(([key, value]) => {
-      formData.append(key, value);
+      value ? formData.append(key, value) : null;
     })
     await foxApi.patchCompanySafetyInfo(this.props.company, formData)
       .then(() => {
         this.props.history.push(`/safety/video`)
       })
       .catch((error) => {
-        console.error(error);
+        const errors = handleError(
+          {
+            error: error,
+            operation: "Safety info upload",
+            validationFields: [
+              "personal_declaration_template",
+              "safety_quiz_template",
+              "safety_video_url"]
+          });
         this.setState({
-          error: 'Safety info upload failed!' +
-            ' Please check your input and try again!' +
-            ' In case this problem repeats, please contact your administrator!'
-        })
+          error: errors
+        });
       })
       .finally(() => this.props.changeSubmitState())
   }
@@ -73,49 +84,61 @@ class SafetyPresets extends Component {
 
   render = () => {
     return (
-      <WithLoadingSpinner loading={this.props.loading}>
-        {this.props.role === "CliAdm" ? <CRow>
-          <CCol>
-            <CForm
-              onSubmit={this.handleSubmit}
-            >
-              <DjangoCSRFToken />
-              <CFormGroup>
-                <CLabel htmlFor="safety_video_url">Url to document</CLabel>
-                <CInput
-                  type="url"
-                  id="safety_video_url"
-                  name="safety_video_url"
-                  placeholder="https://example.com"
-                  pattern="https://.*"
-                  value={this.state.safety_video_url}
-                  onChange={this.handleChange}
-                  required />
-              </CFormGroup>
-              <CFormGroup>
-                <CLabel htmlFor="safety_quiz_template">Safety Quiz Template</CLabel>
-                <CInputFile id="safety_quiz_template" name="safety_quiz_template" onChange={this.handleFileUpload}
-                  required />
-              </CFormGroup>
-              <CFormGroup>
-                <CLabel htmlFor="personal_declaration_template">Personal Declaration Template:</CLabel>
-                <CInputFile id="personal_declaration_template" name="personal_declaration_template" onChange={this.handleFileUpload}
-                  required />
-              </CFormGroup>
-              <CFormGroup>
-                <CButton shape="pill" type="submit" color="dark" variant="outline" block><SubmitSpinner submitting={this.props.submitting} />Submit safety info</CButton>
-              </CFormGroup>
-              {this.state.error
-                ? <p>{this.state.error}</p>
-                : null
-              }
-            </CForm>
-            <CLink to="/safety/video">Inspect preview</CLink>
-          </CCol>
-        </CRow >
-          :
-          <Redirect to="/safety/video" />}
-      </WithLoadingSpinner>
+      <CCard>
+        <CCardHeader>
+          <CCardTitle>
+            Safety Requirements Settings
+        </CCardTitle>
+          <CCardSubtitle>
+            Insert the url link to the safety requirements video and upload the safety quiz and personal declaration templates
+        </CCardSubtitle>
+        </CCardHeader>
+        <CCardBody>
+          <WithLoadingSpinner loading={this.props.loading}>
+            {this.props.role === "CliAdm" ? <CRow>
+              <CCol>
+                <CForm
+                  onSubmit={this.handleSubmit}
+                >
+                  <DjangoCSRFToken />
+                  <CFormGroup>
+                    {/* <CLabel htmlFor="safety_video_url">Url to document</CLabel> */}
+                    <CInput
+                      type="url"
+                      id="safety_video_url"
+                      name="safety_video_url"
+                      placeholder="URL to Safety requirements video"
+                      pattern="https://.*"
+                      value={this.state.safety_video_url}
+                      onChange={this.handleChange}
+                    />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CLabel htmlFor="safety_quiz_template">Safety Quiz Template</CLabel>
+                    <CInputFile id="safety_quiz_template" name="safety_quiz_template" onChange={this.handleFileUpload} />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CLabel htmlFor="personal_declaration_template">Personal Declaration Template:</CLabel>
+                    <CInputFile id="personal_declaration_template" name="personal_declaration_template" onChange={this.handleFileUpload} />
+                  </CFormGroup>
+                  <CFormGroup>
+                    <CButton shape="pill" type="submit" color="dark" variant="outline" block><SubmitSpinner submitting={this.props.submitting} />Submit safety info</CButton>
+                  </CFormGroup>
+                  {this.state.error
+                    ? <p>{this.state.error}</p>
+                    : null
+                  }
+                </CForm>
+                <CLink to="/safety/video">Inspect preview</CLink>
+              </CCol>
+            </CRow >
+              :
+              <Redirect to="/safety/video" />}
+          </WithLoadingSpinner>
+        </CCardBody>
+      </CCard>
+
+
     )
   }
 }

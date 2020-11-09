@@ -33,6 +33,7 @@ import { WithLoading, WithLoadingSpinner, SubmitSpinner } from "../../loadings";
 import { FoxSwitchGroup, MultipleFileUploadButton } from "../../../utils";
 import { DocumentWidget } from "../../widgets";
 import { deleteDocumentsFromStore } from "../../../../src/actions/documents";
+import { handleError } from "../../errors";
 
 const foxApi = new FoxApiService();
 
@@ -86,12 +87,32 @@ class ProjectDetail extends Component {
           this.props.history.goBack();
         })
         .catch((error) => {
-          console.error(error);
+          const errors = handleError({
+            error: error,
+            operation: "Project update",
+            validationFields: [
+              "name",
+              "location",
+              "description",
+              "start_date",
+              "end_date",
+              "company",
+              "contractor",
+              "work_at_height",
+              "lifting_work",
+              "confined_space",
+              "hot_work",
+              "chemical_handling",
+              "work_alone",
+              "work_at_sensitive_area",
+              "cold_work",
+              "file",
+              "template",
+              "url_to_doc",
+            ],
+          });
           this.setState({
-            error:
-              "Project update failed!" +
-              " Please check your input and try again!" +
-              " In case this problem repeats, please contact your administrator!",
+            error: errors,
           });
         })
         .finally(() => this.props.changeSubmitState());
