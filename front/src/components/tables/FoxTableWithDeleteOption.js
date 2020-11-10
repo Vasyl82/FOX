@@ -19,6 +19,7 @@ import { updateModal } from '../../actions'
 
 const foxApi = new FoxApiService();
 
+
 class FoxTableWithDeleteOption extends Component {
 
   state = {
@@ -28,6 +29,7 @@ class FoxTableWithDeleteOption extends Component {
   getEntityFromTableName = () => {
     this.props.tableName.toLowercase()
   }
+
 
   callDeleteModal = (id) => {
     this.props.updateModal({
@@ -83,7 +85,6 @@ class FoxTableWithDeleteOption extends Component {
                 clickableRows
                 hover
                 striped
-                bordered
                 sorter
                 tableFilter={{ placeholder: "Search..." }}
                 columnFilter
