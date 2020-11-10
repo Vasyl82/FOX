@@ -1,6 +1,11 @@
-import React, { Component } from 'react'
-import { getProfileFetch, getContractorList, clearList } from '../../../actions'
-import { connect } from 'react-redux'
+import React, { Component } from "react";
+import {
+  getProfileFetch,
+  getContractorList,
+  clearList,
+} from "../../../actions";
+
+import { connect } from "react-redux";
 import {
   CForm,
   CFormGroup,
@@ -8,6 +13,7 @@ import {
   CLabel,
   CRow,
   CCol,
+  CContainer,
   CTextarea,
   CButton,
   CCard,
@@ -16,18 +22,19 @@ import {
   CCardTitle,
   CCardSubtitle,
 } from "@coreui/react";
-import DjangoCSRFToken from 'django-react-csrftoken'
-import { FoxApiService } from '../../../services'
-import { FoxSwitchGroup, } from '../../../utils'
-import { FoxReactSelectFormGroup } from '../../forms'
-import { permitOptions } from './optionsLists'
-import { WithLoadingSpinner, WithLoading, SubmitSpinner } from '../../loadings'
-import { handleError } from '../../errors'
+import DjangoCSRFToken from "django-react-csrftoken";
+import { FoxApiService } from "../../../services";
+import { FoxSwitchGroup, MultipleFileUploadButton } from "../../../utils";
+import { FoxReactSelectFormGroup } from "../../forms";
+import { permitOptions } from "./optionsLists";
+import { WithLoadingSpinner, WithLoading, SubmitSpinner } from "../../loadings";
+import { deleteDocumentsFromStore } from "../../../../src/actions/documents";
+import { DocumentWidget } from "../../widgets";
+import { handleError } from "../../errors";
 
 const foxApi = new FoxApiService();
 
 class ProjectCreate extends Component {
-
   state = {
     name: "",
     location: "",
@@ -45,141 +52,182 @@ class ProjectCreate extends Component {
     work_at_sensitive_area: false,
     cold_work: false,
     error: false,
-  }
+  };
 
-  handleChange = event => {
-
+  handleFileUpload = (event) => {
     this.setState({
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.files[0],
     });
-  }
+  };
 
-  handleCheck = event => {
+  handleChange = (event) => {
     this.setState({
-      [event.target.name]: event.target.checked
-    })
-  }
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  handleCheck = (event) => {
+    this.setState({
+      [event.target.name]: event.target.checked,
+    });
+  };
 
   handleReactSelect = (option, event) => {
     this.setState({
-      [event.name]: option.value
-    })
-  }
+      [event.name]: option.value,
+    });
+  };
 
-  silenceSubmit = event => {
+  silenceSubmit = (event) => {
     event.preventDefault();
-  }
+  };
 
   handleCreateProject = async () => {
     await this.handleSubmit()
       .then(() => {
-        this.props.history.goBack()
+        this.props.history.goBack();
       })
       .catch((error) => {
-        const errors = handleError(
-          {
-            error: error,
-            operation: "Project creation",
-            validationFields: [
-              "name",
-              "location",
-              "description",
-              "start_date",
-              "end_date",
-              "company",
-              "contractor",
-              "work_at_height",
-              "lifting_work",
-              "confined_space",
-              "hot_work",
-              "chemical_handling",
-              "work_alone",
-              "work_at_sensitive_area",
-              "cold_work",
-              "file",
-              "template",
-              "url_to_doc"
-            ]
-          });
-        this.setState({
-          error: errors
+        const errors = handleError({
+          error: error,
+          operation: "Project creation",
+          validationFields: [
+            "name",
+            "location",
+            "description",
+            "start_date",
+            "end_date",
+            "company",
+            "contractor",
+            "work_at_height",
+            "lifting_work",
+            "confined_space",
+            "hot_work",
+            "chemical_handling",
+            "work_alone",
+            "work_at_sensitive_area",
+            "cold_work",
+            "file",
+            "template",
+            "url_to_doc",
+          ],
         });
-      })
-  }
-
-  handleDocumentCreationRedirect = async () => {
-    this.props.changeSubmitState()
-    await this.handleSubmit()
-      .then(data => {
-        data ?
-          this.props.history.push(`/projects/${data.id}/documents/new`)
-          : null
-      })
-      .catch((error) => {
-        console.error(error);
         this.setState({
-          error: 'Project creation failed!' +
-            ' Please check your input and try again!' +
-            ' In case this problem repeats, please contact your administrator!'
-        })
-      })
-      .finally(() => this.props.changeSubmitState())
-  }
+          error: errors,
+        });
+      });
+  };
 
   handleSubmit = async () => {
+    this.props.changeSubmitState();
     if (parseInt(this.state.contractor) < 0) {
       this.setState({
-        error: 'Contractor was not selected! Please, choose contractor form the list'
-      })
-
+        error:
+          "Contractor was not selected! Please, choose contractor form the list",
+      });
+      this.props.changeSubmitState();
     } else {
       this.formData = this.state;
       delete this.formData.error;
-      return await foxApi.createEntityOf('projects', this.formData)
+      await foxApi
+        .createEntityOf("projects", this.formData)
+
+        .then((newProjectInfo) => {
+          const docsFromStore = [...this.props.docs];
+          return Promise.all(
+            docsFromStore.map((incomeDoc) => {
+              const { backend_action, ...doc } = incomeDoc;
+              doc.project = newProjectInfo.id;
+              const formData = new FormData();
+              Object.entries(doc).forEach(([key, value]) => {
+                formData.append(key, value);
+              });
+              if (backend_action !== "None") {
+                return foxApi[backend_action]("documents", formData);
+              }
+            })
+          );
+        })
+
+        .then(() => {
+          this.props.history.goBack();
+        })
+        .catch((error) => {
+          console.error(error);
+          this.setState({
+            error:
+              "Project creation failed!" +
+              " Please check your input and try again!" +
+              " In case this problem repeats, please contact your administrator!",
+          });
+        })
+
+        .finally(() => this.props.changeSubmitState());
     }
-  }
+  };
+
+  handleChange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
+  };
+  handleFileUpload = (event) => {
+    this.setState({
+      [event.target.name]: event.target.files[0],
+    });
+  };
 
   componentDidMount = async () => {
-    await this.props.getProfileFetch()
-      .then(() => this.props.getContractorList({ signal: this.abortController.signal }))
-      .then(() => this.props.changeLoadingState())
-  }
+    await this.props
+      .getProfileFetch()
+      .then(() =>
+        this.props.getContractorList({ signal: this.abortController.signal })
+      )
+      .then(() => this.props.changeLoadingState());
+  };
 
   componentWillUnmount = async () => {
     this.abortController.abort();
+    this.props.deleteDocumentsFromStore();
     await this.props.clearList();
-  }
+  };
 
   abortController = new window.AbortController();
 
   render = () => {
-    const options = this.props.options ? this.props.options.map(option => { return { value: option.id, label: option.username } }) : null
+    const options = this.props.options
+      ? this.props.options.map((option) => {
+          return { value: option.id, label: option.username };
+        })
+      : null;
+
+    console.log(this.props.docs);
+
     return (
       <CRow>
         <CCol>
           <CCard>
             <CCardHeader>
-              <CCardTitle>
-                Add New Project
-              </CCardTitle>
-              <CCardSubtitle>Fill up the form below to add a new Project</CCardSubtitle>
+              <CCardTitle>Add New Project</CCardTitle>
+              <CCardSubtitle>
+                Fill up the form below to add a new Project
+              </CCardSubtitle>
             </CCardHeader>
             <CCardBody>
               <WithLoadingSpinner loading={this.props.loading}>
-                <CForm
-                  onSubmit={this.silenceSubmit}
-                >
+                <CForm onSubmit={this.silenceSubmit}>
                   <DjangoCSRFToken />
                   <CFormGroup>
                     <CInput
                       id="name"
-                      name='name'
+                      name="name"
                       placeholder="Project Name"
                       value={this.state.name}
                       onChange={this.handleChange}
                       readOnly={this.props.submitting}
                       disabled={this.props.submitting}
-                      required />
+                      required
+                    />
                   </CFormGroup>
                   <CFormGroup>
                     <CInput
@@ -190,7 +238,8 @@ class ProjectCreate extends Component {
                       onChange={this.handleChange}
                       readOnly={this.props.submitting}
                       disabled={this.props.submitting}
-                      required />
+                      required
+                    />
                   </CFormGroup>
                   <CFormGroup>
                     <CTextarea
@@ -211,7 +260,7 @@ class ProjectCreate extends Component {
                         <CInput
                           type="datetime-local"
                           id="start_date"
-                          placeholder='Start date'
+                          placeholder="Start date"
                           name="start_date"
                           value={this.state.start_date}
                           onChange={this.handleChange}
@@ -233,7 +282,6 @@ class ProjectCreate extends Component {
                           disabled={this.props.submitting}
                           required
                         />
-
                       </CCol>
                     </CRow>
                   </CFormGroup>
@@ -246,41 +294,63 @@ class ProjectCreate extends Component {
                     disabled={this.props.submitting}
                   />
                   <FoxSwitchGroup
-                    groupLabel='Choose the related hazardous work
-                  from the list below:'
+                    groupLabel="Choose the related hazardous work from the list below:"
                     options={permitOptions}
                     handleCheck={this.handleCheck}
                     parentState={this.state}
                     readOnly={this.props.submitting}
                     disabled={this.props.submitting}
-
                   />
-                  <CButton disabled={this.props.submitting} shape="pill" onClick={this.handleDocumentCreationRedirect} color="dark" variant="outline" block><SubmitSpinner submitting={this.props.submitting} />Create Project and go to document creation</CButton>
-                  {this.state.error
-                    ? <p className="fox-form-invalid-feedback">{this.state.error}</p>
-                    : null
-                  }
                 </CForm>
+                <div className="mb-2 ">
+                  <strong>Add documents to this project:</strong>
+                </div>
+                <MultipleFileUploadButton />
+                <CRow>
+                  {this.props.docs
+                    ? this.props.docs.map((doc, idx) => (
+                        <DocumentWidget key={idx} doc={doc} />
+                      ))
+                    : null}
+                </CRow>
+                <CButton
+                  disabled={this.props.submitting}
+                  shape="pill"
+                  onClick={this.handleSubmit}
+                  color="dark"
+                  variant="outline"
+                  block
+                >
+                  <SubmitSpinner submitting={this.props.submitting} />
+                  Create Project
+                </CButton>
+                {this.state.error ? <p>{this.state.error}</p> : null}
               </WithLoadingSpinner>
             </CCardBody>
           </CCard>
         </CCol>
-      </CRow >
-    )
-  }
+      </CRow>
+    );
+  };
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     company: state.currentUser.company,
-    options: state.entityListTable.tableData
-  }
-}
+    options: state.entityListTable.tableData,
+    docs: state.projectDocs,
+  };
+};
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getContractorList: ({ ...params }) => dispatch(getContractorList({ ...params })),
-  clearList: () => dispatch(clearList())
-})
+  getContractorList: ({ ...params }) =>
+    dispatch(getContractorList({ ...params })),
+  clearList: () => dispatch(clearList()),
+  deleteDocumentsFromStore: () => dispatch(deleteDocumentsFromStore()),
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ProjectCreate))
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WithLoading(ProjectCreate));
