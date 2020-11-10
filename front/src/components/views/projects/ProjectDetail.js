@@ -264,14 +264,22 @@ class ProjectDetail extends Component {
                         </CCol>
                       </CRow>
                     </CFormGroup>
-                    <FoxReactSelectFormGroup
-                      options={options}
-                      inputInfo="contractor"
-                      inputValue={this.state.contractor}
-                      handleChange={this.handleReactSelect}
-                      disabled={this.props.submitting}
-                      readOnly={this.props.submitting}
-                    />
+                    {/* <FoxReactSelectFormGroup
+                    options={options}
+                    inputInfo="contractor"
+                    inputValue={this.state.contractor}
+                    handleChange={this.handleReactSelect}
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
+                  /> */}
+                    <div className="mb-3">
+                      <strong>Contractor: </strong>
+                      {this.props.options
+                        ? this.props.options.filter(
+                            (option) => option.id === this.state.contractor
+                          )[0].username
+                        : ""}
+                    </div>
                     <CFormGroup>
                       <CLink
                         className="btn btn-outline-dark mr-3"
@@ -314,7 +322,11 @@ class ProjectDetail extends Component {
                       <SubmitSpinner submitting={this.props.submitting} />
                       Save changes
                     </CButton>
-                    {this.state.error ? <p>{this.state.error}</p> : null}
+                    {this.state.error ? (
+                      <p className="fox-form-invalid-feedback">
+                        {this.state.error}
+                      </p>
+                    ) : null}
                   </CForm>
                 </WithLoadingSpinner>
               </CCardBody>
