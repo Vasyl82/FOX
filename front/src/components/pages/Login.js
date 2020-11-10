@@ -1,14 +1,13 @@
-import React from 'react'
+import React from "react";
 import { FoxLoginForm } from "../forms";
-import { AuthContainer } from '../containers'
-
+import { AuthContainer } from "../containers";
 
 const Login = () => {
   return (
     <AuthContainer>
       <FoxLoginForm />
     </AuthContainer>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

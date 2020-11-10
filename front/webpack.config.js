@@ -62,8 +62,7 @@ const config = {
 };
 
 module.exports = (env, argv) => {
-  argv.mode === "production"
-    ? (config.output.filename = "chunk.[contenthash].js")
-    : "main.js";
+  config.output.filename =
+    argv.mode === "production" ? "chunk.[contenthash].js" : "main.js";
   return config;
 };
