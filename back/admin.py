@@ -292,7 +292,7 @@ class DocumentAssignAdmin(admin.ModelAdmin):
 
 class TemplateAdmin(admin.ModelAdmin):
     model = Template
-    list_display = ("name", "company", "hazardous_work", "file", "deleted")
+    list_display = ("name", "company", "file", "hazardous_work", "deleted")
 
 
 admin.site.site_header = "Fox Project Admin Panel"

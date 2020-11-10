@@ -1,21 +1,21 @@
 const clearList = () => {
-    return dispatch => {
-        dispatch(clearEntityTable())
-    }
-}
+  return (dispatch) => {
+    dispatch(clearEntityTable());
+  };
+};
 
-const populateAdditionalEntityTable = projectTableInfo => ({
-    type: 'POPULATE_ADDITIONAL_ENTITY_TABLE',
-    additionalEntityListTable: projectTableInfo
-})
+const populateAdditionalEntityTable = (projectTableInfo) => ({
+  type: "POPULATE_ADDITIONAL_ENTITY_TABLE",
+  additionalEntityListTable: projectTableInfo,
+});
 
-const populateEntityTable = projectTableInfo => ({
-    type: 'POPULATE_ENTITY_TABLE',
-    entityListTable: projectTableInfo
-})
+const populateEntityTable = (projectTableInfo) => ({
+  type: "POPULATE_ENTITY_TABLE",
+  entityListTable: projectTableInfo,
+});
 
 const clearEntityTable = () => ({
-    type: 'CLEAR_ENTITY_TABLE',
-})
+  type: "CLEAR_ENTITY_TABLE",
+});
 
-export { populateEntityTable, populateAdditionalEntityTable, clearList }
+export { populateEntityTable, populateAdditionalEntityTable, clearList };

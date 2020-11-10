@@ -18,19 +18,21 @@ import {
   CCardTitle,
   CFormText,
 } from "@coreui/react";
-
 import {
   getProfileFetch,
   getContractorList,
   setProjectId,
   clearList,
+  getDocuments,
 } from "../../../actions";
 import { FoxApiService } from "../../../services";
 import { ActivityLog } from "../../activity_log";
-import { FoxSwitchGroup } from "../../../utils";
 import { FoxReactSelectFormGroup } from "../../forms";
 import { permitOptions } from "./optionsLists";
 import { WithLoading, WithLoadingSpinner, SubmitSpinner } from "../../loadings";
+import { FoxSwitchGroup, MultipleFileUploadButton } from "../../../utils";
+import { DocumentWidget } from "../../widgets";
+import { deleteDocumentsFromStore } from "../../../../src/actions/documents";
 import { handleError } from "../../errors";
 
 const foxApi = new FoxApiService();
@@ -70,7 +72,6 @@ class ProjectDetail extends Component {
 
   handleSubmit = async (event) => {
     event.preventDefault();
-
     if (parseInt(this.state.contractor) < 0) {
       this.setState({
         error:
@@ -82,6 +83,25 @@ class ProjectDetail extends Component {
       delete this.formData.error;
       await foxApi
         .patchEntityOf("projects", this.props.match.params.id, this.formData)
+        .then(() => {
+          const docsFromStore = [...this.props.docs];
+          return Promise.all(
+            docsFromStore.map((incomeDoc) => {
+              const { backend_action, ...doc } = incomeDoc;
+              doc.project = this.props.match.params.id;
+              const formData = new FormData();
+              if (backend_action !== "None") {
+                Object.entries(doc).forEach(([key, value]) => {
+                  formData.append(key, value);
+                });
+                if (doc.id) {
+                  return foxApi[backend_action]("documents", doc.id, formData);
+                }
+                return foxApi[backend_action]("documents", formData);
+              }
+            })
+          );
+        })
         .then(() => {
           this.props.history.goBack();
         })
@@ -119,15 +139,27 @@ class ProjectDetail extends Component {
   };
 
   componentDidMount = async () => {
-    this.props.setProjectId(this.props.match.params.id);
+    const projectId = this.props.match.params.id;
+    this.props.setProjectId(projectId);
     await this.props
       .getProfileFetch()
-      .then(() => foxApi.getDetailsOf("projects", this.props.match.params.id))
-      .then((data) => this.setState({ ...data }))
-      .then(() =>
-        this.props.getContractorList({ signal: this.abortController.signal })
+      .then(() => foxApi.getDetailsOf("projects", projectId))
+      .then((data) =>
+        this.setState({ ...data }, async () => {
+          await Promise.all([
+            this.props.getDocuments({
+              params: { project_id: projectId },
+              signal: this.abortController.signal,
+            }),
+            this.props.getContractorList({
+              signal: this.abortController.signal,
+            }),
+          ]);
+        })
       )
-      .catch((error) => console.log(error))
+      .catch((error) => {
+        console.log(error);
+      })
       .finally(() => this.props.changeLoadingState());
   };
 
@@ -135,17 +167,22 @@ class ProjectDetail extends Component {
     this.abortController.abort();
     await this.props.clearList();
     this.props.setProjectId("");
+    this.props.deleteDocumentsFromStore();
   };
 
   abortController = new window.AbortController();
 
   render = () => {
-    console.log(this.state);
     const options = this.props.options
       ? this.props.options.map((option) => {
           return { value: option.id, label: option.username };
         })
       : null;
+    console.log(this.props.docs);
+    const docs = this.props.docs
+      ? this.props.docs.filter((doc) => doc.backend_action !== "deleteEntityOf")
+      : [];
+
     return (
       <CRow>
         <CCol>
@@ -266,6 +303,14 @@ class ProjectDetail extends Component {
                       readOnly={this.props.submitting}
                       disabled={this.props.submitting}
                     />
+                    <MultipleFileUploadButton />
+
+                    <CRow>
+                      {docs.map((doc, idx) => (
+                        <DocumentWidget key={idx} doc={doc} />
+                      ))}
+                    </CRow>
+
                     <CButton
                       disabled={this.props.submitting}
                       shape="pill"
@@ -307,15 +352,19 @@ const mapStateToProps = (state) => {
     company: state.currentUser.company,
     options: state.entityListTable.tableData,
     role: state.currentUser.role,
+    docs: state.projectDocs,
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getContractorList: ({ ...params }) =>
-    dispatch(getContractorList({ ...params })),
+  getContractorList: async ({ ...kwargs }) =>
+    await dispatch(getContractorList({ ...kwargs })),
   setProjectId: (id) => dispatch(setProjectId(id)),
   clearList: () => dispatch(clearList()),
+  getDocuments: async ({ ...kwargs }) =>
+    await dispatch(getDocuments({ ...kwargs })),
+  deleteDocumentsFromStore: () => dispatch(deleteDocumentsFromStore()),
 });
 
 export default connect(
