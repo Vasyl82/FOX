@@ -84,6 +84,25 @@ class ProjectDetail extends Component {
       await foxApi
         .patchEntityOf("projects", this.props.match.params.id, this.formData)
         .then(() => {
+          const docsFromStore = [...this.props.docs];
+          return Promise.all(
+            docsFromStore.map((incomeDoc) => {
+              const { backend_action, ...doc } = incomeDoc;
+              doc.project = this.props.match.params.id;
+              const formData = new FormData();
+              if (backend_action !== "None") {
+                Object.entries(doc).forEach(([key, value]) => {
+                  formData.append(key, value);
+                });
+                if (doc.id) {
+                  return foxApi[backend_action]("documents", doc.id, formData);
+                }
+                return foxApi[backend_action]("documents", formData);
+              }
+            })
+          );
+        })
+        .then(() => {
           this.props.history.goBack();
         })
         .catch((error) => {
@@ -160,6 +179,10 @@ class ProjectDetail extends Component {
         })
       : null;
     console.log(this.props.docs);
+    const docs = this.props.docs
+      ? this.props.docs.filter((doc) => doc.backend_action !== "deleteEntityOf")
+      : [];
+
     return (
       <CRow>
         <CCol>
@@ -275,11 +298,9 @@ class ProjectDetail extends Component {
                     <MultipleFileUploadButton />
 
                     <CRow>
-                      {this.props.docs
-                        ? this.props.docs.map((doc, idx) => (
-                            <DocumentWidget key={idx} name={doc.name} />
-                          ))
-                        : null}
+                      {docs.map((doc, idx) => (
+                        <DocumentWidget key={idx} doc={doc} />
+                      ))}
                     </CRow>
 
                     <CButton

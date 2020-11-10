@@ -18,7 +18,7 @@ const initialState = {
   projectDocs: [],
 };
 
-const changeState = (state = initialState, { type, ...rest } ) => {
+const changeState = (state = initialState, { type, ...rest }) => {
   switch (type) {
     case "set":
       return { ...state, ...rest };
@@ -72,28 +72,38 @@ const changeState = (state = initialState, { type, ...rest } ) => {
       return { ...state, projectDocs: newDocs };
     case "DELETE_DOCUMENT":
       const newDeleteDocs = [...state.projectDocs];
-      newDeleteDocs.splice(
+      const docToDelete = newDeleteDocs.splice(
         newDeleteDocs.findIndex((element) => element.name === rest.name),
         1
-      );
+      )[0];
+      if (docToDelete.id) {
+        docToDelete.backend_action = "deleteEntityOf";
+        newDeleteDocs.push(docToDelete);
+      }
       return { ...state, projectDocs: newDeleteDocs };
     case "DELETE_DOCUMENTS_FROM_STORE":
       return { ...state, projectDocs: [] };
     case "ADD_ALL_DOCUMENTS_TO_STORE":
       const actualDocs = [...state.projectDocs];
       const incomeDocs = [...rest.projectDocs];
-
       incomeDocs.forEach((incomeDoc) => {
         const docIndex = actualDocs.findIndex(
           (actualDoc) => actualDoc.name === incomeDoc.name
         );
-        docIndex < 0
-          ? actualDocs.push(incomeDoc)
-          : (actualDocs[docIndex] = incomeDoc);
+        if (docIndex < 0) {
+          incomeDoc.backend_action = "createEntityWithFile";
+          actualDocs.push(incomeDoc);
+        } else if (actualDocs[docIndex].id) {
+          incomeDoc.backend_action = "patchEntityWithFiles";
+          actualDocs[docIndex] = { ...actualDocs[docIndex], ...incomeDoc };
+        } else {
+          incomeDoc.backend_action = "createEntityWithFiles";
+          actualDocs[docIndex] = incomeDoc;
+        }
       });
-
       return { ...state, projectDocs: actualDocs };
-
+    case "ADD_ALL_DOCUMENTS_FROM_BACKEND":
+      return { ...state, ...rest };
     default:
       return state;
   }

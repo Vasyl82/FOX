@@ -1,6 +1,5 @@
 import { RepresentationService, FoxApiService } from "../services";
 
-
 const foxApi = new FoxApiService();
 
 const repr = new RepresentationService();
@@ -23,7 +22,7 @@ const getDocuments = ({ signal = null, params = null }) => {
       .getEntityList("documents", params, signal)
       .then((documents) => {
         if (documents.length > 0) {
-          dispatch(_addAllDocumentsToStore(documents));
+          dispatch(_addAllDocumentsFromBackend(documents));
           return Promise.resolve("Got some docs");
         }
       });
@@ -58,6 +57,11 @@ const _deleteDocument = (name) => ({
 
 const _addAllDocumentsToStore = (documents) => ({
   type: "ADD_ALL_DOCUMENTS_TO_STORE",
+  projectDocs: documents,
+});
+
+const _addAllDocumentsFromBackend = (documents) => ({
+  type: "ADD_ALL_DOCUMENTS_FROM_BACKEND",
   projectDocs: documents,
 });
 

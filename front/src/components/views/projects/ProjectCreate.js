@@ -133,29 +133,18 @@ class ProjectCreate extends Component {
         .createEntityOf("projects", this.formData)
 
         .then((newProjectInfo) => {
-          const filesFromStore = [...this.props.docs];
-          const arrayWithDocsForUpload = [];
-
-          filesFromStore.forEach((fileFromStore) => {
-            let docFileName = fileFromStore.name.split(".");
-            docFileName.pop();
-            docFileName = docFileName.join(".");
-
-            const fileObject = {
-              name: docFileName,
-              file: fileFromStore,
-              project: newProjectInfo.id,
-            };
-            arrayWithDocsForUpload.push(fileObject);
-          });
-
+          const docsFromStore = [...this.props.docs];
           return Promise.all(
-            arrayWithDocsForUpload.map((doc) => {
+            docsFromStore.map((incomeDoc) => {
+              const { backend_action, ...doc } = incomeDoc;
+              doc.project = newProjectInfo.id;
               const formData = new FormData();
               Object.entries(doc).forEach(([key, value]) => {
                 formData.append(key, value);
               });
-              return foxApi.createEntityWithFile("documents", formData);
+              if (backend_action !== "None") {
+                return foxApi[backend_action]("documents", formData);
+              }
             })
           );
         })
@@ -304,28 +293,23 @@ class ProjectCreate extends Component {
                     readOnly={this.props.submitting}
                     disabled={this.props.submitting}
                   />
-                  <CFormGroup>
-                    <CContainer>
-                      <CRow>
-                        <CCol>
-                          <FoxSwitchGroup
-                            groupLabel="Choose the related hazardous work from the list below:"
-                            options={permitOptions}
-                            handleCheck={this.handleCheck}
-                            parentState={this.state}
-                            readOnly={this.props.submitting}
-                            disabled={this.props.submitting}
-                          />
-                        </CCol>
-                      </CRow>
-                    </CContainer>
-                  </CFormGroup>
+                  <FoxSwitchGroup
+                    groupLabel="Choose the related hazardous work from the list below:"
+                    options={permitOptions}
+                    handleCheck={this.handleCheck}
+                    parentState={this.state}
+                    readOnly={this.props.submitting}
+                    disabled={this.props.submitting}
+                  />
                 </CForm>
+                <div className="mb-2 ">
+                  <strong>Add documents to this project:</strong>
+                </div>
                 <MultipleFileUploadButton />
                 <CRow>
                   {this.props.docs
                     ? this.props.docs.map((doc, idx) => (
-                        <DocumentWidget key={idx} name={doc.name} />
+                        <DocumentWidget key={idx} doc={doc} />
                       ))
                     : null}
                 </CRow>
