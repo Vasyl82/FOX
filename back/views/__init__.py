@@ -14,7 +14,7 @@ from .contractors import (  # noqa F401
     ContractorList,
     ContractorDetail,
     ContractorCreate,
-    ContractorAddCompany,
+    # ContractorAddCompany,
 )
 from .workers import (  # noqa F401
     WorkerList,

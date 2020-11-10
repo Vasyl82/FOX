@@ -39,7 +39,7 @@ class WorkerDetail(generics.RetrieveUpdateDestroyAPIView):
 
         if user.role == "Contr":
             return Worker.objects.filter(contractor=user, deleted=False)
-        return Worker.objects.filter(contractor__companies=user.company, deleted=False)
+        return Worker.objects.filter(contractor__company=user.company, deleted=False)
 
     def destroy(self, request, pk):
         queryset = self.get_queryset()
