@@ -16,7 +16,7 @@ class ProjectList(generics.ListAPIView):
         user = self.request.user
         if user.role == "Contr":
             return Project.objects.filter(
-                company__in=user.contractor.companies.all(),
+                # company=user.company,
                 contractor=user,
                 deleted=False,
             )

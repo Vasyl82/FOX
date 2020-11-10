@@ -111,8 +111,8 @@ class ContractorAdmin(FoxUserAdmin):
         "email",
     )
     add_form = ContractorCreationForm
-    fieldsets = ((None, {"fields": ("companies",)}),) + FoxUserAdmin.fieldsets
-    add_fieldsets = ((None, {"fields": ("companies",)}),) + FoxUserAdmin.add_fieldsets
+    fieldsets = ((None, {"fields": ("company",)}),) + FoxUserAdmin.fieldsets
+    add_fieldsets = ((None, {"fields": ("company",)}),) + FoxUserAdmin.add_fieldsets
 
 
 class ClientAdminInline(admin.StackedInline):
