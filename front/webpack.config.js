@@ -3,12 +3,12 @@ const ErrorOverlayPlugin = require("error-overlay-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const path = require("path");
 
-module.exports = {
+const config = {
   entry: "./src/index.js",
   output: {
     path: path.resolve(__dirname, "static/front"),
     publicPath: "/static/front/",
-    filename: "bundle.[contenthash].js",
+    filename: "main.js",
   },
   plugins: [
     new ErrorOverlayPlugin(),
@@ -59,4 +59,11 @@ module.exports = {
     },
   },
   devtool: "cheap-module-source-map",
+};
+
+module.exports = (env, argv) => {
+  argv.mode === "production"
+    ? (config.output.filename = "chunk.[contenthash].js")
+    : "main.js";
+  return config;
 };
