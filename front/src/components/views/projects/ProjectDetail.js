@@ -16,7 +16,6 @@ import {
   CCardBody,
   CCardHeader,
   CCardTitle,
-  CFormText,
 } from "@coreui/react";
 import {
   getProfileFetch,
@@ -27,7 +26,6 @@ import {
 } from "../../../actions";
 import { FoxApiService } from "../../../services";
 import { ActivityLog } from "../../activity_log";
-import { FoxReactSelectFormGroup } from "../../forms";
 import { permitOptions } from "./optionsLists";
 import { WithLoading, WithLoadingSpinner, SubmitSpinner } from "../../loadings";
 import { FoxSwitchGroup, MultipleFileUploadButton } from "../../../utils";
@@ -146,15 +144,10 @@ class ProjectDetail extends Component {
       .then(() => foxApi.getDetailsOf("projects", projectId))
       .then((data) =>
         this.setState({ ...data }, async () => {
-          await Promise.all([
-            this.props.getDocuments({
-              params: { project_id: projectId },
-              signal: this.abortController.signal,
-            }),
-            this.props.getContractorList({
-              signal: this.abortController.signal,
-            }),
-          ]);
+          this.props.getDocuments({
+            params: { project_id: projectId },
+            signal: this.abortController.signal,
+          });
         })
       )
       .catch((error) => {
@@ -173,12 +166,6 @@ class ProjectDetail extends Component {
   abortController = new window.AbortController();
 
   render = () => {
-    const options = this.props.options
-      ? this.props.options.map((option) => {
-          return { value: option.id, label: option.username };
-        })
-      : null;
-    console.log(this.props.docs);
     const docs = this.props.docs
       ? this.props.docs.filter((doc) => doc.backend_action !== "deleteEntityOf")
       : [];
@@ -264,21 +251,9 @@ class ProjectDetail extends Component {
                         </CCol>
                       </CRow>
                     </CFormGroup>
-                    {/* <FoxReactSelectFormGroup
-                    options={options}
-                    inputInfo="contractor"
-                    inputValue={this.state.contractor}
-                    handleChange={this.handleReactSelect}
-                    disabled={this.props.submitting}
-                    readOnly={this.props.submitting}
-                  /> */}
                     <div className="mb-3">
                       <strong>Contractor: </strong>
-                      {this.props.options
-                        ? this.props.options.filter(
-                            (option) => option.id === this.state.contractor
-                          )[0].username
-                        : ""}
+                      {this.state.contractor_name}
                     </div>
                     <CFormGroup>
                       <CLink
