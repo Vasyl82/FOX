@@ -287,12 +287,6 @@ class ProjectDetail extends Component {
                       >
                         See Permission To Work
                       </CLink>
-                      <CLink
-                        className="btn btn-outline-dark"
-                        to={`${this.props.match.url}/documents`}
-                      >
-                        Attached Documents
-                      </CLink>
                     </CFormGroup>
                     <FoxSwitchGroup
                       groupLabel="Choose the related hazardous work
@@ -303,8 +297,13 @@ class ProjectDetail extends Component {
                       readOnly={this.props.submitting}
                       disabled={this.props.submitting}
                     />
+                    <div className="mb-2 ">
+                      <strong>Add documents to this project:</strong>
+                    </div>
                     <MultipleFileUploadButton />
-
+                    <div className="mb-2 ">
+                      <strong>Attached documents:</strong>
+                    </div>
                     <CRow>
                       {docs.map((doc, idx) => (
                         <DocumentWidget key={idx} doc={doc} />
