@@ -3,6 +3,7 @@ import { RepresentationService, FoxApiService } from "../services";
 const foxApi = new FoxApiService();
 
 const repr = new RepresentationService();
+
 const getDocumentList = ({
   params = null,
   additional = false,
@@ -34,6 +35,10 @@ const putAllDocumentsToStore = (documents) => {
 };
 
 const addNewDocument = (document) => {
+  return (dispatch) => dispatch(_updateDocument(document));
+};
+
+const updateDocument = (document) => {
   return (dispatch) => dispatch(_updateDocument(document));
 };
 
@@ -76,4 +81,5 @@ export {
   deleteDocument,
   deleteDocumentsFromStore,
   putAllDocumentsToStore,
+  updateDocument,
 };

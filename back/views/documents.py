@@ -12,6 +12,7 @@ from back.services import (
     DocumentFileService,
     DocumentFileJWTCreator,
     DocumentFileJWTReader,
+    FilledDocumentFileService,
 )
 
 
@@ -59,6 +60,19 @@ class DocumentDownload(APIView):
     def get(self, request, pk, format=None):
         try:
             document = DocumentFileService(pk, Document)
+            response = HttpResponse(
+                document.read(), content_type="application/octet-stream"
+            )
+            response["Content-Disposition"] = f"attachment; filename={document.name}"
+            return response
+        except FileNotFoundError:
+            raise Http404("File not found.")
+
+
+class FilledDocumentFileDownload(APIView):
+    def get(self, request, pk, format=None):
+        try:
+            document = FilledDocumentFileService(pk, Document)
             response = HttpResponse(
                 document.read(), content_type="application/octet-stream"
             )

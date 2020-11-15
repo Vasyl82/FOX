@@ -11,10 +11,11 @@ class DocumentListSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "file",
+            "filled_file",
             "project",
             "hazardous_work",
             "deleted",
-            "backend_action"
+            "backend_action",
             ]
 
     def get_backend_action(self, obj):

@@ -64,11 +64,9 @@ const changeState = (state = initialState, { type, ...rest }) => {
     case "UPDATE_DOCUMENT":
       const newDocs = [...state.projectDocs];
       const searchIndex = newDocs.findIndex(
-        (element) => element.docId === rest.docInfo.docId
+        (element) => element.id === rest.docInfo.id
       );
-      searchIndex < 0
-        ? newDocs.push(rest.docInfo)
-        : newDocs.splice(searchIndex, 1, rest.docInfo);
+      searchIndex < 0 ? null : newDocs.splice(searchIndex, 1, rest.docInfo);
       return { ...state, projectDocs: newDocs };
     case "DELETE_DOCUMENT":
       const newDeleteDocs = [...state.projectDocs];

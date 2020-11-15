@@ -14,6 +14,7 @@ import { getClientManagerList } from "./client_managers";
 import {
   getDocumentList,
   addNewDocument,
+  updateDocument,
   deleteDocumentsFromStore,
   getDocuments,
   putAllDocumentsToStore,
@@ -57,6 +58,7 @@ export {
   getClientManagerList,
   getDocumentList,
   addNewDocument,
+  updateDocument,
   getContractorList,
   getDocuments,
   getWorkerList,
