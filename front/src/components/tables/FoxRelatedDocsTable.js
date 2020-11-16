@@ -65,7 +65,11 @@ const FoxRelatedDocsTable = (props) => {
           <CCardBody>
             <CDataTable
               items={props.tableData ? props.tableData : []}
-              fields={["document_name", "uploaded_document", "uploaded"]}
+              fields={[
+                { key: "name", label: "Document Name" },
+                "uploaded_document",
+                "uploaded",
+              ]}
               loading={props.loading}
               clickableRows
               hover
@@ -77,7 +81,7 @@ const FoxRelatedDocsTable = (props) => {
               itemsPerPageSelect
               pagination
               scopedSlots={{
-                document_name: (item) => (
+                name: (item) => (
                   <td>
                     <CCol className="mb-3" sm="9">
                       <CLink
