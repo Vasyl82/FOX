@@ -7,7 +7,7 @@ def project_docs_path(instance, filename):
 
 
 def project_filled_files_path(instance, filename):
-    return "project_{0}/{1}".format(instance.project.id, filename)
+    return "project_{0}/filled/{1}".format(instance.project.id, filename)
 
 
 class Document(models.Model):

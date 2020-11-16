@@ -90,7 +90,9 @@ class ProjectDetail extends Component {
               const formData = new FormData();
               if (backend_action !== "None") {
                 Object.entries(doc).forEach(([key, value]) => {
-                  formData.append(key, value);
+                  if (value !== null) {
+                    formData.append(key, value);
+                  }
                 });
                 if (doc.id) {
                   return foxApi[backend_action]("documents", doc.id, formData);
@@ -126,6 +128,7 @@ class ProjectDetail extends Component {
               "file",
               "template",
               "url_to_doc",
+              "filled_file",
             ],
           });
           this.setState({
