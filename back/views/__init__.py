@@ -32,6 +32,7 @@ from .documents import (  # noqa F401
     DocumentDownload,
     DocumentDisplayPermission,
     download_file_to_display,
+    FilledDocumentFileDownload
 )  # noqa F401
 from .worker_special_competencies import (  # noqa F401
     WorkerSpecialCompetencyList,

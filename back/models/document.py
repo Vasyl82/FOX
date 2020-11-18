@@ -6,6 +6,10 @@ def project_docs_path(instance, filename):
     return "project_{0}/{1}".format(instance.project.id, filename)
 
 
+def project_filled_files_path(instance, filename):
+    return "project_{0}/filled/{1}".format(instance.project.id, filename)
+
+
 class Document(models.Model):
     class HazardousWork(models.TextChoices):
         none = "None", _("None")
@@ -20,6 +24,7 @@ class Document(models.Model):
 
     name = models.CharField(max_length=128, null=True)
     file = models.FileField(upload_to=project_docs_path, null=True, blank=True)
+    filled_file = models.FileField(upload_to=project_filled_files_path, null=True, blank=True)
     project = models.ForeignKey(
         "back.Project", on_delete=models.CASCADE, related_name="documents", null=True
     )

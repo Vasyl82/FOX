@@ -278,6 +278,12 @@ class FoxApiService {
     return res.blob();
   };
 
+  downloadFilledDocument = async (id) => {
+    let url = `${this.apiBase}documents/downloads/filled/${id}/`;
+    const res = await this.getDoc((url = url));
+    return res.blob();
+  };
+
   downloadSafetyTemplate = async (doctype) => {
     let url = `${this.apiBase}download_template/${doctype}/`;
     const res = await this.getDoc((url = url));

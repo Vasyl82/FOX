@@ -1,175 +1,111 @@
-import React, { Component } from 'react'
-import { getProfileFetch, getDocumentList, setProjectId, clearList } from '../../../actions'
-import { connect } from 'react-redux'
+import React, { Component } from "react";
 import {
-  CForm,
-  CFormGroup,
-  CRow,
-  CCol,
-  CButton,
-} from "@coreui/react";
-import DjangoCSRFToken from 'django-react-csrftoken'
-import { FoxApiService } from '../../../services'
-import FoxProjectDocumentDownLoadUploadFormGroup from '../../forms/FoxProjectDocumentDownloadUploadFormGroup';
-import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
-import { handleError } from '../../errors'
+  getProfileFetch,
+  getDocuments,
+  setProjectId,
+  clearList,
+  updateDocument,
+  deleteDocumentsFromStore,
+} from "../../../actions";
+import { connect } from "react-redux";
+import { FoxApiService } from "../../../services";
+import FoxRelatedDocsTable from "../../tables/FoxRelatedDocsTable";
+import { WithLoading } from "../../loadings";
+import { handleError } from "../../errors";
 
 const foxApi = new FoxApiService();
 
 class ProjectUploadDocs extends Component {
-
   state = {
-    filename: "",
-    file_id: "",
-    project: this.props.match.params.id,
-    url_to_doc: "",
-    upload_files: {},
     error: false,
-  }
+  };
 
-  downloadFile = async (e) => {
-    this.setState({
-      filename: e.target.value,
-      file_id: e.target.name
-    }, () => {
-      foxApi.downloadDocument(this.state.file_id)
-        .then((blob) => {
-          const url = window.URL.createObjectURL(new Blob([blob]));
-          const link = document.createElement('a');
-          link.href = url;
-          const filename = this.state.filename.split('/').pop();
-          link.setAttribute('download', filename);
-          document.body.appendChild(link);
-          link.click();
-          link.parentNode.removeChild(link);
-        })
-        .catch((error) => {
-          const errors = handleError(
-            {
-              error: error,
-              operation: "File download",
-              validationFields: ["name", "file"]
-            });
-          this.setState({
-            error: errors
-          });
-        })
-    })
-  }
+  handleFilledFileUpload = async (event) => {
+    const docFilledFile = event.target.files[0];
+    const docId = event.target.name;
+    const formData = new FormData();
+    formData.append("filled_file", docFilledFile);
 
-  handleFileUpload = event => {
-    const { upload_files } = this.state;
-    upload_files[event.target.name] = event.target.files[0];
-    this.setState({
-      upload_files: upload_files
-    });
-  }
-
-  handleSubmit = async event => {
-    event.preventDefault();
-    this.props.changeSubmitState()
-    const { upload_files } = this.state;
-
-    Object.entries(upload_files).forEach(([key, value]) => {
-
-      const uploadFilesData = new FormData();
-      uploadFilesData.append('file', value);
-      upload_files[key] = uploadFilesData
-    })
-
-    await Promise.all([
-      Object.entries(upload_files).forEach(([key, value]) => {
-        foxApi.patchEntityWithFiles("documents", key, value);
-      })
-    ])
-      .then(() => {
-        this.props.history.goBack()
+    await foxApi
+      .patchEntityWithFiles("documents", docId, formData)
+      .then((updatedDocument) => {
+        this.props.updateDocument(updatedDocument);
       })
       .catch((error) => {
-        const errors = handleError(
-          {
-            error: error,
-            operation: "Document update",
-            validationFields: ["name", "file"]
-          });
-        this.setState({
-          error: errors
+        const errors = handleError({
+          error: error,
+          operation: "Uploaded Document",
+          validationFields: ["filled_file"],
         });
-      })
-      .finally(() => this.props.changeSubmitState())
-  }
+
+        this.setState({
+          error: errors,
+        });
+      });
+  };
 
   componentDidMount = async () => {
     const params = {
       target_type: "Contractor",
-      project_id: this.props.match.params.id
-    }
-    this.props.setProjectId(this.props.match.params.id)
-    await this.props.getProfileFetch()
-      .then(() => this.props.getDocumentList({ params, additional: false, signal: this.abortController.signal }))
-      .catch(error => console.log(error))
-      .finally(() => this.props.changeLoadingState())
-  }
+      project_id: this.props.match.params.id,
+    };
+    this.props.setProjectId(this.props.match.params.id);
+    await this.props
+      .getProfileFetch()
+      .then(() =>
+        this.props.getDocuments({
+          params,
+          signal: this.abortController.signal,
+        })
+      )
+      .catch((error) => console.log(error))
+      .finally(() => this.props.changeLoadingState());
+  };
 
   componentWillUnmount = async () => {
     this.abortController.abort();
     await this.props.clearList();
-    this.props.setProjectId("")
-  }
+    this.props.setProjectId("");
+    this.props.deleteDocumentsFromStore();
+  };
 
   abortController = new window.AbortController();
 
   render = () => {
-    let documentWidgetArray = []
-    if (this.props.documents) {
-      documentWidgetArray = this.props.documents.map((document, idx) => {
-        return (
-          <FoxProjectDocumentDownLoadUploadFormGroup
-            key={idx}
-            document={document}
-            handleFileUpload={this.handleFileUpload}
-            downloadFile={this.downloadFile}
-            disabled={this.props.submitting}
-          />
-        )
-      })
-    }
+    console.log(this.props.documents);
     return (
-      <CRow>
-        <CCol>
-          <WithLoadingSpinner loading={this.props.loading}>
-            <CForm
-              onSubmit={this.handleSubmit}
-            >
-              <DjangoCSRFToken />
-              {documentWidgetArray}
-              <CFormGroup>
-                <CButton disabled={this.props.submitting} shape="pill" type="submit" color="dark" variant="outline" block><SubmitSpinner submitting={this.props.submitting} />Submit documents</CButton>
-              </CFormGroup>
-              {this.state.error
-                ? <p className="fox-form-invalid-feedback">{this.state.error}</p>
-                : null
-              }
-            </CForm>
-          </WithLoadingSpinner>
-        </CCol>
-      </CRow >
-    )
-  }
+      <>
+        <FoxRelatedDocsTable
+          {...this.props}
+          tableName="Related Documents"
+          tableData={this.props.documents}
+          loading={this.props.loading}
+          handleFileUpload={this.handleFilledFileUpload}
+          readOnly={this.props.submitting}
+          disabled={this.props.submitting}
+        />
+      </>
+    );
+  };
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    documents: state.entityListTable.tableData
-  }
-}
+    documents: state.projectDocs,
+  };
+};
 
-const mapDispatchToProps = dispatch => ({
-  getProfileFetch: () => dispatch(getProfileFetch()),
-  getDocumentList: ({ ...params }) => dispatch(getDocumentList({ ...params })),
+const mapDispatchToProps = (dispatch) => ({
+  getProfileFetch: async () => await dispatch(getProfileFetch()),
+  getDocuments: async ({ ...params }) =>
+    await dispatch(getDocuments({ ...params })),
   setProjectId: (id) => dispatch(setProjectId(id)),
-  clearList: () => dispatch(clearList())
-})
+  clearList: () => dispatch(clearList()),
+  updateDocument: (document) => dispatch(updateDocument(document)),
+  deleteDocumentsFromStore: () => dispatch(deleteDocumentsFromStore()),
+});
 
-
-export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ProjectUploadDocs))
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WithLoading(ProjectUploadDocs));
