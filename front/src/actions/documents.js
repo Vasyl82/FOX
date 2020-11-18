@@ -3,6 +3,7 @@ import { RepresentationService, FoxApiService } from "../services";
 const foxApi = new FoxApiService();
 
 const repr = new RepresentationService();
+
 const getDocumentList = ({
   params = null,
   additional = false,
@@ -16,10 +17,10 @@ const getDocumentList = ({
   }
 };
 
-const getDocuments = ({ signal = null, params = null }) => {
+const getDocuments = ({ signal = null, params = null, additional = null }) => {
   return async (dispatch) => {
     await foxApi
-      .getEntityList("documents", params, signal)
+      .getEntityList("documents", params, signal, additional)
       .then((documents) => {
         if (documents.length > 0) {
           dispatch(_addAllDocumentsFromBackend(documents));
@@ -34,6 +35,10 @@ const putAllDocumentsToStore = (documents) => {
 };
 
 const addNewDocument = (document) => {
+  return (dispatch) => dispatch(_updateDocument(document));
+};
+
+const updateDocument = (document) => {
   return (dispatch) => dispatch(_updateDocument(document));
 };
 
@@ -76,4 +81,5 @@ export {
   deleteDocument,
   deleteDocumentsFromStore,
   putAllDocumentsToStore,
+  updateDocument,
 };
