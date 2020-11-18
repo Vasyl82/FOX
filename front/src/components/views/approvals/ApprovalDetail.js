@@ -1,7 +1,12 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import DjangoCSRFToken from 'django-react-csrftoken'
-import { getProfileFetch, getDocumentList, getWorkerList, clearList } from '../../../actions'
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import DjangoCSRFToken from "django-react-csrftoken";
+import {
+  getProfileFetch,
+  getDocuments,
+  getWorkerList,
+  clearList,
+} from "../../../actions";
 import {
   CForm,
   CFormGroup,
@@ -9,23 +14,22 @@ import {
   CRow,
   CCol,
   CTextarea,
-  CLink,
   CButton,
   CCard,
   CCardBody,
   CCardHeader,
   CCollapse,
   CCardTitle,
-  CCardSubtitle
+  CListGroup,
+  CListGroupItem,
 } from "@coreui/react";
-import { FoxApiService } from '../../../services'
-import { DisplayFile, WorkerReview } from '../../../utils'
-import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
+import { FoxApiService } from "../../../services";
+import { WorkerReview } from "../../../utils";
+import { SubmitSpinner, WithLoading, WithLoadingSpinner } from "../../loadings";
 
 const foxApi = new FoxApiService();
 
 class ApprovalDetail extends Component {
-
   state = {
     description: "",
     created: "",
@@ -37,100 +41,116 @@ class ApprovalDetail extends Component {
     filename: "",
     file_id: "",
     current_worker_id: "",
-    current_worker_info: ""
-  }
+    current_worker_info: "",
+  };
 
-  handleChange = event => {
+  handleChange = (event) => {
     this.setState({
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
     });
-  }
+  };
 
-  handleWorkerSelect = event => {
-    this.state.current_worker_id === event.target.name ?
-      this.setState({
-        current_worker_id: ""
-      })
-      :
-      this.setState({
-        current_worker_id: event.target.name
-      })
-  }
+  handleWorkerSelect = (event) => {
+    this.state.current_worker_id === event.target.name
+      ? this.setState({
+          current_worker_id: "",
+        })
+      : this.setState({
+          current_worker_id: event.target.name,
+        });
+  };
 
-  handleSubmit = async event => {
+  handleSubmit = async (event) => {
     event.preventDefault();
-    this.props.changeSubmitState()
+    this.props.changeSubmitState();
     if (this.state.status === "Rejected" && !this.state.description) {
       this.setState({
-        error: 'Rejections reason was not provided! Please, specify the rejection reason!'
-      })
+        error:
+          "Rejections reason was not provided! Please, specify the rejection reason!",
+      });
     } else {
       this.formData = this.state;
       delete this.formData.error;
       delete this.formData.created;
       delete this.formData.last_resolved;
-      delete this.formData.current_worker_id
-      delete this.formData.current_worker_info
-      await foxApi.patchEntityOf('approvals', this.props.match.params.id, this.formData)
+      delete this.formData.current_worker_id;
+      delete this.formData.current_worker_info;
+      await foxApi
+        .patchEntityOf("approvals", this.props.match.params.id, this.formData)
         .then(() => {
-          this.props.history.goBack()
+          this.props.history.goBack();
         })
         .catch((error) => {
           console.error(error);
           this.setState({
-            error: 'Approval resolution failed!' +
-              ' Please check your input and try again!' +
-              ' In case this problem repeats, please contact your administrator!'
+            error:
+              "Approval resolution failed!" +
+              " Please check your input and try again!" +
+              " In case this problem repeats, please contact your administrator!",
           });
         })
-        .finally(() => this.props.changeSubmitState())
+        .finally(() => this.props.changeSubmitState());
     }
-  }
+  };
 
   downloadFile = async (e) => {
-    this.setState({
-      filename: e.target.value,
-      file_id: e.target.name
-    }, () => {
-      foxApi.downloadDocument(this.state.file_id)
-        .then((blob) => {
-          const url = window.URL.createObjectURL(new Blob([blob]));
-          const link = document.createElement('a');
-          link.href = url;
-          const filename = this.state.filename.split('/').pop();
-          link.setAttribute('download', filename);
-          document.body.appendChild(link);
-          link.click();
-          link.parentNode.removeChild(link);
-        })
-        .catch((error) => {
-          console.error('File download failed!');
-          console.error(error)
-        })
-    })
-  }
+    this.setState(
+      {
+        filename: e.target.value,
+        file_id: e.target.name,
+      },
+      () => {
+        foxApi
+          .downloadFilledDocument(this.state.file_id)
+          .then((blob) => {
+            const url = window.URL.createObjectURL(new Blob([blob]));
+            const link = document.createElement("a");
+            link.href = url;
+            const filename = this.state.filename.split("/").pop();
+            link.setAttribute("download", filename);
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+          })
+          .catch((error) => {
+            console.error("File download failed!");
+            console.error(error);
+          });
+      }
+    );
+  };
 
   componentDidMount = async () => {
-    await this.props.getProfileFetch()
-      .then(() => foxApi.getDetailsOf('approvals', this.props.match.params.id))
-      .then((data) => this.setState(
-        { ...data }, async () => {
+    await this.props
+      .getProfileFetch()
+      .then(() => foxApi.getDetailsOf("approvals", this.props.match.params.id))
+
+      .then((data) =>
+        this.setState({ ...data }, async () => {
           await Promise.all([
-            this.props.getDocumentList({ params: { project_id: this.state.project }, additional: true, signal: this.abortController.signal }),
-            this.props.getWorkerList({ params: { project_id: this.state.project }, additional: false, signal: this.abortController.signal })
-          ])
-        }
-      ))
-      .catch(error => {
+            this.props.getDocuments({
+              params: { project_id: this.state.project },
+              additional: true,
+              signal: this.abortController.signal,
+            }),
+            this.props.getWorkerList({
+              params: { project_id: this.state.project },
+              additional: false,
+              signal: this.abortController.signal,
+            }),
+          ]);
+        })
+      )
+      .catch((error) => {
         console.log(error);
       })
-      .finally(() => this.props.changeLoadingState())
-  }
+      .finally(() => this.props.changeLoadingState());
+  };
 
   componentWillUnmount = async () => {
     this.abortController.abort();
     await this.props.clearList();
-  }
+  };
 
   abortController = new window.AbortController();
 
@@ -140,65 +160,61 @@ class ApprovalDetail extends Component {
         <CCol>
           <CCard>
             <CCardHeader>
-              <CCardTitle>
-                Attached Documents
-              </CCardTitle>
+              <CCardTitle>Attached Documents</CCardTitle>
             </CCardHeader>
             <CCardBody>
               <WithLoadingSpinner loading={this.props.loading}>
-                {this.props.documents
-                  ?
-                  this.props.documents.map((document, idx) => {
-                    return (
-                      <React.Fragment key={idx}>
-                        <h6>
-                          {document.name}
-                        </h6>
-                        {document.url_to_doc ?
-                          <CLink
-                            key={`dl-${document.id}`}
-                            href={document.url_to_doc}
-                            target="_blank"
-                            className="btn btn-ghost-primary"
-                          >
-                            Open this document in Google Docs
-            						</CLink>
-                          :
-                          <CButton
-                            variant="outline"
-                            color="primary"
-                            key={`cb-${document.id}`}
-                            id={document.id}
-                            name={document.id}
-                            value={document.filename}
-                            onClick={this.downloadFile}
-                          >
-                            Download document
-              					</CButton>
-                        }
-                      </React.Fragment>
-                    )
-                  })
-                  :
-                  <p>There was no documents attached to this project.</p>}
+                <CListGroup flush>
+                  {this.props.documents ? (
+                    this.props.documents.map((document, idx) => {
+                      return (
+                        <React.Fragment key={idx}>
+                          <CListGroupItem>
+                            <h6>{document.name}</h6>
+                            {document.filled_file !== null ? (
+                              <CButton
+                                variant="outline"
+                                color="primary"
+                                key={`cb-${document.id}`}
+                                id={document.id}
+                                name={document.id}
+                                value={document.name}
+                                onClick={this.downloadFile}
+                              >
+                                Download document
+                              </CButton>
+                            ) : (
+                              "The contractor has not attached the filled version of this document."
+                            )}
+                          </CListGroupItem>
+                        </React.Fragment>
+                      );
+                    })
+                  ) : (
+                    <p>There was no documents attached to this project.</p>
+                  )}
+                </CListGroup>
               </WithLoadingSpinner>
             </CCardBody>
           </CCard>
+
           <CCard>
             <CCardHeader>
-              <CCardTitle>
-                Workers
-              </CCardTitle>
+              <CCardTitle>Workers</CCardTitle>
             </CCardHeader>
             <CCardBody>
               <WithLoadingSpinner loading={this.props.loading}>
-                {this.props.workers ?
+                {this.props.workers ? (
                   this.props.workers.map((worker, idx) => {
                     return (
                       <CCard key={`card-${idx}`} className="mb-0">
                         <CCardBody key={`cbody-${idx}`}>
-                          <h5 key={`h5-${idx}`} className="m-0 p-0">{worker.name}</h5>
-                          <h6 key={`h6-${idx}`} className="m-0 p-0">{worker.position_in_company}</h6>
+                          <h5 key={`h5-${idx}`} className="m-0 p-0">
+                            {worker.name}
+                          </h5>
+                          <h6 key={`h6-${idx}`} className="m-0 p-0">
+                            {worker.position_in_company}
+                          </h6>
                           <CButton
                             key={`btn-${idx}`}
                             block
@@ -208,17 +224,25 @@ class ApprovalDetail extends Component {
                             value={worker.id}
                             name={worker.id}
                             onClick={this.handleWorkerSelect}
-                          >Display Details</CButton>
-                          <CCollapse key={`clps-${idx}`} show={this.state.current_worker_id === worker.id.toString()}>
+                          >
+                            Display Details
+                          </CButton>
+                          <CCollapse
+                            key={`clps-${idx}`}
+                            show={
+                              this.state.current_worker_id ===
+                              worker.id.toString()
+                            }
+                          >
                             <WorkerReview workerId={worker.id} />
                           </CCollapse>
                         </CCardBody>
                       </CCard>
-                    )
+                    );
                   })
-                  :
+                ) : (
                   <p>There was no workers assigned to this project.</p>
-                }
+                )}
               </WithLoadingSpinner>
             </CCardBody>
           </CCard>
@@ -234,8 +258,7 @@ class ApprovalDetail extends Component {
                     value={this.state.description ? this.state.description : ""}
                     onChange={this.handleChange}
                     readOnly={this.props.submitting}
-                  >
-                  </CTextarea>
+                  ></CTextarea>
                 </CFormGroup>
                 <CFormGroup>
                   <CButton
@@ -251,7 +274,7 @@ class ApprovalDetail extends Component {
                   >
                     <SubmitSpinner submitting={this.props.submitting} />
                     Approve
-										</CButton>
+                  </CButton>
                   <CButton
                     shape="pill"
                     type="submit"
@@ -264,33 +287,33 @@ class ApprovalDetail extends Component {
                   >
                     <SubmitSpinner submitting={this.props.submitting} />
                     Reject
-									</CButton>
+                  </CButton>
                 </CFormGroup>
-                {this.state.error
-                  ? <p>{this.state.error}</p>
-                  : null
-                }
+                {this.state.error ? <p>{this.state.error}</p> : null}
               </CForm>
             </CCardBody>
           </CCard>
         </CCol>
-      </CRow >
-    )
-  }
+      </CRow>
+    );
+  };
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    documents: state.additionalEntityListTable.tableData,
-    workers: state.entityListTable.tableData
-  }
-}
+    documents: state.projectDocs,
+    workers: state.entityListTable.tableData,
+  };
+};
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
-  getDocumentList: ({ ...kwargs }) => dispatch(getDocumentList({ ...kwargs })),
   getWorkerList: ({ ...kwargs }) => dispatch(getWorkerList({ ...kwargs })),
-  clearList: () => dispatch(clearList())
-})
+  clearList: () => dispatch(clearList()),
+  getDocuments: async ({ ...kwargs }) => dispatch(getDocuments({ ...kwargs })),
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ApprovalDetail))
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WithLoading(ApprovalDetail));

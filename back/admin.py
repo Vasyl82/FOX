@@ -33,7 +33,7 @@ class FoxUserAdmin(UserAdmin):
     unless a password was entered.
     """
 
-    add_form = FoxUserCreationForm()
+    add_form = FoxUserCreationForm
     add_fieldsets = (
         (
             None,

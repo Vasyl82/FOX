@@ -49,6 +49,7 @@ urlpatterns = [
     path("documents/predefined/", views.PredefinedDocumentCreate.as_view()),
     path("documents/<int:pk>/", views.DocumentDetail.as_view()),
     path("documents/downloads/<int:pk>/", views.DocumentDownload.as_view()),
+    path("documents/downloads/filled/<int:pk>/", views.FilledDocumentFileDownload.as_view()),
     path(
         "documents/display/permission/<int:pk>/",
         views.DocumentDisplayPermission.as_view(),
