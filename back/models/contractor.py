@@ -7,6 +7,10 @@ from django.contrib.auth import get_user_model
 FoxUser = get_user_model()
 
 
+def signature_img_path(instance, filename):
+    return "contractor_{0}/{1}".format(instance.id, filename)
+
+
 class Contractor(FoxUser):
     class Type(models.TextChoices):
         default = "Default", _("Contractor")
@@ -22,6 +26,7 @@ class Contractor(FoxUser):
     companies = models.ManyToManyField(
         "Company", related_name="contractors", blank=True
     )
+    signature = models.ImageField(upload_to=signature_img_path, null=True, blank=True)
 
     class Meta:
         verbose_name = "Contractor"

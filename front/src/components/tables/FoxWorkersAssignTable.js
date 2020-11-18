@@ -10,7 +10,6 @@ import { connect } from "react-redux";
 
 class FoxWorkersAssignTable extends Component {
   setFields = (noCheckBoxes) => {
-    console.log(this.props);
     const baseFields = ["worker_name", "identification_no"];
     if (noCheckBoxes) {
       return baseFields;

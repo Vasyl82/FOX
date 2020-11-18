@@ -8,3 +8,4 @@ from .notifications import (  # noqa F401
 from .predifined_doc_handling_service import PredefinedDocHandlingService  # noqa F401
 from .permits import PermitHandlingService, PermitVerificationService  # noqa F401
 from .qr_code_service import QrCodeService  # noqa F401
+from .signatureService import SignatureService  # noqa F401

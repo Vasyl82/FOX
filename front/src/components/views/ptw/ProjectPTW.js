@@ -28,11 +28,13 @@ class ProjectPTW extends Component {
           })
       )
       .then(() => foxApi.getDetailsOf("projects", projectId))
-      .then((projectInfo) =>
+      .then(async (projectInfo) => {
+        const signature = await foxApi.getSignature(projectInfo.contractor);
+        projectInfo.signature = signature;
         this.setState({
           ...projectInfo,
-        })
-      )
+        });
+      })
       .catch((error) => console.log(error))
       .finally(() => this.props.changeLoadingState());
   };
@@ -46,6 +48,7 @@ class ProjectPTW extends Component {
 
   render = () => {
     const { ...state } = { ...this.state };
+    console.log(state);
     return (
       <WithLoadingSpinner loading={this.props.loading}>
         {["Created", "Rejected"].includes(this.state.status) ? (

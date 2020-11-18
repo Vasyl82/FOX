@@ -7,13 +7,9 @@ import {
   CCardBody,
   CCardHeader,
   CCardTitle,
-  CCardFooter,
-  CButton,
-  CTextarea,
-  CListGroup,
-  CListGroupItem,
   CCardText,
   CBadge,
+  CImg,
 } from "@coreui/react";
 import { FoxWorkersAssignTable } from "../../tables";
 import SafetyDeclarationsCard from "./SafetyDeclarationsCard";
@@ -125,10 +121,19 @@ const FilledPTW = (props) => {
               </em>
             </CCardText>
             <CRow>
-              <CCol className="ml-auto" xs="6" md="3">
-                <CCard>
-                  <CCardBody>Signature here</CCardBody>
-                </CCard>
+              <CCol className="ml-auto mr-3" xs="6" md="3" lg="2">
+                <CCardText>Signature:</CCardText>
+                {project.signature ? (
+                  <CImg
+                    src={window.URL.createObjectURL(project.signature)}
+                    width="80%"
+                    // height="auto"
+                    className="mb-2"
+                    fluid
+                  />
+                ) : (
+                  "No signature attached"
+                )}
                 <CRow>
                   <CCol>
                     <strong>Name: </strong> {project.applicant_name}

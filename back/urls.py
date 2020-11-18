@@ -35,6 +35,7 @@ urlpatterns = [
     path("contractors/", views.ContractorList.as_view()),
     path("contractors/new/", views.ContractorCreate.as_view()),
     path("contractors/<int:pk>/", views.ContractorDetail.as_view()),
+    path("contractors/<int:pk>/signature/", views.ContractorSignature.as_view()),
     # path("contractors/<int:pk>/add_company/", views.ContractorAddCompany.as_view()),
     path("workers/", views.WorkerList.as_view()),
     path("workers/new/", views.WorkerCreate.as_view()),

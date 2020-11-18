@@ -1,7 +1,9 @@
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import generics, status
+from rest_framework.views import APIView
+from back.services import SignatureService
 
 # from rest_framework.views import APIView
 # from rest_framework.response import Response
@@ -40,8 +42,6 @@ class ContractorDetail(generics.RetrieveUpdateDestroyAPIView):
     def destroy(self, request, pk):
         queryset = self.get_queryset()
         contractor = get_object_or_404(queryset, pk=pk)
-        # contractor.companies.remove(request.user.company)
-        # if contractor.companies.count() < 1:
         contractor.deleted = True
         now = timezone.now().strftime("%d-%m-%y %H:%M")
         contractor.username += f"(deleted-{now})"
@@ -53,10 +53,14 @@ class ContractorDetail(generics.RetrieveUpdateDestroyAPIView):
         )
 
 
-# class ContractorAddCompany(APIView):
-#     def patch(self, request, pk):
-#         contractor = get_object_or_404(Contractor, pk=pk)
-#         company = get_object_or_404(Company, pk=request.data["company_id"])
-#         contractor.companies.add(company)
-#         serializer = ContractorSerializer(contractor)
-#         return Response(data=serializer.data)
+class ContractorSignature(APIView):
+    def get(self, request, pk, format=None):
+        try:
+            signature = SignatureService(pk, Contractor)
+            response = HttpResponse(
+                signature.read(), content_type="application/octet-stream"
+            )
+            response["Content-Disposition"] = f"attachment; filename={signature.name}"
+            return response
+        except FileNotFoundError:
+            raise Http404("File not found.")
