@@ -200,9 +200,6 @@ class ProjectCreate extends Component {
           return { value: option.id, label: option.username };
         })
       : null;
-
-    console.log(this.props.docs);
-
     return (
       <CRow>
         <CCol>
