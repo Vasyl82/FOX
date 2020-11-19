@@ -1,3 +1,5 @@
-Project {{project_name}} in company {{company_name}} has been extended to [[time and date will be specified later]]. 
-Please, visit this link to view the details: 
-{{redirect_link}}
+Dear {{ username }},
+Your project {{ project_name }} has been extended by {{ company_name }}. View your project now.
+{{ redirect_link }}
+Cheers,
+Sara

@@ -1,3 +1,5 @@
-You have been assigned for project {{project_name}} in company {{company_name}}. 
-Please, visit this link to start submission process: 
-{{redirect_link}}
+Dear {{ username }},
+You have been assigned a project {{ project_name }} by {{ company_name }}. Start your application now.
+{{ redirect_link }}
+Cheers,
+Sara

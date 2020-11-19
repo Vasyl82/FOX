@@ -2,11 +2,11 @@
 
 <body>
   <div>
-    <p>
-      Your proposal for project {{project_name}} in company {{company_name}} has been approved by all responsible
-      managers.
-      Please find QR codes for your eligible workers. These QR codes must be used to enter the companies facility.
-    </p>
+        <p>Dear <b>{{ username }}</b>,</p>
+        <p>Your application for project <b>{{ project_name }}</b> has been approved by <b>{{ company_name }}</b>. View your application now.</p>
+        <a href={{ redirect_link }}><button>VIEW PROJECT</button></a>
+        <p>Please also find QR codes for your eligible workers. These QR codes must be used to enter the companies facility.</p>
+        <p>Cheers,<br>Sara</p>
   </div>
 </body>
 

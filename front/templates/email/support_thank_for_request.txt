@@ -1,0 +1,8 @@
+Dear {{ username }},
+I am Sara and I am happy to assist you.
+I want to let you know that I have received your request and will get back to you with a (human) response as soon as possible. During our business hours (9:00am until 5:00pm) that is usually within a couple of hours. Evenings and weekends may take us a little bit longer. 
+If you have general questions about FOX, check out our website {{ redirect_link }} for walkthroughs and answers to FAQs.
+If you have any additional information that you think will help us to assist you, please feel free to reply to this email. 
+We look forward to assisting you soon!
+Cheers,
+Sara

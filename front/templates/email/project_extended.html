@@ -1,14 +1,12 @@
 <html>
 
 <body>
-    <div>
-        <p>
-            Project {{project_name}} in company {{company_name}} has been extended to [[time and date will be specified
-            later]].
-            Please, visit this link to view the details:
-            {{redirect_link}}
-        </p>
-    </div>
+  <div>
+        <p>Dear <b>{{ username }}</b>,</p>
+        <p>Your project <b>{{ project_name }}</b> has been extended by <b>{{ company_name }}</b>. View your project now.</p>
+        <a href={{ redirect_link }}><button>VIEW PROJECT</button></a>
+        <p>Cheers,<br>Sara</p>
+  </div>
 </body>
 
 </html>

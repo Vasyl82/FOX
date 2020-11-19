@@ -48,17 +48,46 @@ def password_reset_token_created(
     }
 
     # render email text
-    email_html_message = render_to_string("email/user_reset_password.html", context)
-    email_plaintext_message = render_to_string("email/user_reset_password.txt", context)
+    if reset_password_token.user.role == 'CliAdm':
+        email_html_message = render_to_string("email/admin_reset_password.html", context)
+        email_plaintext_message = render_to_string("email/admin_reset_password.txt", context)
 
-    msg = EmailMultiAlternatives(
-        subject="Password Reset for {title}".format(title="Some website title"),
-        body=email_plaintext_message,
-        from_email=settings.EMAIL_EMAIL_FROM,
-        to=[reset_password_token.user.email],
-    )
-    msg.attach_alternative(email_html_message, "text/html")
-    msg.send()
+        msg = EmailMultiAlternatives(
+            subject="Welcome to FOX!",
+            body=email_plaintext_message,
+            from_email=settings.EMAIL_EMAIL_FROM,
+            to=[reset_password_token.user.email],
+        )
+        msg.attach_alternative(email_html_message, "text/html")
+        msg.send()
+
+    if reset_password_token.user.role == 'CliMan':
+
+        email_html_message = render_to_string("email/manager_reset_password.html", context)
+        email_plaintext_message = render_to_string("email/manager_reset_password.txt", context)
+
+        msg = EmailMultiAlternatives(
+            subject="You have been added as a Manager",
+            body=email_plaintext_message,
+            from_email=settings.EMAIL_EMAIL_FROM,
+            to=[reset_password_token.user.email],
+        )
+        msg.attach_alternative(email_html_message, "text/html")
+        msg.send()
+
+    if reset_password_token.user.role == "Contr":
+
+        email_html_message = render_to_string("email/contractor_reset_password.html", context)
+        email_plaintext_message = render_to_string("email/contractor_reset_password.txt", context)
+
+        msg = EmailMultiAlternatives(
+            subject="You have been added as a Contractor",
+            body=email_plaintext_message,
+            from_email=settings.EMAIL_EMAIL_FROM,
+            to=[reset_password_token.user.email],
+        )
+        msg.attach_alternative(email_html_message, "text/html")
+        msg.send()
 
 
 def send_mail_on_creation(**kwargs):

@@ -34,18 +34,18 @@ class ProjectEmailNotificationService:
             )
 
     def send_project_created(self):
-        self.subject = f"You are assigned for project {self.project.name}"
+        self.subject = f"Project {self.project.name} has been assigned to you."
         self._conduct_email_send("project_created")
         self._conduct_internal_notification()
 
     def send_proposal_submitted(self):
-        self.subject = f"Proposal submitted for project {self.project.name}"
+        self.subject = f"Project {self.project.name} needs your approval."
         self._update_link_to_approval()
         self._conduct_email_send("proposal_submitted")
         self._conduct_internal_notification()
 
     def send_project_approved(self):
-        self.subject = f"Project {self.project.name}. Application approved."
+        self.subject = "Your application has been approved."
         self._conduct_email_send_with_qr_codes("project_approved")
         self._conduct_internal_notification()
 
@@ -55,12 +55,12 @@ class ProjectEmailNotificationService:
         self._conduct_internal_notification()
 
     def send_project_extended(self):
-        self.subject = f"Project {self.project.name} extended"
+        self.subject = "Your Project has been extended."
         self._conduct_email_send("project_extended")
         self._conduct_internal_notification()
 
     def send_project_closed(self):
-        self.subject = f"Project {self.project.name} closed"
+        self.subject = "Your project has been approved."
         self._conduct_email_send("project_closed")
         self._conduct_internal_notification()
 
@@ -85,6 +85,8 @@ class ProjectEmailNotificationService:
             "redirect_link": self.link,
             "project_name": self.project.name,
             "company_name": self.project.company.name,
+            "contractor_name": self.project.contractor,
+            "username": self.receivers[0].name
         }
         if self.issuer:
             self.context = {**self.context, **self.issuer.info}

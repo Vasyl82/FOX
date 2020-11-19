@@ -1,0 +1,11 @@
+Dear {{ username }},
+I am Sara and thank you for your enquiry about FOX.
+We are looking forward to discussing your requirements. One of our experts will contact you shortly for an informal chat about your requirements on the number you have provided. 
+The expert will also send an email personally to you to provide you with more information about FOX. To ensure that the expert best understand your requirements, it would be great if you are able to tell us the following:
+What is your current pain point?
+Which modules that we offer that you are interested with?
+What is the estimated number of staff/users/contractors that will be administered on the system?
+Thank you.
+We look forward to assisting you.
+Cheers,
+Sara
