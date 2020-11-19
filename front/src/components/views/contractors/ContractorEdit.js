@@ -14,6 +14,9 @@ import {
   CCardHeader,
   CCardBody,
   CCardTitle,
+  CCardText,
+  CImg,
+  CInputFile,
 } from "@coreui/react";
 import { FoxApiService } from "../../../services";
 import { getProfileFetch } from "../../../actions";
@@ -40,51 +43,43 @@ class ContractorEdit extends Component {
     });
   };
 
+  handleImageUpload = (event) => {
+    this.setState({
+      [event.target.name]: event.target.files[0],
+    });
+  };
+
   handleSubmit = async (event) => {
     event.preventDefault();
     this.props.changeSubmitState();
-    this.formData = this.state;
-    delete this.formData.error;
+    const { error, ...requestData } = this.state;
+    const formData = new FormData();
+    Object.entries(requestData).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
     await foxApi
-      .updateEntityOf("contractors", this.props.match.params.id, this.formData)
+      .patchEntityWithFiles("contractors", this.props.match.params.id, formData)
       .then(() => {
         this.props.history.goBack();
       })
-      .catch(
-        (error) => {
-          const errorMessage = handleError({
-            error: error,
-            validationFields: [
-              "username",
-              "email",
-              "name",
-              "related_company",
-              "company_phone",
-              "company",
-            ],
-            operation: "Contractor update",
-          });
-          this.setState({
-            error: errorMessage,
-          });
-        }
-        //   if (error.email) {
-        //     if (error.email.contractor_already_exists) {
-        //       if (!error.email.companies.includes(this.props.company.toString())) {
-        //         console.log(error.email.contractor_already_exists);
-        //         this.props.updateModal({ modalType: "contractorConfirmModal", companies: error.email.companies, contractorId: error.email.contractor_id, message: error.email.contractor_already_exists });
-        //         return;
-        //       }
-        //       error.email = ['Contractor with this email is already registered in your company.']
-        //     }
-        //   }
-        //   const errors = Object.values(error).join("\n")
-        //   console.log(errors);
-        //   this.setState({
-        //     error: errors
-        //   });
-        // }
-      )
+      .catch((error) => {
+        const errorMessage = handleError({
+          error: error,
+          validationFields: [
+            "username",
+            "email",
+            "name",
+            "related_company",
+            "company_phone",
+            "company",
+            "signature",
+          ],
+          operation: "Contractor update",
+        });
+        this.setState({
+          error: errorMessage,
+        });
+      })
       .finally(() => this.props.changeSubmitState());
   };
 
@@ -95,6 +90,15 @@ class ContractorEdit extends Component {
         foxApi.getDetailsOf("contractors", this.props.match.params.id)
       )
       .then((data) => this.setState({ ...data }))
+      .then(() => {
+        if (this.state.signature) {
+          return foxApi.getSignature(this.props.match.params.id);
+        } else {
+          throw new Error("Contractor has no signature yet");
+        }
+      })
+      .then((signature) => this.setState({ signature: signature }))
+      .catch((error) => console.log(error))
       .finally(() => this.props.changeLoadingState());
   };
 
@@ -188,6 +192,39 @@ class ContractorEdit extends Component {
                     >
                       Browse workers
                     </CLink>
+                  </CFormGroup>
+                  <CFormGroup row className="ml-0 mr-0">
+                    <CCol sm="6" md="4">
+                      <CFormGroup>
+                        <CInputFile
+                          id="signature"
+                          name="signature"
+                          custom
+                          onChange={this.handleImageUpload}
+                          disabled={this.props.submitting}
+                          readOnly={this.props.submitting}
+                        />
+                        <CLabel htmlFor="signature" variant="custom-file">
+                          Upload signature image...
+                        </CLabel>
+                      </CFormGroup>
+                    </CCol>
+                    <CCol sm="6" md="8">
+                      {this.state.signature &&
+                      typeof this.state.signature === "object" ? (
+                        <>
+                          <CCardText>Signature Preview:</CCardText>
+                          <CImg
+                            src={window.URL.createObjectURL(
+                              this.state.signature
+                            )}
+                            width="200px"
+                            height="200px"
+                            className="mb-2"
+                          />
+                        </>
+                      ) : null}
+                    </CCol>
                   </CFormGroup>
                   <CFormGroup>
                     <CButton

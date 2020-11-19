@@ -20,7 +20,7 @@ const getDocumentList = ({
 const getDocuments = ({ signal = null, params = null, additional = null }) => {
   return async (dispatch) => {
     await foxApi
-      .getEntityList("documents", params, signal, additional)
+      .getEntityList("documents", params, signal)
       .then((documents) => {
         if (documents.length > 0) {
           dispatch(_addAllDocumentsFromBackend(documents));

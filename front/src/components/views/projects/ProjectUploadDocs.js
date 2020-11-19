@@ -21,11 +21,12 @@ class ProjectUploadDocs extends Component {
   };
 
   handleFilledFileUpload = async (event) => {
+    console.log(event.target.files);
     const docFilledFile = event.target.files[0];
     const docId = event.target.name;
     const formData = new FormData();
     formData.append("filled_file", docFilledFile);
-
+    formData.entries().forEach((entry) => console.log(entry));
     await foxApi
       .patchEntityWithFiles("documents", docId, formData)
       .then((updatedDocument) => {
@@ -72,7 +73,6 @@ class ProjectUploadDocs extends Component {
   abortController = new window.AbortController();
 
   render = () => {
-    console.log(this.props.documents);
     return (
       <>
         <FoxRelatedDocsTable
