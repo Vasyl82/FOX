@@ -16,6 +16,7 @@ class Project(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField()
     location = models.CharField(max_length=255, default="Whole facility")
+    submit_date = models.DateTimeField(null=True, blank=True)
     start_date = models.DateTimeField(null=True)
     end_date = models.DateTimeField(null=True)
     extend_date = models.DateTimeField(null=True, blank=True)
@@ -45,6 +46,8 @@ class Project(models.Model):
         null=True,
         blank=True,
     )
+    applicant_name = models.CharField(max_length=64, null=True, blank=True)
+    applicant_phone = models.CharField(max_length=32, null=True, blank=True)
     deleted = models.BooleanField(default=False)
 
     class Meta:

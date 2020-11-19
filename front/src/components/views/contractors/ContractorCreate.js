@@ -13,6 +13,10 @@ import {
   CCardBody,
   CCardTitle,
   CCardSubtitle,
+  CInputFile,
+  CLabel,
+  CImg,
+  CCardText,
 } from "@coreui/react";
 import { FoxApiService } from "../../../services";
 import { getProfileFetch, updateModal } from "../../../actions";
@@ -29,6 +33,7 @@ class ContractorCreate extends Component {
     related_company: "",
     company_phone: "",
     company: this.props.company,
+    signature: "",
     role: "Contr",
     error: false,
   };
@@ -39,60 +44,43 @@ class ContractorCreate extends Component {
     });
   };
 
+  handleImageUpload = (event) => {
+    this.setState({
+      [event.target.name]: event.target.files[0],
+    });
+  };
+
   handleSubmit = async (event) => {
     event.preventDefault();
     this.props.changeSubmitState();
-    this.formData = this.state;
-    delete this.formData.error;
+    const { error, ...requestData } = this.state;
+    const formData = new FormData();
+    Object.entries(requestData).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
     await foxApi
-      .createEntityOf("contractors", this.formData)
+      .createEntityWithFile("contractors", formData)
       .then(() => {
         this.props.history.goBack();
       })
-      .catch(
-        (error) => {
-          const errorMessage = handleError({
-            error: error,
-            validationFields: [
-              "username",
-              "email",
-              "name",
-              "related_company",
-              "company_phone",
-              "company",
-            ],
-            operation: "Contractor manager creation",
-          });
-          this.setState({
-            error: errorMessage,
-          });
-        }
-
-        // if (error.email) {
-        //   if (error.email.contractor_already_exists) {
-        //     if (
-        //       !error.email.companies.includes(this.props.company.toString())
-        //     ) {
-        //       console.log(error.email.contractor_already_exists);
-        //       this.props.updateModal({
-        //         modalType: "contractorConfirmModal",
-        //         companies: error.email.companies,
-        //         contractorId: error.email.contractor_id,
-        //         message: error.email.contractor_already_exists,
-        //       });
-        //       return;
-        //     }
-        //     error.email = [
-        //       "Contractor with this email is already registered in your company.",
-        //     ];
-        //   }
-        // }
-        // const errors = Object.values(error).join("\n");
-        // console.log(errors);
-        // this.setState({
-        //   error: errors,
-        // });
-      )
+      .catch((error) => {
+        const errorMessage = handleError({
+          error: error,
+          validationFields: [
+            "username",
+            "email",
+            "name",
+            "related_company",
+            "company_phone",
+            "company",
+            "signature",
+          ],
+          operation: "Contractor manager creation",
+        });
+        this.setState({
+          error: errorMessage,
+        });
+      })
       .finally(() => this.props.changeSubmitState());
   };
 
@@ -178,6 +166,39 @@ class ContractorCreate extends Component {
                       disabled={this.props.submitting}
                       required
                     />
+                  </CFormGroup>
+                  <CFormGroup row className="ml-0 mr-0">
+                    <CCol sm="6" md="4">
+                      <CFormGroup>
+                        <CInputFile
+                          id="signature"
+                          name="signature"
+                          custom
+                          required
+                          onChange={this.handleImageUpload}
+                          disabled={this.props.submitting}
+                          readOnly={this.props.submitting}
+                        />
+                        <CLabel htmlFor="signature" variant="custom-file">
+                          Upload signature image...
+                        </CLabel>
+                      </CFormGroup>
+                    </CCol>
+                    <CCol sm="6" md="8">
+                      {this.state.signature ? (
+                        <>
+                          <CCardText>Signature Preview:</CCardText>
+                          <CImg
+                            src={window.URL.createObjectURL(
+                              this.state.signature
+                            )}
+                            width="200px"
+                            height="200px"
+                            className="mb-2"
+                          />
+                        </>
+                      ) : null}
+                    </CCol>
                   </CFormGroup>
                   <CFormGroup>
                     <CButton

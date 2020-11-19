@@ -292,7 +292,7 @@ class FoxApiService {
 
   getDisplayPermission = async (id) => {
     let url = `${this.apiBase}documents/display/permission/${id}`;
-    const res = await this.get((url = url));
+    const res = await this.getDoc((url = url));
     return res;
   };
 
@@ -304,6 +304,12 @@ class FoxApiService {
 
   downloadWorkerCompetency = async (id) => {
     let url = `${this.apiBase}worker_special_competencies/downloads/${id}/`;
+    const res = await this.getDoc((url = url));
+    return res.blob();
+  };
+
+  getSignature = async (contractor_id) => {
+    let url = `${this.apiBase}contractors/${contractor_id}/signature/`;
     const res = await this.getDoc((url = url));
     return res.blob();
   };

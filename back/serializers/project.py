@@ -73,15 +73,28 @@ class ProjectListSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
 
+    submit_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
     start_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
     end_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
     extend_date = serializers.DateTimeField(
         format="%Y-%m-%dT%H:%M:%S", required=False, allow_null=True
     )
+    submit_date = serializers.DateTimeField(
+        format="%Y-%m-%dT%H:%M:%S", required=False, allow_null=True
+    )
     contractor_name = serializers.CharField(
         source="contractor.username", read_only=True
     )
+    organization = serializers.CharField(
+        source="contractor.related_company", read_only=True
+    )
+    reference_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
         fields = "__all__"
+
+    def get_reference_id(self, obj):
+        return (
+            f"PTW/{obj.company.pk}/{obj.contractor.pk}/{obj.start_date.year}/{obj.pk}"
+        )

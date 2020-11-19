@@ -9,11 +9,7 @@ class WorkerListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Worker
 
-        fields = [
-            "id",
-            "name",
-            "position_in_company",
-        ]
+        fields = ["id", "name", "position_in_company"]
 
     def get_position_in_company(self, obj):
         return Worker.Position(obj.position_in_company).label

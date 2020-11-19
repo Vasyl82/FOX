@@ -12,26 +12,22 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
               icon: "cil-speedometer",
             },
             {
-              _tag: "CSidebarNavTitle",
-              _children: ["APPLICATION"],
-            },
-            {
-              _tag: "CSidebarNavItem",
-              icon: "cil-user",
-              name: "1. Personnel Management",
-              to: `/projects/${projectId}/assign_workers`,
-            },
-            {
               _tag: "CSidebarNavItem",
               icon: "cil-file",
-              name: "2. Related docs",
+              name: "1. Related docs",
               to: `/projects/${projectId}/related_documents`,
             },
             {
               _tag: "CSidebarNavItem",
-              name: "3. Submit Proposal",
-              to: `/projects/${projectId}/submit_proposal`,
+              icon: "cil-user",
+              name: "2. PTW",
+              to: `/projects/${projectId}/ptw`,
             },
+            // {
+            //   _tag: "CSidebarNavItem",
+            //   name: "3. Submit Proposal",
+            //   to: `/projects/${projectId}/submit_proposal`,
+            // },
           ],
           header_nav: [
             {
