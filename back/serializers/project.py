@@ -79,6 +79,9 @@ class ProjectSerializer(serializers.ModelSerializer):
     extend_date = serializers.DateTimeField(
         format="%Y-%m-%dT%H:%M:%S", required=False, allow_null=True
     )
+    submit_date = serializers.DateTimeField(
+        format="%Y-%m-%dT%H:%M:%S", required=False, allow_null=True
+    )
     contractor_name = serializers.CharField(
         source="contractor.username", read_only=True
     )

@@ -178,7 +178,7 @@ class ApprovalDetail extends Component {
                                 key={`cb-${document.id}`}
                                 id={document.id}
                                 name={document.id}
-                                value={document.name}
+                                value={document.filled_file.split("/").pop()}
                                 onClick={this.downloadFile}
                               >
                                 Download document
