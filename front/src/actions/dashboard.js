@@ -14,13 +14,13 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
             {
               _tag: "CSidebarNavItem",
               icon: "cil-file",
-              name: "1. Related docs",
+              name: "Related docs",
               to: `/projects/${projectId}/related_documents`,
             },
             {
               _tag: "CSidebarNavItem",
               icon: "cil-user",
-              name: "2. PTW",
+              name: "PTW",
               to: `/projects/${projectId}/ptw`,
             },
             // {
