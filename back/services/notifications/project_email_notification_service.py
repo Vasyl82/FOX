@@ -60,7 +60,7 @@ class ProjectEmailNotificationService:
         self._conduct_internal_notification()
 
     def send_project_closed(self):
-        self.subject = "Your project has been approved."
+        self.subject = "Your project has been closed."
         self._conduct_email_send("project_closed")
         self._conduct_internal_notification()
 

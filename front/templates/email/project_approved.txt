@@ -1,5 +1,6 @@
 Dear {{ username }},
 Your application for project {{ project_name }} has been approved by {{ company_name }}. View your application now.
 {{ redirect_link }}
+Please also find QR codes for your eligible workers. These QR codes must be used to enter the companies facility.
 Cheers,
 Sara

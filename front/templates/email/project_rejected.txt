@@ -1,2 +1,5 @@
-Your proposal for project {{project_name}} in company {{company_name}} has been rejected by {{manager_position}} {{manager_name}}. 
-Please, visit this link to correct the noncomformitives and resubmit proposal. {{redirect_link}} 
+Dear {{ username }},
+Your proposal for project {{project_name}} in company {{company_name}} has been rejected. 
+Please, visit this link to correct the noncomformitives and resubmit proposal: {{redirect_link}} .
+Cheers,
+Sara
