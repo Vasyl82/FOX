@@ -40,7 +40,7 @@ def password_reset_token_created(
         "current_user": reset_password_token.user,
         "username": reset_password_token.user.username,
         "user": reset_password_token.user.name,
-        "company_name": reset_password_token.user.company.name,
+        "company_name": reset_password_token.user.company,
         "email": reset_password_token.user.email,
         "reset_password_url": URL_FORMAT.format(
             # reverse("password_reset:reset-password-request"),
