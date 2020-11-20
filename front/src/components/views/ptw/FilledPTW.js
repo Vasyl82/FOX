@@ -158,4 +158,8 @@ const mapStateToProps = (state) => ({
   workerList: state.entityListTable.tableData,
 });
 
+FilledPTW.defaultProps = {
+  workerList: [],
+};
+
 export default connect(mapStateToProps, null)(FilledPTW);
