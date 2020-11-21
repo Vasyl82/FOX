@@ -6,6 +6,7 @@ import {
   getDocuments,
   getWorkerList,
   clearList,
+  deleteDocumentsFromStore,
 } from "../../../actions";
 import {
   CForm,
@@ -150,6 +151,7 @@ class ApprovalDetail extends Component {
   componentWillUnmount = async () => {
     this.abortController.abort();
     await this.props.clearList();
+    this.props.deleteDocumentsFromStore(this.props.documents);
   };
 
   abortController = new window.AbortController();
@@ -311,6 +313,7 @@ const mapDispatchToProps = (dispatch) => ({
   getWorkerList: ({ ...kwargs }) => dispatch(getWorkerList({ ...kwargs })),
   clearList: () => dispatch(clearList()),
   getDocuments: async ({ ...kwargs }) => dispatch(getDocuments({ ...kwargs })),
+  deleteDocumentsFromStore: (docs) => dispatch(deleteDocumentsFromStore(docs)),
 });
 
 export default connect(
