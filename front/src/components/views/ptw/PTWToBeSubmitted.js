@@ -162,36 +162,6 @@ class PTWToBeSubmitted extends Component {
                     disabled={this.props.submitting}
                     readOnly={this.props.submitting}
                   />
-
-                  {/* <CFormGroup row>
-                    <CCol md="6">
-                      <CLabel htmlFor="applicant_name">Applicant Name</CLabel>
-                      <CInput
-                        id="applicant_name"
-                        name="applicant_name"
-                        onChange={this.handleChange}
-                        value={project.applicant_name}
-                        disabled={this.props.submitting}
-                        readOnly={this.props.submitting}
-                        required
-                      />
-                    </CCol>
-                    <CCol md="6">
-                      <CLabel htmlFor="applicant_phone">
-                        Applicant Tel No
-                      </CLabel>
-                      <CInput
-                        id="applicant_phone"
-                        name="applicant_phone"
-                        onChange={this.handleChange}
-                        value={project.applicant_phone}
-                        disabled={this.props.submitting}
-                        readOnly={this.props.submitting}
-                        required
-                      />
-                    </CCol>
-                  </CFormGroup> */}
-
                   <CFormGroup row>
                     <CCol md="6">
                       <CLabel htmlFor="start_date">Start Date</CLabel>
