@@ -54,7 +54,7 @@ const FoxRelatedDocsTable = (props) => {
       link.parentNode.removeChild(link);
     }
   };
-
+  console.log(props);
   return (
     <CRow>
       <CCol>
@@ -125,6 +125,12 @@ const FoxRelatedDocsTable = (props) => {
                 ),
               }}
             />
+            <CLink
+              className="btn btn-pill btn-outline-dark"
+              to={`/projects/${props.match.params.id}/ptw`}
+            >
+              Go To PTW
+            </CLink>
           </CCardBody>
         </CCard>
       </CCol>
