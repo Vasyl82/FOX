@@ -54,7 +54,6 @@ const FoxRelatedDocsTable = (props) => {
       link.parentNode.removeChild(link);
     }
   };
-  console.log(props);
   return (
     <CRow>
       <CCol>
