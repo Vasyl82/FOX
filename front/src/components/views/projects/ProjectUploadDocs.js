@@ -66,7 +66,6 @@ class ProjectUploadDocs extends Component {
   componentWillUnmount = async () => {
     this.abortController.abort();
     await this.props.clearList();
-    this.props.setProjectId("");
     this.props.deleteDocumentsFromStore();
   };
 
