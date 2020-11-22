@@ -1,1 +1,5 @@
-Contractor {{contractor_name}} has submitted proposal for project {{project_name}}. Please, visit the following link to review the proposal. {{redirect_link}}
+Dear {{ username }},
+{{ contractor_name }} has applied for project {{ project_name }}. Your review and approval are needed. Review the application now.
+{{ redirect_link }}
+Cheers,
+Sara

@@ -2,11 +2,12 @@
 
 <body>
     <div>
+        <p>Dear <b>{{ username }}</b>,</p>
         <p>
-            Your proposal for project {{project_name}} in company {{company_name}} has been rejected by
-            {{manager_position}} {{manager_name}}.
-            Please, visit this link to correct the nonconformities and resubmit proposal. {{redirect_link}}
+            Your proposal for project <b>{{project_name}}</b> in company <b>{{company_name}}</b> has been rejected.
+            Please, visit this link to correct the nonconformities and resubmit proposal: {{redirect_link}} .
         </p>
+        <p>Cheers,<br>Sara</p>
     </div>
 </body>
 

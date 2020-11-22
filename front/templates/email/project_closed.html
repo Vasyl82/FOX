@@ -2,10 +2,10 @@
 
 <body>
   <div>
-    <p>
-      All works at project {{project_name}} in company {{company_name}} have been done and it is closed.
-      All QR codes for this project are considered invalid.
-    </p>
+        <p>Dear <b>{{ username }}</b>,</p>
+        <p>Your project <b>{{ project_name }}</b> has been closed by <b>{{ company_name }}</b>. Thank you for your great work.</p>
+        <a href={{ redirect_link }}><button>VIEW PROJECT</button></a>
+        <p>Cheers,<br>Sara</p>
   </div>
 </body>
 

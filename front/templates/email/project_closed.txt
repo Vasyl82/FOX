@@ -1,2 +1,5 @@
-All works at project {{project_name}} in company {{company_name}} have been done and it is closed. 
-All QR codes for this project are considered invalid. 
+Dear {{ username }},
+Your project {{ project_name }} has been closed by {{ company_name }}. Thank you for your great work.
+{{ redirect_link }}
+Cheers,
+Sara

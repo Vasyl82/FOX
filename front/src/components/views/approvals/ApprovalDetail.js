@@ -68,6 +68,7 @@ class ApprovalDetail extends Component {
         error:
           "Rejections reason was not provided! Please, specify the rejection reason!",
       });
+      this.props.changeSubmitState();
     } else {
       this.formData = this.state;
       delete this.formData.error;
