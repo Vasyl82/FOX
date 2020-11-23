@@ -29,11 +29,17 @@ class ProjectPTW extends Component {
       )
       .then(() => foxApi.getDetailsOf("projects", projectId))
       .then(async (projectInfo) => {
-        const signature = await foxApi.getSignature(projectInfo.contractor);
-        projectInfo.signature = signature;
-        this.setState({
-          ...projectInfo,
-        });
+        try {
+          const signature = await foxApi.getSignature(projectInfo.contractor);
+          projectInfo.signature = signature;
+          this.setState({
+            ...projectInfo,
+          });
+        } catch (error) {
+          this.setState({
+            ...projectInfo,
+          });
+        }
       })
       .catch((error) => console.log(error))
       .finally(() => this.props.changeLoadingState());
@@ -42,16 +48,17 @@ class ProjectPTW extends Component {
   componentWillUnmount = async () => {
     this.abortController.abort();
     await this.props.clearList();
+    this.props.setProjectId("");
   };
 
   abortController = new window.AbortController();
 
   render = () => {
     const { ...state } = { ...this.state };
-    console.log(state);
     return (
       <WithLoadingSpinner loading={this.props.loading}>
-        {["Created", "Rejected"].includes(this.state.status) ? (
+        {["Created", "Rejected"].includes(this.state.status) &&
+        this.props.role === "Contr" ? (
           <PTWToBeSubmitted projectInfo={state} {...this.props} />
         ) : (
           <FilledPTW projectInfo={state} {...this.props} />
@@ -64,6 +71,7 @@ class ProjectPTW extends Component {
 const mapStateToProps = (state) => {
   return {
     username: state.currentUser.username,
+    role: state.currentUser.role,
   };
 };
 

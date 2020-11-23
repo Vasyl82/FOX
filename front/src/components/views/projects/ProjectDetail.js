@@ -13,6 +13,7 @@ import {
 } from "@coreui/react";
 import { ActivityLog } from "../../activity_log";
 import { WithLoading, WithLoadingSpinner } from "../../loadings";
+import { ProjectPTW } from "../ptw";
 
 class ProjectDetail extends Component {
   componentDidMount = async () => {
@@ -28,6 +29,7 @@ class ProjectDetail extends Component {
   };
 
   render = () => {
+    const { loading, changeLoadingState, ...props } = this.props;
     return (
       <React.Fragment>
         <CCard>
@@ -40,22 +42,9 @@ class ProjectDetail extends Component {
             ) : null}
           </CCardHeader>
           <CCardBody>
-            <CRow>
-              <CCol>
-                <ActivityLog projectId={this.props.match.params.id} />
-              </CCol>
-            </CRow>
-            <CRow>
-              <CCol>
-                <WithLoadingSpinner loading={this.props.loading}>
-                  <CEmbed ratio="16by9">
-                    <iframe
-                      src={`${window.location.origin}/api/ptw/${this.props.match.params.id}`}
-                    />
-                  </CEmbed>
-                </WithLoadingSpinner>
-              </CCol>
-            </CRow>
+            <WithLoadingSpinner loading={loading}>
+              <ProjectPTW {...props} />
+            </WithLoadingSpinner>
           </CCardBody>
         </CCard>
       </React.Fragment>

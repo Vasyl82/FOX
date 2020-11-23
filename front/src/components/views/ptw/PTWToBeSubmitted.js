@@ -16,15 +16,13 @@ import {
   CLabel,
   CButton,
   CTextarea,
-  CListGroup,
-  CListGroupItem,
   CCardText,
 } from "@coreui/react";
-import { ActivityLog } from "../../activity_log";
 import { FoxWorkersAssignTable } from "../../tables";
 import { WithLoadingSpinner, SubmitSpinner } from "../../loadings";
 import { FoxApiService, ProjectWorkflowService } from "../../../services";
 import { handleError } from "../../errors";
+import { FoxReactSelectFormGroup } from "../../forms";
 import SafetyDeclarationsCard from "./SafetyDeclarationsCard";
 import { getHazardousWorks } from "./utils";
 
@@ -32,7 +30,19 @@ const foxApi = new FoxApiService();
 const workflow = new ProjectWorkflowService();
 
 class PTWToBeSubmitted extends Component {
-  state = { ...this.props.projectInfo };
+  state = {
+    ...this.props.projectInfo,
+  };
+
+  setWorkersOptions = () => {
+    const options = [{ value: -1, label: "Choose responsible person" }];
+    this.props.workerList
+      ? this.props.workerList.forEach((worker) =>
+          options.push({ value: worker.id, label: worker.name })
+        )
+      : null;
+    return options;
+  };
 
   handleChange = (event) => {
     this.setState({
@@ -62,20 +72,20 @@ class PTWToBeSubmitted extends Component {
         });
   };
 
-  silenceSubmit = (event) => {
-    event.preventDefault();
-    console.log("the form is submitting");
+  handleReactSelect = (option, event) => {
+    this.setState({
+      [event.name]: option.value,
+    });
   };
 
   handleSubmit = async (event) => {
     event.preventDefault();
     this.props.changeSubmitState();
-    const { applicant_name, applicant_phone, workers, id } = this.state;
+    const { responsible_person, workers, id } = this.state;
     const submit_date = new Date();
     await foxApi
       .patchEntityOf("projects", id, {
-        applicant_name,
-        applicant_phone,
+        responsible_person,
         workers,
         submit_date: submit_date.toISOString(),
       })
@@ -122,7 +132,6 @@ class PTWToBeSubmitted extends Component {
               <CCardBody>
                 <CForm onSubmit={this.handleSubmit} id="proposal-form">
                   <DjangoCSRFToken />
-
                   <CFormGroup row>
                     <CCol md="6">
                       <CLabel htmlFor="work_location">Work location</CLabel>
@@ -145,34 +154,14 @@ class PTWToBeSubmitted extends Component {
                       />
                     </CCol>
                   </CFormGroup>
-                  <CFormGroup row>
-                    <CCol md="6">
-                      <CLabel htmlFor="applicant_name">Applicant Name</CLabel>
-                      <CInput
-                        id="applicant_name"
-                        name="applicant_name"
-                        onChange={this.handleChange}
-                        value={project.applicant_name}
-                        disabled={this.props.submitting}
-                        readOnly={this.props.submitting}
-                        required
-                      />
-                    </CCol>
-                    <CCol md="6">
-                      <CLabel htmlFor="applicant_phone">
-                        Applicant Tel No
-                      </CLabel>
-                      <CInput
-                        id="applicant_phone"
-                        name="applicant_phone"
-                        onChange={this.handleChange}
-                        value={project.applicant_phone}
-                        disabled={this.props.submitting}
-                        readOnly={this.props.submitting}
-                        required
-                      />
-                    </CCol>
-                  </CFormGroup>
+                  <FoxReactSelectFormGroup
+                    options={this.setWorkersOptions()}
+                    inputInfo="responsible_person"
+                    inputValue={this.state.responsible_person}
+                    handleChange={this.handleReactSelect}
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
+                  />
                   <CFormGroup row>
                     <CCol md="6">
                       <CLabel htmlFor="start_date">Start Date</CLabel>
@@ -221,7 +210,6 @@ class PTWToBeSubmitted extends Component {
                       readOnly
                     ></CTextarea>
                   </CFormGroup>
-                  <ActivityLog projectId={this.props.match.params.id} />
                   <FoxWorkersAssignTable
                     items={this.props.workerList}
                     projectInfo={{ ...project }}

@@ -10,10 +10,39 @@ import {
   CCardText,
   CBadge,
   CImg,
+  CFormText,
 } from "@coreui/react";
 import { FoxWorkersAssignTable } from "../../tables";
+import { ActivityLog } from "../../activity_log";
 import SafetyDeclarationsCard from "./SafetyDeclarationsCard";
 import { getHazardousWorks } from "./utils";
+
+const getBadge = (status) => {
+  switch (status) {
+    case "Created":
+      return "secondary";
+    case "Submitted":
+      return "warning";
+    case "Approved":
+      return "success";
+    case "Rejected":
+      return "danger";
+    case "Application processing":
+      return "secondary";
+    case "Ready to start":
+      return "success";
+    case "Works started":
+      return "info";
+    case "Works finished":
+      return "warning";
+    case "Extended":
+      return "primary";
+    case "Closed":
+      return "dark";
+    default:
+      return "primary";
+  }
+};
 
 const FilledPTW = (props) => {
   const { workers, reference_id, status, id, ...project } = props.projectInfo;
@@ -21,141 +50,176 @@ const FilledPTW = (props) => {
     ? props.workerList.filter((worker) => workers.includes(worker.id))
     : [];
   return (
-    <CCard>
-      <CCardHeader>
-        <CRow>
-          <CCol>
-            <CCardTitle>Permit To Work Review</CCardTitle>
-          </CCol>
-          <CCol className="ml-auto" xs="auto">
-            <strong>Project Status: </strong>
-            <CBadge size="lg" color="success">
-              {status}
-            </CBadge>
-          </CCol>
-          <CCol xs="auto">
-            <strong>ID: </strong>
-            {reference_id}
-          </CCol>
-        </CRow>
-      </CCardHeader>
-      <CCardBody>
-        <CRow>
-          <CCol xs="6" md="2" className="mb-3">
-            <strong>Work Location:</strong>
-          </CCol>
-          <CCol xs="6" md="4" className="mb-3">
-            <CCardText>{project.location}</CCardText>
-          </CCol>
-          <CCol xs="6" md="2" className="mb-3">
-            <strong>Organization:</strong>
-          </CCol>
-          <CCol xs="6" md="4" className="mb-3">
-            <CCardText>{project.organization}</CCardText>
-          </CCol>
-          <CCol xs="6" md="2" className="mb-3">
-            <strong>Applicant name:</strong>
-          </CCol>
-          <CCol xs="6" md="4" className="mb-3">
-            <CCardText>{project.applicant_name}</CCardText>
-          </CCol>
-          <CCol xs="6" md="2" className="mb-3">
-            <strong>Applicant Tel No:</strong>
-          </CCol>
-          <CCol xs="6" md="4" className="mb-3">
-            <CCardText>{project.applicant_phone}</CCardText>
-          </CCol>
-          <CCol xs="6" md="2" className="mb-3">
-            <strong>Start date:</strong>
-          </CCol>
-          <CCol xs="6" md="4" className="mb-3">
-            <CCardText>
-              {new Date(project.start_date).toLocaleDateString()}
-            </CCardText>
-          </CCol>
-          <CCol className="mb-3">
-            <strong>End Date:</strong>
-          </CCol>
-          <CCol xs="6" md="4" className="mb-3">
-            <CCardText>
-              {new Date(project.end_date).toLocaleDateString()}
-            </CCardText>
-          </CCol>
-        </CRow>
-        <CRow>
-          <CCol xs="6" md="2">
-            <strong>Type of Work: </strong>
-          </CCol>
-          <CCol>
-            <div className="filled-ptw__hazardous-works">
-              {getHazardousWorks(project)}
-            </div>
-          </CCol>
-        </CRow>
-        <CRow>
-          <CCol>
-            <FoxWorkersAssignTable
-              items={involvedWorkers}
-              projectInfo={{ ...project }}
-              noCheckBoxes
-            />
-          </CCol>
-        </CRow>
-        <CRow>
-          <CCol>
-            <SafetyDeclarationsCard />
-          </CCol>
-        </CRow>
-        <CRow>
-          <CCol>
-            <CCardText>
-              <em>
-                I certify that I understand and will comply with all the
-                requirement of this application to work and strictly comply with
-                the company’s rules and regulation as well as Malaysia’s OSHA
-                Act 1994. Intolerable risk subjected to{" "}
+    <>
+      <ActivityLog projectId={props.match.params.id} />
+      <CCard>
+        <CCardHeader>
+          <CRow>
+            <CCol>
+              <CCardTitle>Permit To Work Review</CCardTitle>
+            </CCol>
+            <CCol className="ml-auto" xs="auto">
+              <strong>Project Status: </strong>
+              <CBadge size="lg" color={getBadge(status)}>
+                {status}
+              </CBadge>
+            </CCol>
+            <CCol xs="auto">
+              <strong>ID: </strong>
+              {reference_id}
+            </CCol>
+          </CRow>
+        </CCardHeader>
+        <CCardBody>
+          <CRow>
+            <CCol xs="6" md="2" className="mb-3">
+              <strong>Work Location:</strong>
+            </CCol>
+            <CCol xs="6" md="4" className="mb-3">
+              <CCardText>{project.location}</CCardText>
+            </CCol>
+            <CCol xs="6" md="2" className="mb-3">
+              <strong>Organization:</strong>
+            </CCol>
+            <CCol xs="6" md="4" className="mb-3">
+              <CCardText>{project.organization}</CCardText>
+            </CCol>
+            <CCol xs="6" md="2" className="mb-3">
+              <strong>Applicant name:</strong>
+            </CCol>
+            <CCol xs="6" md="4" className="mb-3">
+              <CCardText>{project.applicant_name}</CCardText>
+            </CCol>
+            <CCol xs="6" md="2" className="mb-3">
+              <strong>Applicant Tel No:</strong>
+            </CCol>
+            <CCol xs="6" md="4" className="mb-3">
+              <CCardText>{project.applicant_phone}</CCardText>
+            </CCol>
+            <CCol xs="6" md="2" className="mb-3">
+              <strong>Start date:</strong>
+            </CCol>
+            <CCol xs="6" md="4" className="mb-3">
+              <CCardText>
+                {new Date(project.start_date).toLocaleDateString()}
+              </CCardText>
+            </CCol>
+            <CCol className="mb-3">
+              <strong>End Date:</strong>
+            </CCol>
+            <CCol xs="6" md="4" className="mb-3">
+              <CCardText>
+                {new Date(project.end_date).toLocaleDateString()}
+              </CCardText>
+            </CCol>
+          </CRow>
+          <CRow>
+            <CCol xs="6" md="2">
+              <strong>Type of Work: </strong>
+            </CCol>
+            <CCol>
+              <div className="filled-ptw__hazardous-works">
+                {getHazardousWorks(project)}
+              </div>
+            </CCol>
+          </CRow>
+          {["Created", "Rejected"].includes(status) ? (
+            <CRow alignHorizontal="center" className="pt-3 mb-3">
+              <CCol xs="auto">
                 <strong>
-                  any violation of this application’s requirement may cause work
-                  process being stopped.
+                  The contractor hasn't applied for this project yet
                 </strong>
-              </em>
-            </CCardText>
-            <CRow>
-              <CCol className="ml-auto mr-3" xs="6" md="3" lg="2">
-                <CCardText>Signature:</CCardText>
-                {project.signature ? (
-                  <CImg
-                    src={window.URL.createObjectURL(project.signature)}
-                    width="80%"
-                    // height="auto"
-                    className="mb-2"
-                    fluid
-                  />
-                ) : (
-                  "No signature attached"
-                )}
-                <CRow>
-                  <CCol>
-                    <strong>Name: </strong> {project.applicant_name}
-                  </CCol>
-                </CRow>
-                <CRow>
-                  <CCol>
-                    <strong>Date: </strong>
-                    {new Date(project.submit_date).toLocaleDateString()}
-                  </CCol>
-                </CRow>
               </CCol>
             </CRow>
-          </CCol>
-        </CRow>
-      </CCardBody>
-    </CCard>
+          ) : (
+            <>
+              <CRow>
+                <CCol>
+                  <FoxWorkersAssignTable
+                    items={involvedWorkers}
+                    projectInfo={{ ...project }}
+                    noCheckBoxes
+                  />
+                </CCol>
+              </CRow>
+              <CRow>
+                <CCol>
+                  <SafetyDeclarationsCard />
+                </CCol>
+              </CRow>
+              <CRow>
+                <CCol>
+                  <CCardText>
+                    <em>
+                      I certify that I understand and will comply with all the
+                      requirement of this application to work and strictly
+                      comply with the company’s rules and regulation as well as
+                      Malaysia’s OSHA Act 1994. Intolerable risk subjected to{" "}
+                      <strong>
+                        any violation of this application’s requirement may
+                        cause work process being stopped.
+                      </strong>
+                    </em>
+                  </CCardText>
+                </CCol>
+              </CRow>
+            </>
+          )}
+
+          <CRow form className="pt-3">
+            <CCol md="6" lg="4">
+              <CCardText>
+                <strong>Issued by:</strong>
+              </CCardText>
+              {project.issued_by ? <div>{project.issued_by}</div> : null}
+            </CCol>
+            <CCol md="6" lg="4">
+              <CCardText>
+                <strong>Approved by:</strong>
+              </CCardText>
+              {project.approved_by ? (
+                project.approved_by.map((approve) => (
+                  <>
+                    <div>{approve.name}</div>
+                    <CFormText>{approve.position}</CFormText>
+                  </>
+                ))
+              ) : (
+                <div>No managers have approved this project yet</div>
+              )}
+            </CCol>
+            <CCol md="6" lg="4">
+              <CCardText>
+                <strong>Contractor Signature:</strong>
+              </CCardText>
+              {!["Created", "Rejected"].includes(status) ? (
+                <>
+                  <div>
+                    <strong>Name: </strong>
+                    {project.applicant_name}
+                  </div>
+                  <div>
+                    <strong>Date: </strong>
+                    {new Date(project.submit_date).toLocaleDateString()}
+                  </div>
+                </>
+              ) : (
+                "The contractor hasn't applied for this project yet"
+              )}
+            </CCol>
+          </CRow>
+        </CCardBody>
+      </CCard>
+    </>
   );
 };
 
 const mapStateToProps = (state) => ({
   workerList: state.entityListTable.tableData,
 });
+
+FilledPTW.defaultProps = {
+  workerList: [],
+};
 
 export default connect(mapStateToProps, null)(FilledPTW);
