@@ -1,5 +1,7 @@
+from django.db.models import F
+
 from rest_framework import serializers
-from back.models import Project
+from back.models import Project, ClientManager, Approval
 
 
 class ProjectListSerializer(serializers.ModelSerializer):
@@ -76,6 +78,8 @@ class ProjectSerializer(serializers.ModelSerializer):
     submit_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
     start_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
     end_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
+    applicant_name = serializers.SerializerMethodField()
+    applicant_phone = serializers.SerializerMethodField()
     extend_date = serializers.DateTimeField(
         format="%Y-%m-%dT%H:%M:%S", required=False, allow_null=True
     )
@@ -90,6 +94,10 @@ class ProjectSerializer(serializers.ModelSerializer):
     )
     reference_id = serializers.SerializerMethodField()
 
+    issued_by = serializers.SerializerMethodField()
+
+    approved_by = serializers.SerializerMethodField()
+
     class Meta:
         model = Project
         fields = "__all__"
@@ -98,3 +106,38 @@ class ProjectSerializer(serializers.ModelSerializer):
         return (
             f"PTW/{obj.company.pk}/{obj.contractor.pk}/{obj.start_date.year}/{obj.pk}"
         )
+
+    def get_applicant_name(self, obj):
+        if obj.applicant_name:
+            return obj.applicant_name
+        elif obj.responsible_person:
+            return obj.responsible_person.name
+        return "No applicant yet"
+
+    def get_applicant_phone(self, obj):
+        if obj.applicant_phone:
+            return obj.applicant_phone
+        elif obj.responsible_person:
+            return obj.responsible_person.phone_number
+        return "No applicant yet"
+
+    def get_issued_by(self, obj):
+        return obj.company.fox_users.filter(role="CliAdm").first().name
+
+    def get_approved_by(self, obj):
+        managers = ClientManager.objects.filter(company=obj.company)
+        last_approvals = []
+        for manager in managers:
+            last_approve = (
+                manager.approvals.filter(project=obj).order_by(F("pk").desc()).first()
+            )
+            last_approvals += [last_approve]
+        last_approvals = [a for a in last_approvals if a is not None]
+        return [
+            {
+                "name": approval.manager.name,
+                "position": approval.manager.Position(approval.manager.position).label,
+            }
+            for approval in last_approvals
+            if approval.status == Approval.Status.approved
+        ]
