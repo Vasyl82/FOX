@@ -4,6 +4,7 @@ import { CForm, CFormGroup, CContainer, CRow, CCol, CImg, CButton, CPopover } fr
 import DjangoCSRFToken from 'django-react-csrftoken'
 import { userRegisterFetch, registerError, allowRegistration } from '../../actions'
 import { FoxPasswordInput } from './inputs'
+import logo from "../assets/images/signed-logo.png";
 
 class FoxRegisterForm extends Component {
 
@@ -48,6 +49,7 @@ class FoxRegisterForm extends Component {
                   width="100%"
                   src='/static/front/images/signed-logo.png'
                   className="mb-2"
+                  src={logo}
                 />
               </CCol>
             </CRow>
