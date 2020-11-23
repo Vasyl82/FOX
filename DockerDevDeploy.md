@@ -1,4 +1,4 @@
-# Run Flask App on Docker
+# Run Django App on Docker
 
 ## Prerequisites
 

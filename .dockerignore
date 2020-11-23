@@ -15,3 +15,4 @@
 /aws-deploy.sh
 /docker-compose.yaml
 /temp_buffer_docs
+# package-lock.json
