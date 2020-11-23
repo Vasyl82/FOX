@@ -12,7 +12,7 @@ import {
   CListGroupItem,
   CCardHeader
 } from "@coreui/react";
-import { getProfileFetch } from '../../../actions'
+import { getProfileFetch, setProjectId } from '../../../actions'
 import { ProjectWorkflowService, FoxApiService } from '../../../services'
 import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
 
@@ -29,8 +29,7 @@ class ProposalSubmit extends Component {
   handleSubmit = async () => {
     this.props.changeSubmitState()
     await workflow.submitProposal(this.props.match.params.id)
-      .then(
-        this.props.history.goBack()
+      .then(() => Promise.resolve(this.props.history.goBack())
       )
       .catch((error) => {
         console.error(error);
@@ -51,7 +50,13 @@ class ProposalSubmit extends Component {
           status: data.status
         })
       })
-      .then(() => this.props.changeLoadingState())
+      .then(() => this.props.setProjectId(this.props.match.params.id))
+      .catch(error => console.log(error))
+      .finally(() => this.props.changeLoadingState())
+  }
+
+  componentWillUnmount = () => {
+    this.props.setProjectId("")
   }
 
   render = () => {
@@ -165,7 +170,7 @@ class ProposalSubmit extends Component {
               </CCard>
             </CCol>
           </CRow >
-          : <Redirect to={`/projects/${this.props.match.params.id}/application_status`} />
+          : <Redirect to={`/projects/${this.props.match.params.id}`} />
         }
       </WithLoadingSpinner>
     )
@@ -173,7 +178,8 @@ class ProposalSubmit extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  getProfileFetch: () => dispatch(getProfileFetch()),
+  getProfileFetch: async () => await dispatch(getProfileFetch()),
+  setProjectId: (id) => dispatch(setProjectId(id))
 })
 
 export default connect(null, mapDispatchToProps)(WithLoading(ProposalSubmit))

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { getProfileFetch, getWorkerList, clearList } from '../../../actions'
+import { getProfileFetch, getWorkerList, clearList, setProjectId } from '../../../actions'
 import { connect } from 'react-redux'
 import {
   CForm,
@@ -58,17 +58,24 @@ class WorkerAssign extends Component {
         this.props.history.goBack()
       })
       .catch((error) => {
-        console.error(error);
+        const errors = handleError(
+          {
+            error: error,
+            operation: "Worker creation",
+            validationFields: [
+              "workers",
+              "responsible_person",
+            ]
+          });
         this.setState({
-          error: 'Workers assignment failed!' +
-            ' Please check your input and try again!' +
-            ' In case this problem repeats, please contact your administrator!'
-        })
+          error: errors
+        });
       })
       .finally(this.props.changeSubmitState)
   }
 
   componentDidMount = async () => {
+    this.props.setProjectId(this.props.match.params.id)
     await this.props.getProfileFetch()
       .then(() => this.props.getWorkerList({ signal: this.abortController.signal }))
       .then(() => foxApi.getDetailsOf("projects", this.props.match.params.id))
@@ -76,12 +83,14 @@ class WorkerAssign extends Component {
         workers: data.workers,
         responsible_person: data.responsible_person
       }))
-      .then(() => this.props.changeLoadingState())
+      .catch(error => console.log(error))
+      .finally(() => this.props.changeLoadingState())
   }
 
   componentWillUnmount = async () => {
     this.abortController.abort();
     await this.props.clearList();
+    this.props.setProjectId("")
   }
 
   abortController = new window.AbortController();
@@ -181,13 +190,15 @@ const mapStateToProps = state => {
     workers: state.entityListTable.tableData,
     company: state.currentUser.company,
     contractor: state.currentUser.id,
+    role: state.currentUser.role
   }
 }
 
 const mapDispatchToProps = dispatch => ({
   getProfileFetch: () => dispatch(getProfileFetch()),
   getWorkerList: ({ ...params }) => dispatch(getWorkerList({ ...params })),
-  clearList: () => dispatch(clearList())
+  clearList: () => dispatch(clearList()),
+  setProjectId: (id) => dispatch(setProjectId(id))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(WorkerAssign))

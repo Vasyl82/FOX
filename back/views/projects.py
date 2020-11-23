@@ -16,7 +16,9 @@ class ProjectList(generics.ListAPIView):
         user = self.request.user
         if user.role == "Contr":
             return Project.objects.filter(
-                company=user.company, contractor=user, deleted=False
+                # company=user.company,
+                contractor=user,
+                deleted=False,
             )
         return Project.objects.filter(company=user.company, deleted=False)
 
@@ -29,7 +31,7 @@ class ProjectCreate(generics.CreateAPIView):
         res = super(ProjectCreate, self).create(request, args, kwargs)
         project = Project.objects.get(pk=res.data["id"])
         activity = Activity(
-            project=project, author=request.user, company=request.user.company
+            project=project, author=request.user, company=project.company
         )
         activity.project_created_message()
         email = mail_service(project=project, receivers=[project.contractor])
@@ -45,6 +47,8 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         user = self.request.user
+        if user.role == "Contr":
+            return Project.objects.filter(contractor__pk=user.pk, deleted=False)
         return Project.objects.filter(company=user.company, deleted=False)
 
     def patch(self, request, *args, **kwargs):
@@ -56,7 +60,7 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
         project = Project.objects.get(pk=res.data["id"])
         if prev_project.status != project.status:
             activity = Activity(
-                project=project, author=request.user, company=request.user.company
+                project=project, author=request.user, company=project.company
             )
             activity.project_status_updated_message(project.status)
             mail = mail_service(project=project, receivers=[project.contractor])

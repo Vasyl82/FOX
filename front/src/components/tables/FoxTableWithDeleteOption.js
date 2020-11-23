@@ -19,6 +19,7 @@ import { updateModal } from '../../actions'
 
 const foxApi = new FoxApiService();
 
+
 class FoxTableWithDeleteOption extends Component {
 
   state = {
@@ -28,6 +29,7 @@ class FoxTableWithDeleteOption extends Component {
   getEntityFromTableName = () => {
     this.props.tableName.toLowercase()
   }
+
 
   callDeleteModal = (id) => {
     this.props.updateModal({
@@ -83,9 +85,8 @@ class FoxTableWithDeleteOption extends Component {
                 clickableRows
                 hover
                 striped
-                bordered
                 sorter
-                tableFilter
+                tableFilter={{ placeholder: "Search..." }}
                 columnFilter
                 size="sm"
                 itemsPerPage={10}
@@ -122,7 +123,7 @@ class FoxTableWithDeleteOption extends Component {
                   'delete_item':
                     (item, index) => (
                       <td>
-                        <CButton color="danger" variant="ghost" size="sm" onClick={() => this.callDeleteModal(item.id)} block><CIcon name={'cilTrash'} /></CButton>
+                        <CButton shape="pill" color="danger" variant="ghost" size="sm" onClick={() => this.callDeleteModal(item.id)} block><CIcon name={'cilTrash'} /></CButton>
                       </td>
                     )
                 }}

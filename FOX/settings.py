@@ -42,8 +42,8 @@ env = environ.Env(
     ),
     MAX_NOTIFICATION_DISPLAY=(int, 5),
 )
-# environ.Env.read_env("FOX/.env.taras")
 environ.Env.read_env()
+# environ.Env.read_env("FOX/.env.taras")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
@@ -214,3 +214,5 @@ JWT_AUTH = {
 }
 
 MAX_NOTIFICATION_DISPLAY = env("MAX_NOTIFICATION_DISPLAY")
+
+DEFAULT_HASHING_ALGORITHM = "sha256"

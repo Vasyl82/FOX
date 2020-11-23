@@ -54,20 +54,20 @@ class ProjectStatusMailingTestCase(APITestCase):
         ClientAdmin.objects.create(
             username="test_admin1",
             password="ZAQ!XSW@",
-            email="lysak.ipr@gmail.com",
+            email="lysak1.ipr@gmail.com",
             role=FoxUser.Role.client_admin,
         )
         ClientManager.objects.create(
             username="test_man1",
             password="ZAQ!XSW@",
-            email="lysak.ipr@gmail.com",
+            email="lysak2.ipr@gmail.com",
             role=ClientManager.Role.client_manager,
             position=ClientManager.Position.safety_manager,
         )
         ClientManager.objects.create(
             username="test_man2",
             password="ZAQ!XSW@",
-            email="lysak.ipr@gmail2.com",
+            email="lysak3.ipr@gmail2.com",
             role=ClientManager.Role.client_manager,
             position=ClientManager.Position.safety_manager,
         )
@@ -104,7 +104,7 @@ class ProjectStatusMailingTestCase(APITestCase):
         )
         email_service.send_project_created()
         self.assertEqual(
-            mail.outbox[-1].subject, "You are assigned for project Test project1"
+            mail.outbox[-1].subject, "Project Test project1 has been assigned to you."
         )
 
     def test_project_rejected(self):
@@ -131,7 +131,7 @@ class ProjectStatusMailingTestCase(APITestCase):
         )
         email_service.send_project_approved()
         self.assertEqual(
-            mail.outbox[-1].subject, "Project Test project2. Application approved."
+            mail.outbox[-1].subject, "Your application has been approved."
         )
 
     def test_project_submitted(self):
@@ -148,7 +148,7 @@ class ProjectStatusMailingTestCase(APITestCase):
             email_service.send_proposal_submitted()
         notifications = Notification.objects.all()
         self.assertEqual(
-            mail.outbox[-1].subject, "Proposal submitted for project Test project1"
+            mail.outbox[-1].subject, "Project Test project1 needs your approval."
         )
         self.assertEqual(notifications.count(), 2)
         self.assertEqual(

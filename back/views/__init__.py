@@ -10,7 +10,13 @@ from .client_managers import (  # noqa F401
     ClientManagerDetail,
     ClientManagerCreate,
 )  # noqa F401
-from .contractors import ContractorList, ContractorDetail, ContractorCreate  # noqa F401
+from .contractors import (  # noqa F401
+    ContractorList,
+    ContractorDetail,
+    ContractorCreate,
+    ContractorSignature,
+    # ContractorAddCompany,
+)
 from .workers import (  # noqa F401
     WorkerList,
     WorkerDetail,
@@ -26,6 +32,7 @@ from .documents import (  # noqa F401
     DocumentDownload,
     DocumentDisplayPermission,
     download_file_to_display,
+    FilledDocumentFileDownload
 )  # noqa F401
 from .worker_special_competencies import (  # noqa F401
     WorkerSpecialCompetencyList,

@@ -6,7 +6,7 @@ import {
 
 
 const NotificationCountBadge = props => {
-  const unreadNotificationsCount = props.items.filter(item => item.unread).length
+  const unreadNotificationsCount = props.items.length > 0 ? props.items.filter(item => item.unread).length : 0
   return (
     <React.Fragment>
       <CIcon name="cil-bell" />

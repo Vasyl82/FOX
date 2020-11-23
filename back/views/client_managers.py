@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import generics, status
 from back.models import ClientManager
 from back.serializers import ClientManagerSerializer, ClientManagerListSerializer
@@ -30,6 +31,9 @@ class ClientManagerDetail(generics.RetrieveUpdateDestroyAPIView):
         queryset = self.get_queryset()
         manager = get_object_or_404(queryset, pk=pk)
         manager.deleted = True
+        now = timezone.now().strftime("%d-%m-%y %H:%M")
+        manager.username += f"(deleted-{now})"
+        manager.email += f"(deleted-{now})"
         manager.save()
         return JsonResponse(
             data={"response": f"manager {manager.username} deleted."},

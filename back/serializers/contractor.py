@@ -1,18 +1,20 @@
 from rest_framework import serializers
 from back.models import Contractor
 
+# , FoxUser
+
 
 class ContractorListSerializer(serializers.ModelSerializer):
 
     contact_person = serializers.SerializerMethodField()
-    company_or_organization = serializers.CharField(source="related_company")
+    # company_or_organization = serializers.CharField(source="related_company")
 
     class Meta:
         model = Contractor
         fields = [
             "id",
             "username",
-            "company_or_organization",
+            "related_company",
             "contact_person",
             "company_phone",
         ]
@@ -32,9 +34,9 @@ class ContractorSerializer(serializers.ModelSerializer):
             "username",
             "name",
             "email",
-            "company",
             "company_phone",
             "role",
             "related_company",
-            # "is_active",
+            "company",
+            "signature",
         ]

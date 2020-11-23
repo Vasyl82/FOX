@@ -7,6 +7,10 @@ from django.contrib.auth import get_user_model
 FoxUser = get_user_model()
 
 
+def signature_img_path(instance, filename):
+    return "contractor_{0}/{1}".format(instance.id, filename)
+
+
 class Contractor(FoxUser):
     class Type(models.TextChoices):
         default = "Default", _("Contractor")
@@ -19,6 +23,10 @@ class Contractor(FoxUser):
 
     related_company = models.CharField(max_length=128, null=True)
     company_phone = models.CharField(max_length=64, null=True)
+    companies = models.ManyToManyField(
+        "Company", related_name="contractors", blank=True
+    )
+    signature = models.ImageField(upload_to=signature_img_path, null=True, blank=True)
 
     class Meta:
         verbose_name = "Contractor"

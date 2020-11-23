@@ -30,17 +30,6 @@ class FoxEntityListTable extends Component {
               <CCardTitle>
                 {this.props.tableName}
               </CCardTitle>
-              {/* {this.props.tableName === "Projects" && this.props.role === "Contr"
-                ?
-                null
-                :
-                <CLink
-                  className="btn btn-pill btn-outline-success"
-                  to={`${this.props.match.url}/new`}
-                >
-                  Add new
-                </CLink>
-              } */}
               {this.props.showNewButton ?
                 <CLink
                   className="btn btn-pill btn-outline-success"
@@ -61,7 +50,7 @@ class FoxEntityListTable extends Component {
                 striped
                 bordered
                 sorter
-                tableFilter
+                tableFilter={{ placeholder: "Search..." }}
                 columnFilter
                 size="sm"
                 itemsPerPage={10}

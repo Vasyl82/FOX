@@ -1,14 +1,18 @@
 from django.http import HttpResponse, JsonResponse, Http404
 from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from back.models import Document
-from back.serializers import DocumentSerializer, DocumentListSerializer, PredefinedDocumentSerializer
+from back.serializers import (
+    DocumentSerializer,
+    DocumentListSerializer,
+    PredefinedDocumentSerializer,
+)
 from back.services import (
     DocumentFileService,
     DocumentFileJWTCreator,
     DocumentFileJWTReader,
+    FilledDocumentFileService,
 )
 
 
@@ -16,11 +20,12 @@ class DocumentList(generics.ListAPIView):
     queryset = Document.objects.all()
     serializer_class = DocumentListSerializer
 
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["project_id"]
-
     def get_queryset(self):
-        return Document.objects.filter(deleted=False)
+        if self.request.query_params["project_id"]:
+            return Document.objects.filter(
+                deleted=False, project__pk=self.request.query_params["project_id"]
+            )
+        return Document.objects.none()
 
 
 class DocumentCreate(generics.CreateAPIView):
@@ -32,20 +37,13 @@ class PredefinedDocumentCreate(generics.CreateAPIView):
     serializer_class = PredefinedDocumentSerializer
     queryset = Document.objects.all()
 
-    def destroy(self, request, pk):
-        queryset = self.get_queryset()
-        document = get_object_or_404(queryset, pk=pk)
-        document.deleted = True
-        document.save()
-        return JsonResponse(
-            data={"response": f"document {document.name} deleted."},
-            status=status.HTTP_204_NO_CONTENT,
-        )
-
 
 class DocumentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
+
+    def get_queryset(self):
+        return Document.objects.filter(deleted=False)
 
     def destroy(self, request, pk):
         queryset = self.get_queryset()
@@ -62,6 +60,19 @@ class DocumentDownload(APIView):
     def get(self, request, pk, format=None):
         try:
             document = DocumentFileService(pk, Document)
+            response = HttpResponse(
+                document.read(), content_type="application/octet-stream"
+            )
+            response["Content-Disposition"] = f"attachment; filename={document.name}"
+            return response
+        except FileNotFoundError:
+            raise Http404("File not found.")
+
+
+class FilledDocumentFileDownload(APIView):
+    def get(self, request, pk, format=None):
+        try:
+            document = FilledDocumentFileService(pk, Document)
             response = HttpResponse(
                 document.read(), content_type="application/octet-stream"
             )

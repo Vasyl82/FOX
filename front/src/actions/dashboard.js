@@ -1,8 +1,8 @@
 const getDashboardLayout = (userRole = "Dum", projectId = null) => {
-  return dispatch => {
+  return (dispatch) => {
     let dashboard = null;
     switch (userRole) {
-      case 'Contr':
+      case "Contr":
         dashboard = {
           sidebar: [
             {
@@ -12,26 +12,22 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
               icon: "cil-speedometer",
             },
             {
-              _tag: "CSidebarNavTitle",
-              _children: ["APPLICATION"]
-            },
-            {
-              _tag: "CSidebarNavItem",
-              icon: "cil-user",
-              name: "1. Personnel Management",
-              to: `/projects/${projectId}/assign_workers`,
-            },
-            {
               _tag: "CSidebarNavItem",
               icon: "cil-file",
-              name: "2. Related docs",
+              name: "Related docs",
               to: `/projects/${projectId}/related_documents`,
             },
             {
               _tag: "CSidebarNavItem",
-              name: "3. Submit Proposal",
-              to: `/projects/${projectId}/submit_proposal`,
+              icon: "cil-user",
+              name: "PTW",
+              to: `/projects/${projectId}/ptw`,
             },
+            // {
+            //   _tag: "CSidebarNavItem",
+            //   name: "3. Submit Proposal",
+            //   to: `/projects/${projectId}/submit_proposal`,
+            // },
           ],
           header_nav: [
             {
@@ -44,7 +40,7 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
                   id: "head_nav_link_workers",
                   to: "/workers",
                   linktext: "Workers",
-                }
+                },
               ],
             },
             {
@@ -57,7 +53,7 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
                   id: "head_nav_link_projects",
                   to: "/projects",
                   linktext: "Projects",
-                }
+                },
               ],
             },
             {
@@ -70,13 +66,13 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
                   id: "head_nav_link_safety_video",
                   to: "/safety/video",
                   linktext: "Safety",
-                }
+                },
               ],
             },
           ],
         };
         break;
-      case 'CliMan':
+      case "CliMan":
         dashboard = {
           sidebar: [
             {
@@ -123,13 +119,13 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
                   id: "head_nav_link_safety_video",
                   to: "/safety/video",
                   linktext: "Safety",
-                }
+                },
               ],
             },
           ],
         };
         break;
-      case 'CliAdm':
+      case "CliAdm":
         dashboard = {
           sidebar: [
             {
@@ -150,7 +146,7 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
                   id: "head_nav_link_projects",
                   to: "/projects",
                   linktext: "Projects",
-                }
+                },
               ],
             },
             {
@@ -163,7 +159,7 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
                   id: "head_nav_link_managers",
                   to: "/managers",
                   linktext: "Managers",
-                }
+                },
               ],
             },
             {
@@ -176,7 +172,7 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
                   id: "head_nav_link_contractors",
                   to: "/contractors",
                   linktext: "Contractors",
-                }
+                },
               ],
             },
             {
@@ -189,7 +185,7 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
                   id: "head_nav_link_safety_presets",
                   to: "/safety/presets",
                   linktext: "Safety",
-                }
+                },
               ],
             },
           ],
@@ -216,7 +212,7 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
                   id: "head_nav_link_example",
                   to: "/",
                   linktext: "Example",
-                }
+                },
               ],
             },
           ],
@@ -224,36 +220,36 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
         break;
     }
     dispatch(initiateDashboard(dashboard));
+    return Promise.resolve();
+  };
+};
 
-  }
-}
+const updateSideBar = (sidebar) => {
+  return (dispatch) => {
+    dispatch(newSideBar(sidebar));
+  };
+};
 
-const updateSideBar = sidebar => {
-  return dispatch => {
-    dispatch(newSideBar(sidebar))
-  }
-}
+const updateHeaderNav = (headerNav) => {
+  return (dispatch) => {
+    dispatch(newHeaderNav(headerNav));
+  };
+};
 
-const updateHeaderNav = headerNav => {
-  return dispatch => {
-    dispatch(newHeaderNav(headerNav))
-  }
-}
-
-const initiateDashboard = dashboard => ({
-  type: 'INITIATE_DASHBOARD',
+const initiateDashboard = (dashboard) => ({
+  type: "INITIATE_DASHBOARD",
   sidebar: dashboard.sidebar,
-  headerNav: dashboard.header_nav
-})
+  headerNav: dashboard.header_nav,
+});
 
-const newSideBar = sidebar => ({
-  type: 'UPDATE_SIDEBAR',
-  sidebar: sidebar
-})
+const newSideBar = (sidebar) => ({
+  type: "UPDATE_SIDEBAR",
+  sidebar: sidebar,
+});
 
-const newHeaderNav = headerNav => ({
-  type: 'UPDATE_HEADER_NAV',
-  headerNav: headerNav
-})
+const newHeaderNav = (headerNav) => ({
+  type: "UPDATE_HEADER_NAV",
+  headerNav: headerNav,
+});
 
-export default getDashboardLayout
+export default getDashboardLayout;

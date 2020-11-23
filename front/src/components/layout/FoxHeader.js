@@ -1,5 +1,5 @@
-import React from 'react'
-import { useSelector, useDispatch, connect } from 'react-redux'
+import React from "react";
+import { useSelector, useDispatch, connect } from "react-redux";
 import {
   CContainer,
   CHeader,
@@ -10,35 +10,40 @@ import {
   CHeaderNavLink,
   CSubheader,
   CBreadcrumbRouter,
-  CLink, CCreateElement
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
+  CLink,
+  CCreateElement,
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
 
 // routes config
-import routes from '../routes'
+import routes from "../routes";
 
 import {
   FoxHeaderDropdown,
   FoxHeaderDropdownMssg,
   FoxHeaderDropdownNotif,
-  FoxHeaderDropdownTasks
-} from './index'
+  FoxHeaderDropdownTasks,
+} from "./index";
 
-import { FoxHeaderNavLink } from '../../utils'
+import { FoxHeaderNavLink } from "../../utils";
 
 const FoxHeader = (props) => {
-  const dispatch = useDispatch()
-  const sidebarShow = useSelector(state => state.sidebarShow)
+  const dispatch = useDispatch();
+  const sidebarShow = useSelector((state) => state.sidebarShow);
 
   const toggleSidebar = () => {
-    const val = [true, 'responsive'].includes(sidebarShow) ? false : 'responsive'
-    dispatch({ type: 'set', sidebarShow: val })
-  }
+    const val = [true, "responsive"].includes(sidebarShow)
+      ? false
+      : "responsive";
+    dispatch({ type: "set", sidebarShow: val });
+  };
 
   const toggleSidebarMobile = () => {
-    const val = [false, 'responsive'].includes(sidebarShow) ? true : 'responsive'
-    dispatch({ type: 'set', sidebarShow: val })
-  }
+    const val = [false, "responsive"].includes(sidebarShow)
+      ? true
+      : "responsive";
+    dispatch({ type: "set", sidebarShow: val });
+  };
 
   return (
     <CHeader withSubheader>
@@ -62,7 +67,7 @@ const FoxHeader = (props) => {
           components={{
             CHeaderNavItem,
             CHeaderNavLink,
-            FoxHeaderNavLink
+            FoxHeaderNavLink,
           }}
         />
       </CHeaderNav>
@@ -70,6 +75,9 @@ const FoxHeader = (props) => {
       <CHeaderNav className="px-3">
         <FoxHeaderDropdownMssg />
         <FoxHeaderDropdown />
+        <div className="c-header-nav-item mx-2">
+          {props.currentUser.username.toUpperCase()}
+        </div>
       </CHeaderNav>
 
       <CSubheader className="px-3 justify-content-between">
@@ -79,14 +87,15 @@ const FoxHeader = (props) => {
         />
       </CSubheader>
     </CHeader>
-  )
-}
+  );
+};
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     navigation: state.headerNav,
     company: state.company,
-  }
-}
+    currentUser: state.currentUser,
+  };
+};
 
-export default connect(mapStateToProps)(FoxHeader)
+export default connect(mapStateToProps)(FoxHeader);

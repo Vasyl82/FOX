@@ -18,6 +18,7 @@ import {
 import { FoxApiService } from '../../../services'
 import { getProfileFetch } from '../../../actions'
 import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
+import { handleError } from '../../errors'
 
 const positions = [
   { id: -1, position: "Choose manager position" },
@@ -64,14 +65,19 @@ class ClientManagerCreate extends Component {
         .then(() => {
           this.props.history.goBack()
         })
-        .catch((error) => {
-          console.error(error);
+        .catch(error => {
+          const errorMessage = handleError(
+            {
+              error: error,
+              validationFields: ["username", "email", "name", "position", "department", "company"],
+              operation: "Client manager creation"
+            }
+          )
           this.setState({
-            error: 'Client manager creation failed!' +
-              ' Please check your input and try again!' +
-              ' In case this problem repeats, please contact your administrator!'
+            error: errorMessage
           })
-        })
+        }
+        )
         .finally(() => this.props.changeSubmitState())
     }
   }
@@ -179,7 +185,7 @@ class ClientManagerCreate extends Component {
                     </CButton>
                   </CFormGroup>
                   {this.state.error
-                    ? <p>{this.state.error}</p>
+                    ? <p className={"fox-form-invalid-feedback"}>{this.state.error}</p>
                     : null
                   }
                 </CForm>

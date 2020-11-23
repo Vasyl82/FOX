@@ -2,10 +2,10 @@
 
 <body>
   <div>
-    <p>
-      You have been assigned for project {{project_name}} in company {{company_name}}.
-      Please, visit this link to start submission process: {{redirect_link}}
-    </p>
+        <p>Dear <b>{{ username }}</b>,</p>
+        <p>You have been assigned a project <b>{{ project_name }}</b> by <b>{{ company_name }}</b>. Start your application now.</p>
+        <a href={{ redirect_link }}><button>START PROJECT</button></a>
+        <p>Cheers,<br>Sara</p>
   </div>
 </body>
 

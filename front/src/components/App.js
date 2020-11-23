@@ -18,11 +18,10 @@ class App extends Component {
 
   componentDidMount = () => {
     this.props.getProfileFetch()
-      .then(() => this.props.changeLoadingState())
       .catch(error => {
         console.log(error);
-        this.props.changeLoadingState()
       })
+      .finally(() => this.props.changeLoadingState())
   }
 
   render() {

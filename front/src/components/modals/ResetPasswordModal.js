@@ -10,23 +10,19 @@ import {
 } from '@coreui/react'
 import { FoxApiService } from '../../services'
 import { updateModal } from '../../actions'
-import { WithLoading, SubmitSpnner, SubmitSpinner } from '../loadings'
+import { WithLoading, SubmitSpinner } from '../loadings'
 
 const foxApi = new FoxApiService()
 
 class ResetPasswordModal extends Component {
 
   state = {
-    email: this.props.email,
     error: false,
     success: false
   }
 
   handleSubmit = async () => {
     this.props.changeSubmitState()
-    const requestData = this.state;
-    delete requestData.success;
-    delete requestData.error;
     await foxApi.resetPassword({ email: this.props.email })
       .then(() => {
         this.setState({
