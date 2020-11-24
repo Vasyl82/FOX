@@ -33,7 +33,6 @@ class ContractorCreate extends Component {
     related_company: "",
     company_phone: "",
     company: this.props.company,
-    signature: "",
     role: "Contr",
     error: false,
   };
@@ -44,22 +43,12 @@ class ContractorCreate extends Component {
     });
   };
 
-  handleImageUpload = (event) => {
-    this.setState({
-      [event.target.name]: event.target.files[0],
-    });
-  };
-
   handleSubmit = async (event) => {
     event.preventDefault();
     this.props.changeSubmitState();
     const { error, ...requestData } = this.state;
-    const formData = new FormData();
-    Object.entries(requestData).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
     await foxApi
-      .createEntityWithFile("contractors", formData)
+      .createEntityOf("contractors", requestData)
       .then(() => {
         this.props.history.goBack();
       })
@@ -73,7 +62,6 @@ class ContractorCreate extends Component {
             "related_company",
             "company_phone",
             "company",
-            "signature",
           ],
           operation: "Contractor manager creation",
         });
@@ -166,39 +154,6 @@ class ContractorCreate extends Component {
                       disabled={this.props.submitting}
                       required
                     />
-                  </CFormGroup>
-                  <CFormGroup row className="ml-0 mr-0">
-                    <CCol sm="6" md="4">
-                      <CFormGroup>
-                        <CInputFile
-                          id="signature"
-                          name="signature"
-                          custom
-                          required
-                          onChange={this.handleImageUpload}
-                          disabled={this.props.submitting}
-                          readOnly={this.props.submitting}
-                        />
-                        <CLabel htmlFor="signature" variant="custom-file">
-                          Upload signature image...
-                        </CLabel>
-                      </CFormGroup>
-                    </CCol>
-                    <CCol sm="6" md="8">
-                      {this.state.signature ? (
-                        <>
-                          <CCardText>Signature Preview:</CCardText>
-                          <CImg
-                            src={window.URL.createObjectURL(
-                              this.state.signature
-                            )}
-                            width="200px"
-                            height="200px"
-                            className="mb-2"
-                          />
-                        </>
-                      ) : null}
-                    </CCol>
                   </CFormGroup>
                   <CFormGroup>
                     <CButton

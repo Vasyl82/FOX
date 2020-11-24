@@ -35,8 +35,6 @@ urlpatterns = [
     path("contractors/", views.ContractorList.as_view()),
     path("contractors/new/", views.ContractorCreate.as_view()),
     path("contractors/<int:pk>/", views.ContractorDetail.as_view()),
-    path("contractors/<int:pk>/signature/", views.ContractorSignature.as_view()),
-    # path("contractors/<int:pk>/add_company/", views.ContractorAddCompany.as_view()),
     path("workers/", views.WorkerList.as_view()),
     path("workers/new/", views.WorkerCreate.as_view()),
     path("workers/<int:pk>/", views.WorkerDetail.as_view()),
@@ -50,7 +48,10 @@ urlpatterns = [
     path("documents/predefined/", views.PredefinedDocumentCreate.as_view()),
     path("documents/<int:pk>/", views.DocumentDetail.as_view()),
     path("documents/downloads/<int:pk>/", views.DocumentDownload.as_view()),
-    path("documents/downloads/filled/<int:pk>/", views.FilledDocumentFileDownload.as_view()),
+    path(
+        "documents/downloads/filled/<int:pk>/",
+        views.FilledDocumentFileDownload.as_view(),
+    ),
     path(
         "documents/display/permission/<int:pk>/",
         views.DocumentDisplayPermission.as_view(),
