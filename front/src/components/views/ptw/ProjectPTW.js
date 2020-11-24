@@ -29,17 +29,9 @@ class ProjectPTW extends Component {
       )
       .then(() => foxApi.getDetailsOf("projects", projectId))
       .then(async (projectInfo) => {
-        try {
-          const signature = await foxApi.getSignature(projectInfo.contractor);
-          projectInfo.signature = signature;
-          this.setState({
-            ...projectInfo,
-          });
-        } catch (error) {
-          this.setState({
-            ...projectInfo,
-          });
-        }
+        this.setState({
+          ...projectInfo,
+        });
       })
       .catch((error) => console.log(error))
       .finally(() => this.props.changeLoadingState());
@@ -48,7 +40,6 @@ class ProjectPTW extends Component {
   componentWillUnmount = async () => {
     this.abortController.abort();
     await this.props.clearList();
-    this.props.setProjectId("");
   };
 
   abortController = new window.AbortController();

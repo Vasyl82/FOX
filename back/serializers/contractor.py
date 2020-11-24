@@ -38,5 +38,4 @@ class ContractorSerializer(serializers.ModelSerializer):
             "role",
             "related_company",
             "company",
-            "signature",
         ]
