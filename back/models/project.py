@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime
 from django.utils.translation import gettext_lazy as _
 
 
@@ -16,6 +17,7 @@ class Project(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField()
     location = models.CharField(max_length=255, default="Whole facility")
+    creation_date = models.DateTimeField(default=datetime.now, null=True, blank=True)
     submit_date = models.DateTimeField(null=True, blank=True)
     start_date = models.DateTimeField(null=True)
     end_date = models.DateTimeField(null=True)

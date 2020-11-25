@@ -1,7 +1,7 @@
 from django.db.models import F
 
 from rest_framework import serializers
-from back.models import Project, ClientManager, Approval
+from back.models import Project, ClientManager, Approval, Worker
 
 
 class ProjectListSerializer(serializers.ModelSerializer):
@@ -74,12 +74,11 @@ class ProjectListSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-
-    submit_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
     start_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
     end_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
     applicant_name = serializers.SerializerMethodField()
     applicant_phone = serializers.SerializerMethodField()
+    creation_date = serializers.SerializerMethodField()
     extend_date = serializers.DateTimeField(
         format="%Y-%m-%dT%H:%M:%S", required=False, allow_null=True
     )
@@ -98,6 +97,8 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     approved_by = serializers.SerializerMethodField()
 
+    submitted_by = serializers.SerializerMethodField()
+
     class Meta:
         model = Project
         fields = "__all__"
@@ -106,7 +107,13 @@ class ProjectSerializer(serializers.ModelSerializer):
         return (
             f"PTW/{obj.company.pk}/{obj.contractor.pk}/{obj.start_date.year}/{obj.pk}"
         )
-
+           
+    def get_creation_date(self, obj):
+        return {
+            "date": obj.creation_date.strftime("%d %b %Y"),
+            "time": obj.creation_date.strftime("%H:%M:%S"),
+        }
+        
     def get_applicant_name(self, obj):
         if obj.applicant_name:
             return obj.applicant_name
@@ -122,7 +129,10 @@ class ProjectSerializer(serializers.ModelSerializer):
         return "No applicant yet"
 
     def get_issued_by(self, obj):
-        return obj.company.fox_users.filter(role="CliAdm").first().name
+        return {
+            "name": obj.company.fox_users.filter(role="CliAdm").first().name,
+            "email": obj.company.fox_users.filter(role="CliAdm").first().email
+            }
 
     def get_approved_by(self, obj):
         managers = ClientManager.objects.filter(company=obj.company)
@@ -137,7 +147,31 @@ class ProjectSerializer(serializers.ModelSerializer):
             {
                 "name": approval.manager.name,
                 "position": approval.manager.Position(approval.manager.position).label,
+                "last_resolved_date": approval.last_resolved.strftime("%d %b %Y"),
+                "last_resolved_time": approval.last_resolved.strftime("%H:%M:%S"),
+                "email": approval.manager.email
             }
             for approval in last_approvals
             if approval.status == Approval.Status.approved
         ]
+                 
+    def get_submitted_by(self, obj):
+        if obj.responsible_person:
+            return {
+                "name": obj.responsible_person.name,
+                "position":  Worker.Position(obj.responsible_person.position_in_company).label,
+                "submitted_date": obj.submit_date.strftime("%d %b %Y"),
+                "submitted_time": obj.submit_date.strftime("%H:%M:%S"),
+                "phone": obj.responsible_person.phone_number
+            }
+        elif obj.applicant_name:
+            """DO NOT DELETE, SERVER DEPRICATED FEATURES"""
+            return {
+                "name": obj.applicant_name,
+                "position":  obj.applicant_name,
+                "submitted_date": obj.submit_date.strftime("%d %b %Y") if obj.submit_date else "",
+                "submitted_time": obj.submit_date.strftime("%H:%M:%S") if obj.submit_date else "",
+                "phone": obj.applicant_phone
+            }
+        else:
+            return None

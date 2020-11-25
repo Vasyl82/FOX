@@ -165,47 +165,49 @@ const FilledPTW = (props) => {
               </CRow>
             </>
           )}
-
           <CRow form className="pt-3">
             <CCol md="6" lg="4">
               <CCardText>
                 <strong>Issued by:</strong>
               </CCardText>
-              {project.issued_by ? <div>{project.issued_by}</div> : null}
+              <div className="ptw-signatures">{project.issued_by.name}</div>
+              <CFormText>{project.issued_by.email}</CFormText>
+              <CFormText>{project.creation_date.date}</CFormText>
+              <CFormText>{project.creation_date.time}</CFormText>
             </CCol>
             <CCol md="6" lg="4">
               <CCardText>
                 <strong>Approved by:</strong>
               </CCardText>
-              {project.approved_by ? (
-                project.approved_by.map((approve) => (
+              {project.approved_by.length > 0 ? (
+                project.approved_by.map((approve) => ( 
                   <>
-                    <div>{approve.name}</div>
+                    <div className="ptw-signatures">{approve.name}</div>
                     <CFormText>{approve.position}</CFormText>
+                    <CFormText>{approve.email}</CFormText>
+                    <CFormText>{approve.last_resolved_date}</CFormText>
+                    <CFormText>{approve.last_resolved_time}</CFormText>
+                    <div className="mb-3"></div>
                   </>
-                ))
+                 ))
               ) : (
-                <div>No managers have approved this project yet</div>
+                <div>No managers have approved this project yet.</div>
               )}
             </CCol>
             <CCol md="6" lg="4">
               <CCardText>
-                <strong>Contractor Signature:</strong>
+                <strong>Submitted by:</strong>
               </CCardText>
-              {!["Created", "Rejected"].includes(status) ? (
-                <>
-                  <div>
-                    <strong>Name: </strong>
-                    {project.applicant_name}
-                  </div>
-                  <div>
-                    <strong>Date: </strong>
-                    {new Date(project.submit_date).toLocaleDateString()}
-                  </div>
-                </>
-              ) : (
-                "The contractor hasn't applied for this project yet"
-              )}
+              { project.submitted_by ?
+               <>
+                <div className="ptw-signatures">{project.submitted_by.name}</div>
+                <CFormText>{project.submitted_by.position}</CFormText>
+                <CFormText>{project.submitted_by.phone}</CFormText>
+                <CFormText>{project.submitted_by.submitted_date}</CFormText>
+                <CFormText>{project.submitted_by.submitted_time}</CFormText>
+              </>
+             :  <div>The contractor hasn't applied for this project yet</div>
+            }
             </CCol>
           </CRow>
         </CCardBody>
