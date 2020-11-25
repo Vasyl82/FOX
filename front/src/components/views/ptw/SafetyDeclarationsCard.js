@@ -33,7 +33,7 @@ const safetyDeclarations = [
 export default function SafetyDeclarationsCard() {
   return (
     <>
-      <CCardSubtitle className="mb-1">Declarations:</CCardSubtitle>
+      <CCardSubtitle className="pt-5 pb-3 mb-1 h4">Declarations:</CCardSubtitle>
       <CCard>
         <CCardBody>
           <CListGroup flush>
