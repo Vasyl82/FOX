@@ -32,7 +32,7 @@ class FoxWorkersAssignTable extends Component {
   render() {
     return (
       <>
-        <CCardSubtitle className="pt-2 mb-1">Personal Involved:</CCardSubtitle>
+        <CCardSubtitle className="pt-5 pb-3 mb-1 h4">Personnel Involved:</CCardSubtitle>
         <CCard>
           <CCardBody>
             <CDataTable
@@ -42,10 +42,7 @@ class FoxWorkersAssignTable extends Component {
               clickableRows
               hover
               striped
-              tableFilter={{ placeholder: "Search..." }}
               size="sm"
-              itemsPerPage={5}
-              pagination
               scopedSlots={{
                 worker_name: (item) => <td>{item.name}</td>,
                 identification_no: (item) => <td>{`ID-${item.id}`}</td>,

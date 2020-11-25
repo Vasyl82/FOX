@@ -21,14 +21,12 @@ class ProjectPTW extends Component {
     this.props.setProjectId(projectId);
     await this.props
       .getProfileFetch()
-      .then(
-        async () =>
-          await this.props.getWorkerList({
-            signal: this.abortController.signal,
-          })
-      )
       .then(() => foxApi.getDetailsOf("projects", projectId))
       .then(async (projectInfo) => {
+        await this.props.getWorkerList({
+          params: {contractor_id: projectInfo.contractor},
+          signal: this.abortController.signal,
+        })
         this.setState({
           ...projectInfo,
         });
