@@ -45,7 +45,7 @@ class FoxWorkersAssignTable extends Component {
               size="sm"
               scopedSlots={{
                 worker_name: (item) => <td>{item.name}</td>,
-                identification_no: (item) => <td>{`ID-${item.id}`}</td>,
+                identification_no: (item) => <td>{item.card_number_id || item.passport }</td>,
                 chosen: (item) => (
                   <td className="d-flex align-items-center">
                     <CInputCheckbox
