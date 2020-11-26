@@ -19,6 +19,7 @@ import { FoxApiService } from '../../../services'
 import { getProfileFetch } from '../../../actions'
 import { SubmitSpinner, WithLoading, WithLoadingSpinner } from '../../loadings'
 import { handleError } from '../../errors'
+import { FoxReactSelectFormGroup } from "../../forms";
 
 const positions = [
   { id: -1, position: "Choose manager position" },
@@ -50,6 +51,12 @@ class ClientManagerCreate extends Component {
       [event.target.name]: event.target.value
     });
   }
+
+  handleReactSelect = (option, event) => {
+    this.setState({
+      [event.name]: option.value,
+    });
+  };
 
   handleSubmit = async event => {
     event.preventDefault();
@@ -88,6 +95,14 @@ class ClientManagerCreate extends Component {
   }
 
   render = () => {
+
+    const positionsInput = positions ?
+      positions.map((option) => {
+      return {
+        value: option.id, label: option.position};
+      })
+    : null;
+      
     return (
       <CRow>
         <CCol>
@@ -142,25 +157,14 @@ class ClientManagerCreate extends Component {
                       required
                     />
                   </CFormGroup>
-                  <CFormGroup>
-                    <CSelect
-                      id="position"
-                      name="position"
-                      placeholder="Choose position"
-                      value={this.state.position}
-                      onChange={this.handleChange}
-                      readOnly={this.props.submitting}
-                      disabled={this.props.submitting}
-                      required
-                    >
-                      {positions.map((option) => {
-                        return (
-                          <option key={option.id} value={option.id}>{option.position}</option>
-                        )
-                      }
-                      )}
-                    </CSelect>
-                  </CFormGroup>
+                  <FoxReactSelectFormGroup
+                    options={positionsInput}
+                    inputInfo="position"
+                    inputValue={this.state.position}
+                    handleChange={this.handleReactSelect}
+                    disabled={this.props.submitting}
+                    readOnly={this.props.submitting}
+                  />
                   <CFormGroup>
                     <CInput
                       id="department"
@@ -209,4 +213,3 @@ const mapDispatchToProps = dispatch => ({
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(WithLoading(ClientManagerCreate))
-
