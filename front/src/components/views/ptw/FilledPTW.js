@@ -201,12 +201,13 @@ const FilledPTW = (props) => {
               { project.submitted_by ?
                <>
                 <div className="ptw-signatures">{project.submitted_by.name}</div>
+                <CFormText>{project.submitted_by.email}</CFormText>
                 <CFormText>{project.submitted_by.position}</CFormText>
                 <CFormText>{project.submitted_by.phone}</CFormText>
                 <CFormText>{project.submitted_by.submitted_date}</CFormText>
                 <CFormText>{project.submitted_by.submitted_time}</CFormText>
               </>
-             :  <div>The contractor hasn't applied for this project yet</div>
+             :  <div>The contractor hasn't applied for this project yet.</div>
             }
             </CCol>
           </CRow>

@@ -158,11 +158,10 @@ class ProjectSerializer(serializers.ModelSerializer):
     def get_submitted_by(self, obj):
         if obj.responsible_person:
             return {
-                "name": obj.responsible_person.name,
-                "position":  Worker.Position(obj.responsible_person.position_in_company).label,
+                "name": obj.company.fox_users.filter(role="Contr").first().name,
+                "email": obj.company.fox_users.filter(role="Contr").first().email,
                 "submitted_date": obj.submit_date.strftime("%d %b %Y"),
                 "submitted_time": obj.submit_date.strftime("%H:%M:%S"),
-                "phone": obj.responsible_person.phone_number
             }
         elif obj.applicant_name:
             """DO NOT DELETE, SERVER DEPRICATED FEATURES"""
