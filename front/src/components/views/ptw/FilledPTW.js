@@ -85,13 +85,13 @@ const FilledPTW = (props) => {
               <CCardText>{project.organization}</CCardText>
             </CCol>
             <CCol xs="6" md="2" className="mb-3">
-              <strong>Applicant name:</strong>
+              <strong>Person in Charge name:</strong>
             </CCol>
             <CCol xs="6" md="4" className="mb-3">
               <CCardText>{project.applicant_name}</CCardText>
             </CCol>
             <CCol xs="6" md="2" className="mb-3">
-              <strong>Applicant Tel No:</strong>
+              <strong>Person in Charge Tel No:</strong>
             </CCol>
             <CCol xs="6" md="4" className="mb-3">
               <CCardText>{project.applicant_phone}</CCardText>
@@ -201,12 +201,13 @@ const FilledPTW = (props) => {
               { project.submitted_by ?
                <>
                 <div className="ptw-signatures">{project.submitted_by.name}</div>
+                <CFormText>{project.submitted_by.email}</CFormText>
                 <CFormText>{project.submitted_by.position}</CFormText>
                 <CFormText>{project.submitted_by.phone}</CFormText>
                 <CFormText>{project.submitted_by.submitted_date}</CFormText>
                 <CFormText>{project.submitted_by.submitted_time}</CFormText>
               </>
-             :  <div>The contractor hasn't applied for this project yet</div>
+             :  <div>The contractor hasn't applied for this project yet.</div>
             }
             </CCol>
           </CRow>
