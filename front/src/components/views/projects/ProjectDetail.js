@@ -43,7 +43,7 @@ class ProjectDetail extends Component {
           </CCardHeader>
           <CCardBody>
             <WithLoadingSpinner loading={loading}>
-              <ProjectPTW {...props} />
+              <ProjectPTW {...props} forceFilledPTW/>
             </WithLoadingSpinner>
           </CCardBody>
         </CCard>
