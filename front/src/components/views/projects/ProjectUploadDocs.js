@@ -51,6 +51,8 @@ class ProjectUploadDocs extends Component {
       project_id: this.props.match.params.id,
     };
     this.props.setProjectId(this.props.match.params.id);
+    console.log(params.project_id, "dfgfdg");
+    console.log(params.project_status, "dfgfdg");
     await this.props
       .getProfileFetch()
       .then(() =>

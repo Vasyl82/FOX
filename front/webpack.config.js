@@ -51,8 +51,12 @@ const config = {
     ],
   },
   devServer: {
+    allowedHosts: ["127.0.0.1"],
+    host: "127.0.0.1",
+    port: 18080,
     contentBase: path.join(__dirname, "templates/dev-front"),
     publicPath: "/static/front",
+    hot: true,
     historyApiFallback: true,
     proxy: {
       "/api": "http://localhost:8000",
