@@ -54,7 +54,7 @@ const FoxReactSelectFormGroup = (props) => {
       <Select
         id={props.inputInfo}
         name={props.inputInfo}
-        placeholder={makePlaceholder(props.inputInfo)}
+        placeholder={props.placeholder ? props.placeholder : makePlaceholder(props.inputInfo)}
         value={getValueFromOptions(props.inputValue, props.options)}
         onChange={props.handleChange}
         options={props.options}

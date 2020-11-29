@@ -32,10 +32,11 @@ const workflow = new ProjectWorkflowService();
 class PTWToBeSubmitted extends Component {
   state = {
     ...this.props.projectInfo,
+    error: false
   };
 
   setWorkersOptions = () => {
-    const options = [{ value: -1, label: "Choose Person in Charge" }];
+    const options = [{ value: "", label: "Choose Person in Charge" }];
     this.props.workerList
       ? this.props.workerList.forEach((worker) =>
           options.push({ value: worker.id, label: worker.name })
@@ -51,6 +52,7 @@ class PTWToBeSubmitted extends Component {
   };
 
   handleCheck = (event) => {
+    console.log(this.state.workers)
     const assignedWorkers = [...this.state.workers];
     const incomingWorker = parseInt(event.target.name);
     assignedWorkers.includes(incomingWorker)
@@ -58,7 +60,7 @@ class PTWToBeSubmitted extends Component {
       : assignedWorkers.push(incomingWorker);
     this.setState({
       workers: assignedWorkers,
-    });
+    }, () => console.log(this.state.workers.length && this.state.responsible_person));
   };
 
   handleCheckAll = () => {
@@ -81,11 +83,10 @@ class PTWToBeSubmitted extends Component {
   handleSubmit = async (event) => {
     event.preventDefault();
     this.props.changeSubmitState();
-
-    if (parseInt(this.setWorkersOptions.options < 0)) {
+    if (!this.state.responsible_person) {
       this.setState({
         error: 'Person in charge was not selected! Please, choose person in charge from the list'
-      })
+      }, this.props.changeSubmitState())
     } else {
 
       const { responsible_person, workers, id } = this.state;
@@ -163,6 +164,7 @@ class PTWToBeSubmitted extends Component {
                   </CFormGroup>
                   <CLabel htmlFor="organization">Person in Charge</CLabel>
                   <FoxReactSelectFormGroup
+                    placeholder="Choose Person in Charge"
                     options={this.setWorkersOptions()}
                     inputInfo="responsible_person"
                     inputValue={this.state.responsible_person}
@@ -220,7 +222,6 @@ class PTWToBeSubmitted extends Component {
                   </CFormGroup>
                   <FoxWorkersAssignTable
                     items={this.props.workerList}
-                    required
                     projectInfo={{ ...project }}
                     workers={project ? [...project.workers] : []}
                     handleCheck={this.handleCheck}
@@ -251,7 +252,7 @@ class PTWToBeSubmitted extends Component {
                 <CButton
                   form="proposal-form"
                   type="submit"
-                  disabled={this.props.submitting}
+                  disabled={this.props.submitting || !project.responsible_person || project.workers.length < 1}
                   shape="pill"
                   type="submit"
                   color="dark"
@@ -261,6 +262,7 @@ class PTWToBeSubmitted extends Component {
                   <SubmitSpinner submitting={this.props.submitting} />
                   Submit proposal
                 </CButton>
+                {this.state.error ? <p>{this.state.error}</p> : null}
               </CCardFooter>
             </WithLoadingSpinner>
           </CCard>
