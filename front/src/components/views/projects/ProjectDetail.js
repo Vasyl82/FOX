@@ -14,12 +14,22 @@ import {
 import { ActivityLog } from "../../activity_log";
 import { WithLoading, WithLoadingSpinner } from "../../loadings";
 import { ProjectPTW } from "../ptw";
+import { FoxApiService } from "../../../services";
+
+const foxApi = new FoxApiService();
 
 class ProjectDetail extends Component {
+  state = {
+    status: ''
+  }
+
   componentDidMount = async () => {
-    this.props.setProjectId(this.props.match.params.id);
+    const projectId = this.props.match.params.id
+    this.props.setProjectId(projectId);
     await this.props
       .getProfileFetch()
+      .then(() =>foxApi.getDetailsOf('projects', projectId))
+      .then(data => this.setState({status: data.status}))
       .catch((error) => console.log(error))
       .finally(() => this.props.changeLoadingState());
   };
@@ -35,7 +45,7 @@ class ProjectDetail extends Component {
         <CCard>
           <CCardHeader className="d-flex justify-content-between">
             <CCardTitle>Project details</CCardTitle>
-            {this.props.role === "CliAdm" ? (
+            {["Created", "Rejected", "Submitted"].includes(this.state.status) &&  this.props.role === "CliAdm" ? (
               <CLink to={`${this.props.location.pathname}/edit`}>
                 Edit project
               </CLink>
