@@ -52,7 +52,6 @@ class PTWToBeSubmitted extends Component {
   };
 
   handleCheck = (event) => {
-    console.log(this.state.workers)
     const assignedWorkers = [...this.state.workers];
     const incomingWorker = parseInt(event.target.name);
     assignedWorkers.includes(incomingWorker)
@@ -60,7 +59,7 @@ class PTWToBeSubmitted extends Component {
       : assignedWorkers.push(incomingWorker);
     this.setState({
       workers: assignedWorkers,
-    }, () => console.log(this.state.workers.length && this.state.responsible_person));
+    });
   };
 
   handleCheckAll = () => {
