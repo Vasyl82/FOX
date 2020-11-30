@@ -32,10 +32,11 @@ const workflow = new ProjectWorkflowService();
 class PTWToBeSubmitted extends Component {
   state = {
     ...this.props.projectInfo,
+    error: false
   };
 
   setWorkersOptions = () => {
-    const options = [{ value: -1, label: "Choose responsible person" }];
+    const options = [{ value: "", label: "Choose Person in Charge" }];
     this.props.workerList
       ? this.props.workerList.forEach((worker) =>
           options.push({ value: worker.id, label: worker.name })
@@ -81,28 +82,34 @@ class PTWToBeSubmitted extends Component {
   handleSubmit = async (event) => {
     event.preventDefault();
     this.props.changeSubmitState();
-    const { responsible_person, workers, id } = this.state;
-    const submit_date = new Date();
-    await foxApi
-      .patchEntityOf("projects", id, {
-        responsible_person,
-        workers,
-        submit_date: submit_date.toISOString(),
-      })
-      .then(() => workflow.submitProposal(id))
-      .then(() => this.props.history.push(`/projects/${id}`))
-      .catch((error) => {
-        const errors = handleError({
-          error: error,
-          validationFields: ["applicant_name", "applicant_phone", "workers"],
-          operation: "Application submit",
-        });
-        this.setState({
-          error: errors,
-        });
-      })
-      .finally(this.props.changeSubmitState);
-  };
+    if (!this.state.responsible_person) {
+      this.setState({
+        error: 'Person in charge was not selected! Please, choose person in charge from the list'
+      }, this.props.changeSubmitState())
+    } else {
+
+      const { responsible_person, workers, id } = this.state;
+      const submit_date = new Date();
+      await foxApi
+        .patchEntityOf("projects", id, {
+          responsible_person,
+          workers,
+          submit_date: submit_date.toISOString(),
+        })
+        .then(() => workflow.submitProposal(id))
+        .then(() => this.props.history.push(`/projects/${id}`))
+        .catch((error) => {
+          const errors = handleError({
+            error: error,
+            validationFields: ["applicant_name", "applicant_phone", "workers"],
+            operation: "Application submit",
+          });
+          this.setState({
+            error: errors,
+          });
+        })
+        .finally(this.props.changeSubmitState);
+  }};
 
   render = () => {
     const { ...project } = { ...this.state };
@@ -154,7 +161,9 @@ class PTWToBeSubmitted extends Component {
                       />
                     </CCol>
                   </CFormGroup>
+                  <CLabel htmlFor="organization">Person in Charge</CLabel>
                   <FoxReactSelectFormGroup
+                    placeholder="Choose Person in Charge"
                     options={this.setWorkersOptions()}
                     inputInfo="responsible_person"
                     inputValue={this.state.responsible_person}
@@ -242,7 +251,7 @@ class PTWToBeSubmitted extends Component {
                 <CButton
                   form="proposal-form"
                   type="submit"
-                  disabled={this.props.submitting}
+                  disabled={this.props.submitting || !project.responsible_person || project.workers.length < 1}
                   shape="pill"
                   type="submit"
                   color="dark"
@@ -252,6 +261,7 @@ class PTWToBeSubmitted extends Component {
                   <SubmitSpinner submitting={this.props.submitting} />
                   Submit proposal
                 </CButton>
+                {this.state.error ? <p>{this.state.error}</p> : null}
               </CCardFooter>
             </WithLoadingSpinner>
           </CCard>

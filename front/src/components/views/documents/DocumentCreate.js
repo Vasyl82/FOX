@@ -168,7 +168,7 @@ class DocumentCreate extends Component {
                         disabled={this.props.submitting}
                         readOnly={this.props.submitting}
                         required />
-                      <CFormText>Recommended formats: .doc, .docx, .xls, .xlsx, .pdf</CFormText>
+                      <CFormText>Required formats: .doc, .docx, .xls, .xlsx, .pdf</CFormText>
                     </CFormGroup>
                     : null}
                   {error

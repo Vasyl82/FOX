@@ -63,7 +63,7 @@ class ClientManagerCreate extends Component {
     this.props.changeSubmitState()
     if (parseInt(this.state.position) === -1) {
       this.setState({
-        error: 'Client manager position was not selected! Please, choose position form the list'
+        error: 'Client manager position was not selected! Please, choose position from the list'
       })
     } else {
       this.formData = this.state;
@@ -102,7 +102,7 @@ class ClientManagerCreate extends Component {
         value: option.id, label: option.position};
       })
     : null;
-      
+
     return (
       <CRow>
         <CCol>

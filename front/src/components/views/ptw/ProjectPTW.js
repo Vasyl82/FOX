@@ -47,7 +47,7 @@ class ProjectPTW extends Component {
     return (
       <WithLoadingSpinner loading={this.props.loading}>
         {["Created", "Rejected"].includes(this.state.status) &&
-        this.props.role === "Contr" ? (
+        this.props.role === "Contr" && !this.props.forceFilledPTW ? (
           <PTWToBeSubmitted projectInfo={state} {...this.props} />
         ) : (
           <FilledPTW projectInfo={state} {...this.props} />
