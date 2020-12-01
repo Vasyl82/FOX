@@ -50,6 +50,15 @@ const deleteDocumentsFromStore = (allDocuments) => {
   return (dispatch) => dispatch(_deleteDocumentsFromStore(allDocuments));
 };
 
+const putAllDocumentsInvalidNamesToStore = (allInvalidDocsNames) => {
+  return (dispatch) => dispatch(_addInvalidDocsNames(allInvalidDocsNames));
+};
+
+const _addInvalidDocsNames = (invalidFilesNames) => ({
+  type: "ADD_ALL_DOCUMENTS_INVALID_NAMES",
+  invalidFilesNames,
+})
+
 const _updateDocument = (docInfo) => ({
   type: "UPDATE_DOCUMENT",
   docInfo: docInfo,
@@ -82,4 +91,5 @@ export {
   deleteDocumentsFromStore,
   putAllDocumentsToStore,
   updateDocument,
+  putAllDocumentsInvalidNamesToStore,
 };

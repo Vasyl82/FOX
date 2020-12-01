@@ -16,6 +16,7 @@ const initialState = {
   modal: {},
   submitting: false,
   projectDocs: [],
+  invalidFilesNames: []
 };
 
 const changeState = (state = initialState, { type, ...rest }) => {
@@ -102,6 +103,8 @@ const changeState = (state = initialState, { type, ...rest }) => {
       return { ...state, projectDocs: actualDocs };
     case "ADD_ALL_DOCUMENTS_FROM_BACKEND":
       return { ...state, ...rest };
+    case "ADD_ALL_DOCUMENTS_INVALID_NAMES":
+      return {...state, ...rest}
     default:
       return state;
   }
