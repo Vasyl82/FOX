@@ -23,16 +23,17 @@ import {
   CCardSubtitle,
 } from "@coreui/react";
 import DjangoCSRFToken from "django-react-csrftoken";
-import { FoxApiService } from "../../../services";
+import { FoxApiService, FileCheckService } from "../../../services";
 import { FoxSwitchGroup, MultipleFileUploadButton } from "../../../utils";
 import { FoxReactSelectFormGroup } from "../../forms";
 import { permitOptions } from "./optionsLists";
 import { WithLoadingSpinner, WithLoading, SubmitSpinner } from "../../loadings";
-import { deleteDocumentsFromStore } from "../../../../src/actions/documents";
-import { DocumentWidget } from "../../widgets";
+import { deleteDocumentsFromStore, putAllDocumentsInvalidNamesToStore } from "../../../../src/actions/documents";
+import { DocumentWidget, InvalidFileTrueMessage, InvalidDocumentTotalSizeError } from "../../widgets";
 import { handleError } from "../../errors";
 
 const foxApi = new FoxApiService();
+const fileCheck = new FileCheckService();
 
 class ProjectCreate extends Component {
   state = {
@@ -166,17 +167,6 @@ class ProjectCreate extends Component {
     }
   };
 
-  handleChange = (event) => {
-    this.setState({
-      [event.target.name]: event.target.value,
-    });
-  };
-  handleFileUpload = (event) => {
-    this.setState({
-      [event.target.name]: event.target.files[0],
-    });
-  };
-
   componentDidMount = async () => {
     await this.props
       .getProfileFetch()
@@ -187,6 +177,7 @@ class ProjectCreate extends Component {
   };
 
   componentWillUnmount = async () => {
+    this.props.addInvalidDocsNames([]);
     this.abortController.abort();
     this.props.deleteDocumentsFromStore();
     await this.props.clearList();
@@ -303,6 +294,8 @@ class ProjectCreate extends Component {
                   <strong>Add documents to this project:</strong>
                 </div>
                 <MultipleFileUploadButton />
+                <div className="h5 small">*Required formats: .doc, .docx, .xls, .xlsx, .pdf.</div>
+                <div className="h5 small">**The total size of attached documents should not exceed 32 megabytes.</div>
                 <CRow>
                   {this.props.docs
                     ? this.props.docs.map((doc, idx) => (
@@ -311,7 +304,7 @@ class ProjectCreate extends Component {
                     : null}
                 </CRow>
                 <CButton
-                  disabled={this.props.submitting}
+                  disabled={this.props.submitting || fileCheck.moreThen32MB(this.props.docs)}
                   shape="pill"
                   onClick={this.handleSubmit}
                   color="dark"
@@ -322,6 +315,8 @@ class ProjectCreate extends Component {
                   Create Project
                 </CButton>
                 {this.state.error ? <p>{this.state.error}</p> : null}
+                <InvalidFileTrueMessage />
+                <InvalidDocumentTotalSizeError />
               </WithLoadingSpinner>
             </CCardBody>
           </CCard>
@@ -336,6 +331,7 @@ const mapStateToProps = (state) => {
     company: state.currentUser.company,
     options: state.entityListTable.tableData,
     docs: state.projectDocs,
+    invalidDocsNames: state.invalidFilesNames,
   };
 };
 
@@ -345,6 +341,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(getContractorList({ ...params })),
   clearList: () => dispatch(clearList()),
   deleteDocumentsFromStore: () => dispatch(deleteDocumentsFromStore()),
+  addInvalidDocsNames: () => dispatch(putAllDocumentsInvalidNamesToStore())
 });
 
 export default connect(

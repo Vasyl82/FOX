@@ -24,15 +24,16 @@ import {
   clearList,
   getDocuments,
 } from "../../../actions";
-import { FoxApiService } from "../../../services";
+import { FoxApiService, FileCheckService } from "../../../services";
 import { permitOptions } from "./optionsLists";
 import { WithLoading, WithLoadingSpinner, SubmitSpinner } from "../../loadings";
 import { FoxSwitchGroup, MultipleFileUploadButton } from "../../../utils";
-import { DocumentWidget } from "../../widgets";
-import { deleteDocumentsFromStore } from "../../../../src/actions/documents";
+import { DocumentWidget, InvalidFileTrueMessage, InvalidDocumentTotalSizeError } from "../../widgets";
+import { deleteDocumentsFromStore, putAllDocumentsInvalidNamesToStore } from "../../../../src/actions/documents";
 import { handleError } from "../../errors";
 
 const foxApi = new FoxApiService();
+const fileCheck = new FileCheckService();
 
 class ProjectEdit extends Component {
   state = {
@@ -159,6 +160,7 @@ class ProjectEdit extends Component {
   };
 
   componentWillUnmount = async () => {
+    this.props.addInvalidDocsNames([]);
     this.abortController.abort();
     await this.props.clearList();
     this.props.setProjectId("");
@@ -278,6 +280,8 @@ class ProjectEdit extends Component {
                       <strong>Add documents to this project:</strong>
                     </div>
                     <MultipleFileUploadButton />
+                    <div className="h5 small">*Required formats: .doc, .docx, .xls, .xlsx, .pdf.</div>
+                    <div className="h5 small">**The total size of attached documents should not exceed 32 megabytes.</div>
                     <div className="mb-2 ">
                       <strong>Attached documents:</strong>
                     </div>
@@ -288,7 +292,7 @@ class ProjectEdit extends Component {
                     </CRow>
 
                     <CButton
-                      disabled={this.props.submitting}
+                      disabled={this.props.submitting || fileCheck.moreThen32MB(docs)}
                       shape="pill"
                       type="submit"
                       color="dark"
@@ -303,6 +307,8 @@ class ProjectEdit extends Component {
                         {this.state.error}
                       </p>
                     ) : null}
+                    <InvalidFileTrueMessage />
+                    <InvalidDocumentTotalSizeError />
                   </CForm>
                 </WithLoadingSpinner>
               </CCardBody>
@@ -322,6 +328,7 @@ const mapStateToProps = (state) => {
     options: state.entityListTable.tableData,
     role: state.currentUser.role,
     docs: state.projectDocs,
+    invalidDocsNames: state.invalidFilesNames,
   };
 };
 
@@ -334,6 +341,7 @@ const mapDispatchToProps = (dispatch) => ({
   getDocuments: async ({ ...kwargs }) =>
     await dispatch(getDocuments({ ...kwargs })),
   deleteDocumentsFromStore: () => dispatch(deleteDocumentsFromStore()),
+  addInvalidDocsNames: () => dispatch(putAllDocumentsInvalidNamesToStore())
 });
 
 export default connect(

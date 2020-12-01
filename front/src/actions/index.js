@@ -19,6 +19,7 @@ import {
   getDocuments,
   putAllDocumentsToStore,
   deleteDocument,
+  putAllDocumentsInvalidNamesToStore,
 } from "./documents";
 import { getContractorList } from "./contractors";
 import { getWorkerList } from "./workers";
@@ -71,6 +72,7 @@ export {
   updateModal,
   clearList,
   putAllDocumentsToStore,
+  putAllDocumentsInvalidNamesToStore,
   populateEntityTable,
   populateAdditionalEntityTable,
   changeSubmitState,

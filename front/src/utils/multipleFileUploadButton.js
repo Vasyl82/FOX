@@ -2,6 +2,10 @@ import React from "react";
 import { connect } from "react-redux";
 import { CCol, CInputFile, CLabel } from "@coreui/react";
 import { putAllDocumentsToStore } from "../actions";
+import { FileCheckService } from "../services";
+import { putAllDocumentsInvalidNamesToStore } from  "../actions/documents";
+
+const fileCheck = new FileCheckService();
 
 const MultipleFileUploadButton = (props) => {
   const handleFilesUpload = (event) => {
@@ -10,15 +14,24 @@ const MultipleFileUploadButton = (props) => {
     const files = [...event.target.files];
 
     const arrayWithDocsForUpload = [];
+    const arrayWithInvalidDocsNames = []
 
     files.forEach((file) => {
+      props.addInvalidDocsNames([]);
+      if (fileCheck.checkDocsType(file) === true){
       const fileObject = {
         name: file.name,
         file: file,
+        size: file.size
       };
       arrayWithDocsForUpload.push(fileObject);
+    } else {
+      const invalidFileName = file.name
+      arrayWithInvalidDocsNames.push(invalidFileName)
+    }
     });
 
+    props.addInvalidDocsNames(arrayWithInvalidDocsNames);
     props.putAllDocumentsToStore(arrayWithDocsForUpload);
     event.target.value = null;
     console.log(event.target.files);
@@ -49,6 +62,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   putAllDocumentsToStore: (documents) =>
     dispatch(putAllDocumentsToStore(documents)),
+    addInvalidDocsNames: (names) => dispatch(putAllDocumentsInvalidNamesToStore(names))
 });
 
 export default connect(
