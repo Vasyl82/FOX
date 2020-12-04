@@ -114,6 +114,16 @@ const FilledPTW = (props) => {
             </CCol>
           </CRow>
           <CRow>
+          <CCol xs="6" md="2" className="xs-3">
+              <strong>Extended date:</strong>
+            </CCol>
+            <CCol xs="6" md="4" className="mb-3">
+              <CCardText>
+                {project.extend_date ? new Date(project.extend_date).toLocaleDateString() : "The project is not extended yet."}
+              </CCardText>
+            </CCol>
+          </CRow>
+          <CRow>
             <CCol xs="6" md="2">
               <strong>Type of Work: </strong>
             </CCol>
