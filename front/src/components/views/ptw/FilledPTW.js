@@ -180,7 +180,7 @@ const FilledPTW = (props) => {
                 <strong>Approved by:</strong>
               </CCardText>
               {project.approved_by.length > 0 ? (
-                project.approved_by.map((approve) => ( 
+                project.approved_by.map((approve) => (
                   <>
                     <div className="ptw-signatures">{approve.name}</div>
                     <CFormText>{approve.position}</CFormText>
@@ -207,7 +207,7 @@ const FilledPTW = (props) => {
                 <CFormText>{project.submitted_by.submitted_date}</CFormText>
                 <CFormText>{project.submitted_by.submitted_time}</CFormText>
               </>
-             :  <div>The contractor hasn't applied for this project yet.</div>
+             :  <div>The contractor has not submitted the PTW.</div>
             }
             </CCol>
           </CRow>
