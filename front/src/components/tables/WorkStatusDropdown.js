@@ -40,7 +40,7 @@ class WorkStatusDropdown extends Component {
                 className="table-dropdown-icon"
                 name={'cilSettings'} />
             </CDropdownToggle>
-            <CDropdownMenu className="p-0 foxtable-dropdown-menu" placement="bottom-end">
+            <CDropdownMenu className="p-0 foxtable-dropdown-menu" placement="right">
               {choices.map((choice, idx) => {
                 const [value, name] = Object.entries(choice)[0]
                 return <CDropdownItem
