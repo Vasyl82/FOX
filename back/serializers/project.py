@@ -1,14 +1,15 @@
 from django.db.models import F
-
+from django.utils import timezone
 from rest_framework import serializers
 from back.models import Project, ClientManager, Approval, Worker
+# from back.serializers import DocumentSerializer
 
 
 class ProjectListSerializer(serializers.ModelSerializer):
 
     project_name = serializers.SerializerMethodField()
     application_status = serializers.SerializerMethodField()
-    work_status = serializers.SerializerMethodField()
+    project_status = serializers.SerializerMethodField()
     start_date = serializers.SerializerMethodField()
     end_date = serializers.SerializerMethodField()
     extend_date = serializers.SerializerMethodField()
@@ -24,7 +25,7 @@ class ProjectListSerializer(serializers.ModelSerializer):
             "location",
             "status",
             "application_status",
-            "work_status",
+            "project_status",
             "extend_date",
         ]
 
@@ -42,21 +43,21 @@ class ProjectListSerializer(serializers.ModelSerializer):
         )
         return application_status
 
-    def get_work_status(self, obj):
+    def get_project_status(self, obj):
         status = obj.status
         status_options = {
             "Approved": "Ready to start",
-            "Works_started": "Works started",
-            "Works_finished": "Works finished",
+            "Started": "Started",
+            "Completed": "Completed",
             "Extended": "Extended",
             "Closed": "Closed",
         }
-        work_status = (
+        project_status = (
             status_options[status]
             if status in status_options.keys()
             else "Application processing"
         )
-        return work_status
+        return project_status
 
     def get_start_date(self, obj):
         return obj.start_date.strftime("%d %b %Y")
@@ -99,6 +100,8 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     submitted_by = serializers.SerializerMethodField()
 
+    # documents = DocumentSerializer(many=True, read_only=True)
+
     class Meta:
         model = Project
         fields = "__all__"
@@ -107,26 +110,26 @@ class ProjectSerializer(serializers.ModelSerializer):
         return (
             f"PTW/{obj.company.pk}/{obj.contractor.pk}/{obj.start_date.year}/{obj.pk}"
         )
-           
+
     def get_creation_date(self, obj):
         return {
-            "date": obj.creation_date.strftime("%d %b %Y"),
-            "time": obj.creation_date.strftime("%H:%M:%S"),
+            "date": timezone.localtime(value=obj.creation_date).strftime("%d %b %Y"),
+            "time": timezone.localtime(value=obj.creation_date).strftime("%H:%M:%S"),
         }
-        
+
     def get_applicant_name(self, obj):
         if obj.applicant_name:
             return obj.applicant_name
         elif obj.responsible_person:
             return obj.responsible_person.name
-        return "No applicant yet"
+        return "No person in charge yet"
 
     def get_applicant_phone(self, obj):
         if obj.applicant_phone:
             return obj.applicant_phone
         elif obj.responsible_person:
             return obj.responsible_person.phone_number
-        return "No applicant yet"
+        return "No person in charge yet"
 
     def get_issued_by(self, obj):
         return {
@@ -149,17 +152,17 @@ class ProjectSerializer(serializers.ModelSerializer):
                 "position": approval.manager.Position(approval.manager.position).label,
                 "last_resolved_date": approval.last_resolved.strftime("%d %b %Y"),
                 "last_resolved_time": approval.last_resolved.strftime("%H:%M:%S"),
-                "email": approval.manager.email
+                "email": approval.manager.email.split("(deleted-")
             }
             for approval in last_approvals
             if approval.status == Approval.Status.approved
         ]
-                 
+
     def get_submitted_by(self, obj):
         if obj.responsible_person:
             return {
                 "name": obj.company.fox_users.filter(role="Contr").first().name,
-                "email": obj.company.fox_users.filter(role="Contr").first().email,
+                "email": obj.company.fox_users.filter(role="Contr").first().email.split('(deleted-'),
                 "submitted_date": obj.submit_date.strftime("%d %b %Y"),
                 "submitted_time": obj.submit_date.strftime("%H:%M:%S"),
             }
