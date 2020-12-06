@@ -65,7 +65,7 @@ class PermitVerification extends Component {
                       </React.Fragment>
                     ) : (
                       <h1>
-                        <strong className="text-danger">ACCESS DENIED</strong>
+                        <strong className="text-danger">You do not have the permission to Scan the QR Code</strong>
                       </h1>
                     )}
                   </CCardBody>

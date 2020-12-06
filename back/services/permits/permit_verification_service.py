@@ -16,7 +16,7 @@ class PermitVerificationService:
         permit_is_valid = self._validate_permit(permit)
         if permit_is_valid:
             return {"name": permit.worker.name}
-        return "Access Denied"
+        return "You do not have the permission to Scan the QR Code"
 
     def _validate_permit(self, permit):
         if permit is None:
