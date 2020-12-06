@@ -150,8 +150,8 @@ class ProjectSerializer(serializers.ModelSerializer):
             {
                 "name": approval.manager.name,
                 "position": approval.manager.Position(approval.manager.position).label,
-                "last_resolved_date": approval.last_resolved.strftime("%d %b %Y"),
-                "last_resolved_time": approval.last_resolved.strftime("%H:%M:%S"),
+                "last_resolved_date": timezone.localtime(value=approval.last_resolved).strftime("%d %b %Y"),
+                "last_resolved_time": timezone.localtime(value=approval.last_resolved).strftime("%H:%M:%S"),
                 "email": approval.manager.email.split("(deleted-")
             }
             for approval in last_approvals
@@ -163,16 +163,16 @@ class ProjectSerializer(serializers.ModelSerializer):
             return {
                 "name": obj.company.fox_users.filter(role="Contr").first().name,
                 "email": obj.company.fox_users.filter(role="Contr").first().email.split('(deleted-'),
-                "submitted_date": obj.submit_date.strftime("%d %b %Y"),
-                "submitted_time": obj.submit_date.strftime("%H:%M:%S"),
+                "submitted_date": timezone.localtime(value=obj.submit_date).strftime("%d %b %Y"),
+                "submitted_time": timezone.localtime(value=obj.submit_date).strftime("%H:%M:%S"),
             }
         elif obj.applicant_name:
             """DO NOT DELETE, SERVER DEPRICATED FEATURES"""
             return {
                 "name": obj.applicant_name,
                 "position":  obj.applicant_name,
-                "submitted_date": obj.submit_date.strftime("%d %b %Y") if obj.submit_date else "",
-                "submitted_time": obj.submit_date.strftime("%H:%M:%S") if obj.submit_date else "",
+                "submitted_date": timezone.localtime(value=obj.submit_date).strftime("%d %b %Y") if obj.submit_date else "",
+                "submitted_time": timezone.localtime(value=obj.submit_date).strftime("%H:%M:%S") if obj.submit_date else "",
                 "phone": obj.applicant_phone
             }
         else:
