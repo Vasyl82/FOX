@@ -7,8 +7,8 @@ const getDashboardLayout = (userRole = "Dum", projectId = null) => {
           sidebar: [
             {
               _tag: "CSidebarNavItem",
-              name: "Dashboard",
-              to: "/dashboard",
+              name: "Project Detail",
+              to: `/projects/${projectId}`,
               icon: "cil-speedometer",
             },
             {
