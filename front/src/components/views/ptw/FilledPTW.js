@@ -31,9 +31,9 @@ const getBadge = (status) => {
       return "secondary";
     case "Ready to start":
       return "success";
-    case "Works started":
+    case "Started":
       return "info";
-    case "Works finished":
+    case "Completed":
       return "warning";
     case "Extended":
       return "primary";

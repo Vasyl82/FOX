@@ -111,11 +111,11 @@ class FoxTableWithDeleteOption extends Component {
                         </CBadge>
                       </td>
                     ),
-                  'work_status':
+                  'project_status':
                     (item) => (
                       <td className="d-flex align-items-center">
-                        <CBadge shape="pill" color={this.props.getBadge(item.work_status)}>
-                          {item.work_status}
+                        <CBadge shape="pill" color={this.props.getBadge(item.project_status)}>
+                          {item.project_status}
                         </CBadge>
                         <WorkStatusDropdown key={item.id} item={item} {...this.props} />
                       </td>

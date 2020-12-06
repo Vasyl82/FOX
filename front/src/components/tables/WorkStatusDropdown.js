@@ -9,8 +9,8 @@ import CIcon from '@coreui/icons-react'
 const foxApi = new FoxApiService();
 
 const choices = [
-  { Works_started: 'Works started' },
-  { Works_finished: 'Works finished' },
+  { Started: 'Started' },
+  { Completed: 'Completed' },
   { Extended: 'Extended' },
   { Closed: 'Closed' },
 ]
@@ -31,7 +31,7 @@ class WorkStatusDropdown extends Component {
 
   render = () => {
     return (
-      this.props.role === "CliAdm" && this.props.item.work_status !== "Application processing" ?
+      this.props.role === "CliAdm" && this.props.item.project_status !== "Application processing" ?
         <React.Fragment>
           <CDropdown >
             <CDropdownToggle className="project-table-toggle">
