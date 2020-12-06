@@ -194,7 +194,7 @@ const FilledPTW = (props) => {
                   <>
                     <div className="ptw-signatures">{approve.name}</div>
                     <CFormText>{approve.position}</CFormText>
-                    <CFormText>{approve.email}</CFormText>
+                    <CFormText>{approve.email[0]}</CFormText>
                     <CFormText>{approve.last_resolved_date}</CFormText>
                     <CFormText>{approve.last_resolved_time}</CFormText>
                     <div className="mb-3"></div>
@@ -211,7 +211,7 @@ const FilledPTW = (props) => {
               { project.submitted_by ?
                <>
                 <div className="ptw-signatures">{project.submitted_by.name}</div>
-                <CFormText>{project.submitted_by.email}</CFormText>
+                <CFormText>{project.submitted_by.email[0]}</CFormText>
                 <CFormText>{project.submitted_by.position}</CFormText>
                 <CFormText>{project.submitted_by.phone}</CFormText>
                 <CFormText>{project.submitted_by.submitted_date}</CFormText>
