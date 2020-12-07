@@ -9,8 +9,8 @@ class Project(models.Model):
         submitted = "Submitted", _("Submitted")
         approved = "Approved", _("Approved")
         rejected = "Rejected", _("Rejected")
-        works_started = "Works_started", _("Works started")
-        works_finished = "Works_finished", _("Works finished")
+        works_started = "Started", _("Started")
+        works_finished = "Completed", _("Completed")
         extended = "Extended", _("Extended")
         closed = "Closed", _("Closed")
 

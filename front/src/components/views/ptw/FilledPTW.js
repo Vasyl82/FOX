@@ -31,9 +31,9 @@ const getBadge = (status) => {
       return "secondary";
     case "Ready to start":
       return "success";
-    case "Works started":
+    case "Started":
       return "info";
-    case "Works finished":
+    case "Completed":
       return "warning";
     case "Extended":
       return "primary";
@@ -114,6 +114,16 @@ const FilledPTW = (props) => {
             </CCol>
           </CRow>
           <CRow>
+          <CCol xs="6" md="2" className="xs-3">
+              <strong>Extended date:</strong>
+            </CCol>
+            <CCol xs="6" md="4" className="mb-3">
+              <CCardText>
+                {project.extend_date ? new Date(project.extend_date).toLocaleDateString() : "The project is not extended yet."}
+              </CCardText>
+            </CCol>
+          </CRow>
+          <CRow>
             <CCol xs="6" md="2">
               <strong>Type of Work: </strong>
             </CCol>
@@ -180,11 +190,11 @@ const FilledPTW = (props) => {
                 <strong>Approved by:</strong>
               </CCardText>
               {project.approved_by.length > 0 ? (
-                project.approved_by.map((approve) => ( 
+                project.approved_by.map((approve) => (
                   <>
                     <div className="ptw-signatures">{approve.name}</div>
                     <CFormText>{approve.position}</CFormText>
-                    <CFormText>{approve.email}</CFormText>
+                    <CFormText>{approve.email[0]}</CFormText>
                     <CFormText>{approve.last_resolved_date}</CFormText>
                     <CFormText>{approve.last_resolved_time}</CFormText>
                     <div className="mb-3"></div>
@@ -201,13 +211,13 @@ const FilledPTW = (props) => {
               { project.submitted_by ?
                <>
                 <div className="ptw-signatures">{project.submitted_by.name}</div>
-                <CFormText>{project.submitted_by.email}</CFormText>
+                <CFormText>{project.submitted_by.email[0]}</CFormText>
                 <CFormText>{project.submitted_by.position}</CFormText>
                 <CFormText>{project.submitted_by.phone}</CFormText>
                 <CFormText>{project.submitted_by.submitted_date}</CFormText>
                 <CFormText>{project.submitted_by.submitted_time}</CFormText>
               </>
-             :  <div>The contractor hasn't applied for this project yet.</div>
+             :  <div>The contractor has not submitted the PTW.</div>
             }
             </CCol>
           </CRow>

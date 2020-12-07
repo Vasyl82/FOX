@@ -39,7 +39,7 @@ class InternalNotificationsTestCase(APITestCase):
             description="Test description",
             company=company,
             contractor=contractor,
-            status="Works_started",
+            status="Started",
         )
         ClientAdmin.objects.create(
             username="test_admin1",

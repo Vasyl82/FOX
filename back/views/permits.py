@@ -9,6 +9,6 @@ class PermitVerification(APIView):
         verification_result = PermitVerificationService(
             part1, part2, part3
         ).verify_permit()
-        if verification_result == "Access Denied":
+        if verification_result == "You do not have the permission to Scan the QR Code":
             raise Http404(verification_result)
         return JsonResponse(verification_result)
