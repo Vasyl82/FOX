@@ -161,8 +161,8 @@ class ProjectSerializer(serializers.ModelSerializer):
     def get_submitted_by(self, obj):
         if obj.responsible_person:
             return {
-                "name": obj.company.fox_users.filter(role="Contr").first().name,
-                "email": obj.company.fox_users.filter(role="Contr").first().email.split('(deleted-'),
+                "name": obj.contractor.name,
+                "email": obj.contractor.email.split('(deleted-'),
                 "submitted_date": timezone.localtime(value=obj.submit_date).strftime("%d %b %Y"),
                 "submitted_time": timezone.localtime(value=obj.submit_date).strftime("%H:%M:%S"),
             }
