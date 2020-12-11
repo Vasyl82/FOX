@@ -158,7 +158,7 @@ class ProjectCreate extends Component {
           this.setState({
             error:
               "Project creation failed!" +
-              " Please check your input and try again!" +
+              " Please check if you filled all fields and try again!" +
               " In case this problem repeats, please contact your administrator!",
           });
         })

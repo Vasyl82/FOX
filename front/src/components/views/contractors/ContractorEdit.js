@@ -60,7 +60,7 @@ class ContractorEdit extends Component {
             "company_phone",
             "company",
           ],
-          operation: "Contractor update",
+          operation: "The contractor with this username or email already exists, so editing of the contractor data",
         });
         this.setState({
           error: errorMessage,
